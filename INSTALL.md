@@ -30,10 +30,11 @@ on osx:
     brew install nginx
 
 
-You will want to setup nginx with signed certificates.  We use the CDN notation when generating blind xss payloads (// vs http://) to save space.  CDN nottation resolves to the current scheme, so if you are injecting into a page hosted over ssl, the callbacks will have to be on a web server that supports ssl.   
+You will want to setup nginx with signed certificates.  We use the CDN notation when generating blind xss payloads (// vs http://) to save space.  CDN notation resolves to the current scheme, so if you are injecting into a page hosted over ssl, the callbacks will have to be on a web server that supports ssl.   
 
 The following configuration can be copied into the server portion of the nginx.conf file.  Replace the CAPS portion with your information:
 
+```nginx
     server {
         listen 80;
         server_name YOUR_SERVER_NAME.com;
@@ -77,7 +78,8 @@ The following configuration can be copied into the server portion of the nginx.c
         }
     
     }
-    
+```    
+
 Double check everything is okay by running the following:
 
     nginx -t
