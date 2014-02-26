@@ -13,7 +13,7 @@ import flask_wtf
 # Config and App setups
 app = Flask(__name__)
 app.config.from_object('config-default')
-
+app.debug = app.config.get('DEBUG')
 # Log handler functionality
 handler = RotatingFileHandler(app.config.get('LOG_FILE'), maxBytes=10000000, backupCount=100)
 handler.setFormatter(Formatter(

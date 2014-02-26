@@ -2,8 +2,7 @@ import os
 
 _basedir = os.path.abspath(os.path.dirname(__file__))
 
-DEBUG = True
-
+DEBUG = False
 
 SECRET_KEY = "thisIs_soS_ecret_shh!!don'ttell"
 
