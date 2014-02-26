@@ -108,7 +108,7 @@ The following configuration file is located in the root of Sleepy Puppy (config-
     # Email server configuration
     MAIL_SERVER = 'localhost'
     MAIL_PORT = 25
-    MAIL_SENDER = 'sbehrens@netflix.com'
+    MAIL_SENDER = 'your_email@gmail.com'
     #MAIL_USE_TLS = False
     #MAIL_USE_SSL = False
     #MAIL_USERNAME = 'you'
