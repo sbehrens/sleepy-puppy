@@ -193,7 +193,9 @@ As well as the DOM, which also hightlights where in the code your payload was ex
 After a Payload is generated, the attacker injects the payload into the application.  When the script is loaded in a future time the follwoing events occur:
 
 1.  The JavaScript file is retrieved from the server, passing the *u* parameter which contains a unique identifier used to link the payload with the capture.  The server also replaces associated variables and hostnames within the JavaScript file.  
+
 2.  Script loads Jquery and HTML2Canvas frameworks
+
 3.  Script POSTS to /callbacks and includes: 
 
     URI,
