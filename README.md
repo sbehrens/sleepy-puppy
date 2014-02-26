@@ -145,7 +145,7 @@ Assessments are where you specify the application you are testing.  You will use
 The User model allows you to specify email notifications for specific assessments.  A user can subscribe to notifications for multiple assessments.
 
 ###User View###
-![User View](http://i.snag.gy/OfJed.jpg "User View")
+![User View](http://i.snag.gy/p4pWj.jpg "User View")
 
 There are two users in this example that will recieve notifications when a capture is recieved for a particular assessment.
 
@@ -213,7 +213,7 @@ Users who want to recieve notifications can simply edit the User model.  To setu
 
 An example email notification is below:
 
-![Email Notifications](http://i.snag.gy/Wy95X.jpg "Email Notifications")
+![Email Notifications](http://i.snag.gy/WAEaU.jpg "Email Notifications")
 
 
 ##TODO##
