@@ -217,8 +217,11 @@ An example email notification is below:
 
 
 ##TODO##
+
 Common Payload database (drop down menu)
+
 Encoding options for payload
+
 ZeroCopy clipboard
 
 ##Known Issues##
