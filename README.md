@@ -35,7 +35,7 @@ A [User](#users) model allows you to optionally setup email notifications for ca
 
 Sleepy Puppy also provides an API for user's who may want to develop plugins for scanners such as Burp or Zap.
 
-[API Documentation](https://github.com/sbehrens/sleepy-puppy/blob/master/api.md)
+[API Documentation](https://github.com/sbehrens/sleepy-puppy/blob/master/API.md)
 
 #Setup#
 
