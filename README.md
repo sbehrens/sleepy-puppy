@@ -35,7 +35,7 @@ A [User](#users) model allows you to optionally setup email notifications for ca
 
 Sleepy Puppy also provides an API for user's who may want to develop plugins for scanners such as Burp or Zap.
 
-[API Documentation](https://github.com/sbehrens/sleepy-puppy/blob/master/api.md)
+[API Documentation](https://github.com/sbehrens/sleepy-puppy/blob/master/API.md)
 
 #Setup#
 
@@ -108,7 +108,7 @@ The following configuration file is located in the root of Sleepy Puppy (config-
     # Email server configuration
     MAIL_SERVER = 'localhost'
     MAIL_PORT = 25
-    MAIL_SENDER = 'sbehrens@netflix.com'
+    MAIL_SENDER = 'your_email@gmail.com'
     #MAIL_USE_TLS = False
     #MAIL_USE_SSL = False
     #MAIL_USERNAME = 'you'
@@ -145,7 +145,7 @@ Assessments are where you specify the application you are testing.  You will use
 The User model allows you to specify email notifications for specific assessments.  A user can subscribe to notifications for multiple assessments.
 
 ###User View###
-![User View](http://i.snag.gy/OfJed.jpg "User View")
+![User View](http://i.snag.gy/p4pWj.jpg "User View")
 
 There are two users in this example that will recieve notifications when a capture is recieved for a particular assessment.
 
@@ -213,12 +213,15 @@ Users who want to recieve notifications can simply edit the User model.  To setu
 
 An example email notification is below:
 
-![Email Notifications](http://i.snag.gy/Wy95X.jpg "Email Notifications")
+![Email Notifications](http://i.snag.gy/WAEaU.jpg "Email Notifications")
 
 
 ##TODO##
+
 Common Payload database (drop down menu)
+
 Encoding options for payload
+
 ZeroCopy clipboard
 
 ##Known Issues##
