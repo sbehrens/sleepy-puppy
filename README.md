@@ -67,9 +67,9 @@ The [installation guide](https://github.com/sbehrens/sleepy-puppy/blob/master/IN
 
 #Why Blind Cross-site Scripting?#
 
-Often when we are testing for client side injections (HTML/JS/etc.) we are looking for where the injection occurs within the application we are testing *only*.  While this provides ample coverage for the application in scope, there is a possiblity that the code we are injecting may be reflected back in a completley separate application.  
+Often when we are testing for client side injections (HTML/JS/etc.) we are looking for where the injection occurs within the application we are testing *only*.  While this provides ample coverage for the application in scope, there is a possiblity that the code we are injecting may be reflected back in a completely separate application.  
 
-An examle would be a signup for an eCommerce website.  We can imagine a field such as "First Name" which gets reflected back throughout the eCommerce website.  But what about the helpdesk application when a user has a question?  We can imagine that first name field may get reflected back out in tha helpdesk application.  It's also possible that the help desk user logs into another application to retreive more information on you when you ask a question.  That application may also query the "First Name" parameter.  
+An example would be a signup for an eCommerce website.  We can imagine a field such as "First Name" which gets reflected back throughout the eCommerce website.  But what about the helpdesk application when a user has a question?  We can imagine that first name field may get reflected back out in the helpdesk application.  It's also possible that the help desk user logs into another application to retreive more information on you when you ask a question.  That application may also reflect the "First Name" parameter.  
 
 Blind cross-site scripting allows you to test a deeper scope and breadth of the 'data' flow within an endpoint.  
 
