@@ -13,7 +13,6 @@ def show_capture(id):
     """
     captured = Capture.query.filter_by(payload_id=id).all()
     payload_assessment = Payload.query.filter_by(id=id).first()
-    print captured
     return render_template('admin/capture.html', captured=captured, payload_assessment=payload_assessment, HOSTNAME=app.config['HOSTNAME'])
 
 @app.context_processor

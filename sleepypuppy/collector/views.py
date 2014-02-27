@@ -30,8 +30,6 @@ def email_subscriptions(xss_uid, url):
             user_subscriptions.append(e.id)
         if len(set(notify_jobs.show_assessment_ids()).intersection(user_subscriptions)) > 0:
             email_list.append(user_notify[i].email)
-    print 'foo'
-    print email_list
     # If there are people to email, email them that a capture was recieved
     if email_list:
         msg = Message("[Sleepy Puppy] - Capture Recieved From: " + url,
