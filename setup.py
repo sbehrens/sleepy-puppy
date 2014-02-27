@@ -18,7 +18,8 @@ setup(
             'flask-bcrypt',
             'Flask-RESTful',
             'flask-login',
-            'pillow',
+            'Pillow',
+            'pil',
             'flask-mail',
         ]
 )
