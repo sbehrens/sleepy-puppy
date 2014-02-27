@@ -65,7 +65,7 @@
     <div>
       <div class="span6">
         {% if current_user.is_authenticated() %}
-                <img src ="http://gifrific.com/wp-content/uploads/2013/02/Puppy-Sleeping.gif">
+        <img src="{{ url_for('static', filename='sleepy.jpg')}}">
         </div>
         <div class="span6">
             <h1>Blind XSS Collector</h1>
