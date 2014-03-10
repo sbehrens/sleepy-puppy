@@ -2,7 +2,7 @@ from flask import request, send_from_directory
 from werkzeug import secure_filename
 from sleepypuppy import app, csrf_protect
 import os
-import Image
+from PIL import Image
 
 # Only allow png extensions, which is the filetype we generate using HTML5 canvas.
 ALLOWED_EXTENSIONS = set(['png'])
