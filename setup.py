@@ -19,7 +19,6 @@ setup(
             'Flask-RESTful',
             'flask-login',
             'Pillow',
-            'pil',
             'flask-mail',
         ]
 )
