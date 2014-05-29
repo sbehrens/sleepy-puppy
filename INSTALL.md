@@ -35,6 +35,7 @@ You will want to setup nginx with signed certificates.  We use the CDN notation 
 The following configuration can be copied into the server portion of the nginx.conf file.  Replace the CAPS portion with your information:
 
 ```nginx
+http{
     server {
         listen 80;
         server_name YOUR_SERVER_NAME.com;
@@ -78,6 +79,7 @@ The following configuration can be copied into the server portion of the nginx.c
         }
     
     }
+}
 ```    
 
 Double check everything is okay by running the following:
