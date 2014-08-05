@@ -13,6 +13,7 @@ setup(
             'Flask-SQLAlchemy==1.0',
             'Flask-Script==0.6.3',
             'SQLAlchemy',
+            'bcrypt',
             'Flask-Admin',
             'Flask-WTF',
             'flask-bcrypt',

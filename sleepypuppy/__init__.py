@@ -2,7 +2,7 @@ from logging import Formatter
 from logging.handlers import RotatingFileHandler
 from flask import Flask, redirect, request, abort
 from flask.ext import login
-from flaskext.bcrypt import Bcrypt
+from flask.ext.bcrypt import Bcrypt
 from flask.ext.restful import Api
 from flask.ext.admin import Admin
 from flask.ext.mail import Mail
