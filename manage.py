@@ -38,28 +38,19 @@ def drop_db():
     db.drop_all()
 
 @manager.command
-def create_login():
+def create_login(login,password):
     """
     Seed the database with some inital values
     """
-    import getpass
 
     print 'creating admin user'
 
-    login = raw_input('login: ')
-    password = getpass.getpass('password: ')
-    confirm_password = getpass.getpass('confirm password: ')
-
     if Admin.query.filter_by(login=login).count():
         print 'user already exists!'
-        sys.exit(1)
+        return
     else:
-        if password != confirm_password:
-            print 'passwords to not match!'
-            sys.exit(1)
-        else:
-            admin_user = Admin(login=login, password=password)
-            print 'user: ' + login + ' created!'
+        admin_user = Admin(login=login, password=password)
+        print 'user: ' + login + ' created!'
 
 
     db.session.add(admin_user)
