@@ -21,7 +21,7 @@ HOSTNAME = 'crushit.today'
 # Email server configuration
 MAIL_SERVER = 'localhost'
 MAIL_PORT = 25
-MAIL_SENDER = 'root@your-domain.com'
+MAIL_SENDER =  os.getenv('sender', 'sleepypuppy@domain.com')
 #MAIL_USE_TLS = False
 #MAIL_USE_SSL = False
 #MAIL_USERNAME = 'you'
