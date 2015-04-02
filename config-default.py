@@ -4,12 +4,12 @@ _basedir = os.path.abspath(os.path.dirname(__file__))
 
 DEBUG = False
 
-SECRET_KEY = "thisIs_soS_ecret_shh!!don'ttell"
+SECRET_KEY = os.getenv('secret_key', 'ThiSISMYDARKSECRET!@#')
 
 CSRF_ENABLED = True
-CSRF_SESSION_KEY = "thisistheawes0mestkeytohaveever!!!"
+CSRF_SESSION_KEY = os.getenv('csrf_session_key', 'ThiSISMYDARKSECRET!@#')
 
-SQLALCHEMY_DATABASE_URI = 'sqlite:////tmp/2sleepypuppy.db'
+SQLALCHEMY_DATABASE_URI = os.getenv('sleepypuppy_db', 'sqlite:////tmp/sleepy-db.db')
 
 UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'uploads')
 
