@@ -15,7 +15,7 @@ class Admin(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     login = db.Column(db.String(80))
     password = db.Column(db.String(64))
-    api_key = db.Column(db.String(40))
+    api_key = db.Column(db.String(80))
 
     # Integrate Admin model with Flask Login
     def is_authenticated(self):
