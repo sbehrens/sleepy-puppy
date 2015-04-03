@@ -24,7 +24,7 @@ class Capture(db.Model):
     cookies = db.Column(db.String(2000), unique=False)
     user_agent = db.Column(db.String(512), unique=False)
     payload = db.Column(db.Integer)
-    screenshot = db.Column(db.Integer, unique=False)
+    screenshot = db.Column(db.String(20), unique=False)
     pub_date = db.Column(db.String(512), unique=False)
     dom = db.Column(db.String(65535), unique=False)
     payload_id = db.Column(db.Integer, db.ForeignKey('payloads.id'))

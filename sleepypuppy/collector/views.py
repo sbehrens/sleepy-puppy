@@ -16,7 +16,7 @@ def collector(xss_uid = 1):
     return render_template(
         'c.js',
         xss_uid=xss_uid,
-        hostname=app.config['HOSTNAME'],
+        hostname=app.config['CALLBACK_HOSTNAME'],
         callback_protocol=app.config.get('CALLBACK_PROTOCOL', 'https')
     )
 
@@ -57,7 +57,7 @@ def getCallbacks():
         user_agent = urllib.unquote(str(request.form['user_agent']))
         assessment = Payload.query.filter_by(id=int(request.form['xss_uid'])).first()
         xss_uid = Payload.query.filter_by(id=int(request.form['xss_uid'])).first()
-        screenshot = int(request.form['screenshot'])
+        screenshot = str(request.form['screenshot'])
         dom = urllib.unquote(str(request.form['dom']))
 
         # If it's a rogue capture, log it anyway.

@@ -16,8 +16,9 @@ UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'upload
 LOG_LEVEL = "DEBUG"
 LOG_FILE = "sleepypuppy.log"
 
-HOSTNAME = 'localhost'
-CALLBACK_PROTOCOL = 'http' # http for local dev, https for deploy
+HOSTNAME = 'localhost' # for getting the JS file.
+CALLBACK_HOSTNAME = HOSTNAME
+CALLBACK_PROTOCOL = 'https' # http for local dev, https for deploy
 
 # Email server configuration
 MAIL_SERVER = 'localhost'
