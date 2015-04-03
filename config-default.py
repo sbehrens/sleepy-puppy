@@ -16,7 +16,8 @@ UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'upload
 LOG_LEVEL = "DEBUG"
 LOG_FILE = "sleepypuppy.log"
 
-HOSTNAME = 'crushit.today'
+HOSTNAME = 'localhost'
+CALLBACK_PROTOCOL = 'http' # http for local dev, https for deploy
 
 # Email server configuration
 MAIL_SERVER = 'localhost'

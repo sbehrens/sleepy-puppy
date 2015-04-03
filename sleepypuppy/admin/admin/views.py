@@ -22,7 +22,7 @@ class LoginForm(form.Form):
         if user is None:
             raise validators.ValidationError('Invalid username or password')
 
-        if not bcrypt.check_password_hash(user.password, self.password.data):
+        if not bcrypt.check_password_hash(user.password.encode('utf-8'), self.password.data):
             raise validators.ValidationError('Invalid username or password')
 
     def get_admin(self):

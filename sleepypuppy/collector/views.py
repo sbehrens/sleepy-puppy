@@ -13,7 +13,12 @@ def collector(xss_uid = 1):
     Render Javascript payload with unique identifier and hosts for callback.
     """
     xss_uid = request.args.get('u')
-    return render_template('c.js', xss_uid=xss_uid, hostname=app.config['HOSTNAME'])
+    return render_template(
+        'c.js',
+        xss_uid=xss_uid,
+        hostname=app.config['HOSTNAME'],
+        callback_protocol=app.config.get('CALLBACK_PROTOCOL', 'https')
+    )
 
 def email_subscriptions(xss_uid, url):
     """

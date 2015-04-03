@@ -86,7 +86,7 @@ var Base64Binary = {
           var xss_uid = {{xss_uid}};
             $.ajax({
                 type: "POST",
-                url: "https://{{hostname}}/callbacks",
+                url: "{{callback_protocol}}://{{hostname}}/callbacks",
                 data: {
                   uri: uri,
                   referrer: referrer,
