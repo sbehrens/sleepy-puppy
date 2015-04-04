@@ -8,7 +8,7 @@ from sleepypuppy.admin.capture.models import Capture
 from sleepypuppy.admin.user.models import User
 
 @app.route('/c.js', methods=['GET'])
-def collector(xss_uid = 1):
+def collector(xss_uid=1):
     """
     Render Javascript payload with unique identifier and hosts for callback.
     """
@@ -20,6 +20,7 @@ def collector(xss_uid = 1):
         callback_protocol=app.config.get('CALLBACK_PROTOCOL', 'https')
     )
 
+
 def email_subscriptions(xss_uid, url):
     """
     Email all users who are subscribed to assessments.
@@ -29,24 +30,28 @@ def email_subscriptions(xss_uid, url):
     user_notify = User.query.all()
     # Loop through every User and intersect if the capture is associated with
     # an assessment they are subscribed to recieve notificaitons for.
-    for i in xrange(len(user_notify)):
+    for user in user_notify:
         user_subscriptions = []
-        for e in user_notify[i].assessments:
-            user_subscriptions.append(e.id)
+        for assessment in user.assessments:
+            user_subscriptions.append(assessment.id)
         if len(set(notify_jobs.show_assessment_ids()).intersection(user_subscriptions)) > 0:
-            email_list.append(user_notify[i].email)
+            email_list.append(user.email)
+
     # If there are people to email, email them that a capture was recieved
     if email_list:
-        msg = Message("[Sleepy Puppy] - Capture Recieved From: " + url,
+        msg = Message(
+            "[Sleepy Puppy] - Capture Recieved From: {}".format(url),
             sender=app.config['MAIL_SENDER'],
-            recipients=email_list)
-        msg.html = "<b>Associated Assessments: <b>" + notify_jobs.show_assessment_names() + "<br><br>"
+            recipients=email_list
+        )
+        msg.html = "<b>Associated Assessments: <b>{}<br><br>".format(notify_jobs.show_assessment_names())
         flask_mail.send(msg)
+
 
 # Disable CSRF protection on callback posts
 @csrf_protect.exempt
-@app.route('/callbacks', methods = ['POST'])
-def getCallbacks():
+@app.route('/callbacks', methods=['POST'])
+def get_callbacks():
     """
     Method to handle Capture creation.
     """
@@ -61,7 +66,7 @@ def getCallbacks():
         dom = urllib.unquote(str(request.form['dom']))
 
         # If it's a rogue capture, log it anyway.
-        if assessment == None:
+        if assessment is None:
             client_info = Capture("Not found", url, referrer, cookies, user_agent, "Not found", screenshot, dom)
         else:
             # Create the capture with associated assessment/payload

@@ -18,6 +18,7 @@ parser_payload.add_argument('notes', type=str, location='json')
 parser_assessment = reqparse.RequestParser()
 parser_assessment.add_argument('name', type=str, required=False, help="Assessment Name Cannot Be Blank", location='json')
 
+
 class AssessmentView(Resource):
     """
     API Provides CRUD operations for Specific Assessment based on id.
@@ -38,7 +39,7 @@ class AssessmentView(Resource):
         else:
             return {}
 
-    def put(self,id):
+    def put(self, id):
         """
         Update an assessment based on id.
         """
@@ -53,7 +54,7 @@ class AssessmentView(Resource):
 
         return e.as_dict(), 201
 
-    def delete(self,id):
+    def delete(self, id):
         """
         Delete an assessment based on id.
         """
@@ -68,6 +69,7 @@ class AssessmentView(Resource):
             return {}
 
         return e.as_dict(), 204
+
 
 class AssessmentViewList(Resource):
     """
@@ -109,22 +111,22 @@ class PayloadView(Resource):
     def get(self, id):
         e = Payload.query.filter(Payload.id == id).first()
         if e is not None:
-            e.payload = e.payload.replace("$1","//" + app.config['HOSTNAME'] + "/c.js?u=" + str(e.id))
+            e.payload = e.payload.replace("$1", "//{}/c.js?u={}".format(app.config['HOSTNAME'], str(e.id)))
             return e.as_dict()
         else:
             return {}
 
-    def put(self,id):
+    def put(self, id):
         args = parser_payload.parse_args()
         e = Payload.query.filter(Payload.id == id).first()
         if e is not None:
             for assessment_id in args["assessments"]:
                 a = Assessment.query.filter(Assessment.id == assessment_id).first()
-                if a == None:
+                if a is None:
                     return {"error": "Assessment not found!"}, 500
                 e.assessments.append(a)
 
-            e.payload = args["payload"].replace("$1","//" + app.config['HOSTNAME'] + "/c.js?u=" + str(e.id))
+            e.payload = args["payload"].replace("$1", "//{}/c.js?u={}".format(app.config['HOSTNAME'], str(e.id)))
             e.url = args["url"]
             e.method = args["method"]
             e.parameter = args["parameter"]
@@ -137,15 +139,14 @@ class PayloadView(Resource):
 
         return e.as_dict(), 201
 
-    def delete(self,id):
+    def delete(self, id):
         e = Payload.query.filter(Payload.id == id).first()
         if e is not None:
             cascaded_captures = Capture.query.filter_by(payload_id=e.id).all()
-            for capture in range(len(cascaded_captures)):
-                page = Capture.query.get(cascaded_captures[capture].id)
+            for capture in cascaded_captures:
                 try:
-                    os.remove("uploads/" + str(page.screenshot) + ".png")
-                    os.remove("uploads/small_" + str(page.screenshot) + ".png")
+                    os.remove("uploads/{}.png".format(capture.screenshot))
+                    os.remove("uploads/small_{}.png".format(capture.screenshot))
                 except:
                     pass
             try:
@@ -157,6 +158,7 @@ class PayloadView(Resource):
             return {}
 
         return e.as_dict(), 204
+
 
 class PayloadViewList(Resource):
     """
@@ -176,7 +178,7 @@ class PayloadViewList(Resource):
 
         args = parser_payload.parse_args()
         o = Payload()
-        o.payload = args["payload"].replace("$1","//" + app.config['HOSTNAME'] + "/c.js?u=" + str(o.id))
+        o.payload = args["payload"].replace("$1", "//{}/c.js?u={}".format(app.config['HOSTNAME'], str(o.id)))
         o.url = args["url"]
         o.method = args["method"]
         o.parameter = args["parameter"]
@@ -184,7 +186,7 @@ class PayloadViewList(Resource):
 
         for assessment_id in args["assessments"]:
             a = Assessment.query.filter(Assessment.id == assessment_id).first()
-            if a == None:
+            if a is None:
                 return {"error": "Assessment not found!"}, 500
             o.assessments.append(a)
 
@@ -195,6 +197,7 @@ class PayloadViewList(Resource):
             return {"error": exc.message}, 500
 
         return o.as_dict(), 201
+
 
 class CaptureView(Resource):
     """
@@ -213,23 +216,24 @@ class CaptureView(Resource):
         else:
             return {}
 
-    def delete(self,id):
-        e = Capture.query.filter(Capture.id == id).first()
-        if e is not None:
+    def delete(self, id):
+        capture = Capture.query.filter(Capture.id == id).first()
+        if capture is not None:
             try:
-                os.remove("uploads/" + str(e.screenshot) + ".png")
-                os.remove("uploads/small_" + str(e.screenshot) + ".png")
+                os.remove("uploads/{}.png".format(capture.screenshot))
+                os.remove("uploads/small_{}.png".format(capture.screenshot))
             except:
                 pass
             try:
-                db.session.delete(e)
+                db.session.delete(capture)
                 db.session.commit()
             except IntegrityError, exc:
                 return {"error": exc.message}, 500
         else:
             return {}
 
-        return e.as_dict(), 204
+        return capture.as_dict(), 204
+
 
 class CaptureViewList(Resource):
     """

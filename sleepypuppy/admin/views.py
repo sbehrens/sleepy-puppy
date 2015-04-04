@@ -5,7 +5,6 @@ from capture.models import Capture
 from payload.models import Payload
 
 @app.route('/admin/capture/<int:id>')
-# Login required decorator
 @login_required
 def show_capture(id):
     """
@@ -13,7 +12,12 @@ def show_capture(id):
     """
     captured = Capture.query.filter_by(payload_id=id).all()
     payload_assessment = Payload.query.filter_by(id=id).first()
-    return render_template('admin/capture.html', captured=captured, payload_assessment=payload_assessment, HOSTNAME=app.config['HOSTNAME'])
+    return render_template(
+        'admin/capture.html',
+        captured=captured,
+        payload_assessment=payload_assessment,
+        HOSTNAME=app.config['HOSTNAME']
+    )
 
 @app.context_processor
 def capture_facts():
@@ -21,11 +25,10 @@ def capture_facts():
     Returns the total number of captures in the database.
     """
     return dict(
-        total_captures = Capture.query.count()
+        total_captures=Capture.query.count()
     )
 
 @app.route('/admin/payload/<int:id>')
-# Login required decorator
 @login_required
 def show_payload(id):
     """
@@ -33,8 +36,18 @@ def show_payload(id):
     """
     payload = Payload.query.filter_by(id=id).first()
     if payload is None:
-        return render_template('admin/payload.html', HOSTNAME="Not Found", pl="", \
-            query_len="", attack="Not Found")
-    attack = payload.payload.replace("$1","//" + app.config['HOSTNAME'] + "/c.js?u=" + str(payload.id))
-    return render_template('admin/payload.html', HOSTNAME=app.config['HOSTNAME'], pl=payload, \
-        attack=attack)
+        return render_template(
+            'admin/payload.html',
+            HOSTNAME="Not Found",
+            pl="",
+            query_len="",
+            attack="Not Found"
+        )
+
+    attack = payload.payload.replace("$1", "//{}/c.js?u={}".format(app.config['HOSTNAME'], str(payload.id)))
+    return render_template(
+        'admin/payload.html',
+        HOSTNAME=app.config['HOSTNAME'],
+        pl=payload,
+        attack=attack
+    )

@@ -26,8 +26,10 @@ def upload_file():
         if file and allowed_file(file.filename):
             # Prevent dir traversal/NUL byte injection
             filename = secure_filename(file.filename)
+
             if not os.path.exists(app.config['UPLOAD_FOLDER']):
                 os.makedirs(app.config['UPLOAD_FOLDER'])
+
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             im = Image.open(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             im.thumbnail(size, Image.ANTIALIAS)
@@ -39,5 +41,7 @@ def uploaded_file(filename):
     """
     Route to retrieve screenshot when requested.
     """
-    return send_from_directory(app.config['UPLOAD_FOLDER'],
-                               filename)
+    return send_from_directory(
+        app.config['UPLOAD_FOLDER'],
+        filename
+    )

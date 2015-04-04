@@ -4,8 +4,9 @@ from flask.ext import admin, login
 from flask.ext.admin import helpers, expose
 from flask.ext.admin.contrib.sqla import ModelView
 from wtforms import form, fields, validators
-from sleepypuppy import db,bcrypt
+from sleepypuppy import db, bcrypt
 from models import Admin
+
 
 # Define login and registration forms (for flask-login)
 class LoginForm(form.Form):
@@ -28,6 +29,7 @@ class LoginForm(form.Form):
     def get_admin(self):
         # Retrieve the Admin login
         return db.session.query(Admin).filter_by(login=self.login.data).first()
+
 
 class MyAdminIndexView(admin.AdminIndexView):
     """
@@ -58,12 +60,14 @@ class MyAdminIndexView(admin.AdminIndexView):
         login.logout_user()
         return redirect(url_for('.index'))
 
+
 class AdminView(ModelView):
     """
     Class overrides Model View from Flask Admin.
     """
     # CSRF Protection
     form_base_class = Form
+
     # Check if user is authenticated
     def is_accessible(self):
         return login.current_user.is_authenticated()
@@ -72,13 +76,23 @@ class AdminView(ModelView):
     # Form overrides and validators for view
     form_columns = ('login', 'password', 'confirm')
     form_extra_fields = {
-    'password': fields.PasswordField('New Password', [validators.Required(), validators.EqualTo('confirm', message='Passwords must match')]),
-    'confirm': fields.PasswordField('Repeat Password')
+        'password': fields.PasswordField(
+            'New Password',
+            [
+                validators.Required(),
+                validators.EqualTo('confirm', message='Passwords must match')
+            ]
+        ),
+        'confirm': fields.PasswordField('Repeat Password')
     }
 
     form_args = dict(
-        login=dict(description="Login name for sleepy puppy dashboard",\
-        validators=[validators.required(), validators.Length(min=4, max=25)]
+        login=dict(
+            description="Login name for sleepy puppy dashboard",
+            validators=[
+                validators.required(),
+                validators.Length(min=4, max=25)
+            ]
         )
-        )
+    )
 

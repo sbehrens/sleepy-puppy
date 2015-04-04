@@ -3,6 +3,7 @@ from sqlalchemy.orm import relationship
 from sleepypuppy.admin.models import user_associations
 from sleepypuppy.admin.assessment.models import Assessment
 
+
 class User(db.Model):
     """
     User model contains the following parameters used for email notifications:

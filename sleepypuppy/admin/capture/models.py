@@ -1,6 +1,7 @@
 from sleepypuppy import db
 import datetime
 
+
 class Capture(db.Model):
     """
     Capture model contains the following parameters:
@@ -14,7 +15,6 @@ class Capture(db.Model):
     screenshot = screenshot identifier
     pub_date = Date with which the capature was recieved
     """
-
     __tablename__ = 'captures'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -29,14 +29,12 @@ class Capture(db.Model):
     dom = db.Column(db.String(65535), unique=False)
     payload_id = db.Column(db.Integer, db.ForeignKey('payloads.id'))
 
-
     def as_dict(self):
         """Return Capture model as JSON object"""
         return {c.name: getattr(self, c.name) for c in self.__table__.columns}
 
-    def __init__(self, assessment, url, referrer, cookies, user_agent, \
-        payload, screenshot, dom, pub_date=None):
-
+    def __init__(self, assessment, url, referrer, cookies, user_agent,
+                 payload, screenshot, dom, pub_date=None):
         self.assessment = assessment
         self.url = url
         self.referrer = referrer
