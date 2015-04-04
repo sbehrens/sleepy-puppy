@@ -33,8 +33,8 @@ class PayloadView(ModelView):
         cascaded_captures = Capture.query.filter_by(payload_id=model.id).all()
         for capture in cascaded_captures:
             try:
-                os.remove("uploads/" + str(capture.screenshot) + ".png")
-                os.remove("uploads/small_" + str(capture.screenshot) + ".png")
+                os.remove("uploads/{}.png".format(capture.screenshot))
+                os.remove("uploads/small_{}.png".format(capture.screenshot))
             except:
                 pass
     on_model_delete = delete_screenshots
@@ -45,8 +45,8 @@ class PayloadView(ModelView):
             cascaded_captures = Capture.query.filter_by(payload_id=record).all()
             for capture in cascaded_captures:
                 try:
-                    os.remove("uploads/" + str(capture.screenshot) + ".png")
-                    os.remove("uploads/small_" + str(capture.screenshot) + ".png")
+                    os.remove("uploads/{}.png".format(capture.screenshot))
+                    os.remove("uploads/small_{}.png".format(capture.screenshot))
                 except:
                     pass
             page = Payload.query.get(record)

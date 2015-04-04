@@ -73,8 +73,8 @@ class CaptureView(ModelView):
         """
         Remove screenshot assocaited with Capture model
         """
-        os.remove("uploads/" + str(model.screenshot) + ".png")
-        os.remove("uploads/small_" + str(model.screenshot) + ".png")
+        os.remove("uploads/{}.png".format(model.screenshot))
+        os.remove("uploads/small_{}.png".format(model.screenshot))
 
     on_model_delete = delete_screenshots
 
