@@ -125,7 +125,7 @@
         {% for c, name in list_columns %}
         {% if c == 'screenshot' %}
         {% autoescape false %}
-        <td><a href="http://{{admin_view.hostname}}/up/{{get_value(row, c)}}.png"><img src="http://{{admin_view.hostname}}/up/small_{{get_value(row, c)}}.png"/></td>
+        <td><a href="/up/{{get_value(row, c)}}.png"><img src="/up/small_{{get_value(row, c)}}.png"/></a></td>
         {% endautoescape %}
         {% elif c =='cookies' and get_value(row, c) != ""-%}
         <td>
@@ -199,7 +199,7 @@
     <td><b>Not found</b></td>
     {%- else -%}
 
-    <td><b><a href="http://{{admin_view.hostname}}/admin/payload/{{get_value(row, c)}}">{{get_value(row, c)}}</a></b></td>
+    <td><b><a href="/admin/payload/{{get_value(row, c)}}">{{get_value(row, c)}}</a></b></td>
     {% endif %}
     {%- else -%}
     <td>{{ get_value(row, c) }}</td>
