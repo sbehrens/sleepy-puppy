@@ -6,6 +6,7 @@ from sleepypuppy import app, db, flask_mail, csrf_protect
 from sleepypuppy.admin.payload.models import Payload
 from sleepypuppy.admin.capture.models import Capture
 from sleepypuppy.admin.user.models import User
+from flask import Response
 
 @app.route('/c.js', methods=['GET'])
 def collector(xss_uid=1):
@@ -50,20 +51,27 @@ def email_subscriptions(xss_uid, url):
 
 # Disable CSRF protection on callback posts
 @csrf_protect.exempt
-@app.route('/callbacks', methods=['POST'])
+@app.route('/callbacks', methods=['POST', 'GET'])
 def get_callbacks():
     """
     Method to handle Capture creation.
     """
+    response = Response()
+    response.headers.add('Access-Control-Allow-Origin', request.headers.get("Origin", None))
+    response.headers.add('Access-Control-Allow-Methods', 'GET,POST')
+    response.headers.add('Access-Control-Max-Age', '21600')
+    response.headers.add('Access-Control-Allow-Credentials', 'true')
+    response.headers.add('Access-Control-Allow-Headers', "Origin, X-Requested-With, Content-Type, Accept")
+
     if request.method == 'POST':
-        url = urllib.unquote(str(request.form['uri']))
-        referrer = urllib.unquote(str(request.form['referrer']))
-        cookies = urllib.unquote(str(request.form['cookies']))
-        user_agent = urllib.unquote(str(request.form['user_agent']))
+        url = urllib.unquote(unicode(request.form['uri']))
+        referrer = urllib.unquote(unicode(request.form['referrer']))
+        cookies = urllib.unquote(unicode(request.form['cookies']))
+        user_agent = urllib.unquote(unicode(request.form['user_agent']))
         assessment = Payload.query.filter_by(id=int(request.form['xss_uid'])).first()
         xss_uid = Payload.query.filter_by(id=int(request.form['xss_uid'])).first()
-        screenshot = str(request.form['screenshot'])
-        dom = urllib.unquote(str(request.form['dom']))
+        screenshot = unicode(request.form['screenshot'])
+        dom = urllib.unquote(unicode(request.form['dom']))[:65535]
 
         # If it's a rogue capture, log it anyway.
         if assessment is None:
@@ -75,4 +83,5 @@ def get_callbacks():
 
         db.session.add(client_info)
         db.session.commit()
-        return ""
+
+    return response
