@@ -12,6 +12,9 @@ CSRF_SESSION_KEY = os.getenv('csrf_session_key', 'ThiSISMYDARKSECRET!@#')
 SQLALCHEMY_DATABASE_URI = os.getenv('sleepypuppy_db', 'sqlite:////tmp/sleepy-db.db')
 
 UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'uploads')
+UPLOAD_SCREENSHOTS_TO_S3 = False
+S3_BUCKET = ""
+S3_FILES_PREFIX = "sleepypuppy"
 
 LOG_LEVEL = "DEBUG"
 LOG_FILE = "sleepypuppy.log"

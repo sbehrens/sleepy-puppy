@@ -67,14 +67,42 @@ class CaptureView(ModelView):
     # Allow columns to be searched/sorted
     column_filters = ('payload_id', 'url')
 
+    def delete_from_s3(self, filename):
+        if app.config.get('UPLOAD_SCREENSHOTS_TO_S3', False):
+            try:
+                import boto
+                from boto.s3.key import Key
+                conn = boto.connect_s3()
+                b = conn.get_bucket(app.config['S3_BUCKET'])
+                k = Key(b)
+                k.key = '{}/{}'.format(
+                    app.config.get('S3_FILES_PREFIX', 'sleepypuppy'),
+                    filename
+                )
+                k.delete()
+            except Exception as e:
+                app.logger.warn(
+                    "Exception {}/{} removing {}/{} from s3".format(
+                        Exception,
+                        e,
+                        app.config.get('S3_FILES_PREFIX', 'sleepypuppy'),
+                        filename
+                    )
+                )
+
     # Delete screenshots on mass delete
-    @staticmethod
     def delete_screenshots(self, model):
         """
         Remove screenshot assocaited with Capture model
         """
-        os.remove("uploads/{}.png".format(model.screenshot))
-        os.remove("uploads/small_{}.png".format(model.screenshot))
+        try:
+            os.remove("uploads/{}.png".format(model.screenshot))
+            os.remove("uploads/small_{}.png".format(model.screenshot))
+        except:
+            pass
+
+        self.delete_from_s3("{}.png".format(model.screenshot))
+        self.delete_from_s3("small_{}.png".format(model.screenshot))
 
     on_model_delete = delete_screenshots
 
@@ -87,6 +115,10 @@ class CaptureView(ModelView):
                 os.remove("uploads/small_{0}.png".format(filename))
             except:
                 pass
+
+            self.delete_from_s3("{}.png".format(filename))
+            self.delete_from_s3("small_{}.png".format(filename))
+
             page = Capture.query.get(record)
             db.session.delete(page)
             db.session.commit()

@@ -44,7 +44,7 @@ def show_payload(id):
             attack="Not Found"
         )
 
-    attack = payload.payload.replace("$1", "//{}/c.js?u={}".format(app.config['HOSTNAME'], str(payload.id)))
+    attack = payload.payload.replace("$1", "//{}/x?u={}".format(app.config['HOSTNAME'], str(payload.id)))
     return render_template(
         'admin/payload.html',
         HOSTNAME=app.config['HOSTNAME'],

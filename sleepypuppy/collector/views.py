@@ -8,12 +8,19 @@ from sleepypuppy.admin.capture.models import Capture
 from sleepypuppy.admin.user.models import User
 from flask import Response
 
+@app.route('/x', methods=['GET'])
+def x_collector(xss_uid=1):
+    """
+    shortcut for collector()
+    """
+    return collector(request.args.get('u', 1))
+
 @app.route('/c.js', methods=['GET'])
 def collector(xss_uid=1):
     """
     Render Javascript payload with unique identifier and hosts for callback.
     """
-    xss_uid = request.args.get('u')
+    xss_uid = request.args.get('u', 1)
     return render_template(
         'c.js',
         xss_uid=xss_uid,
