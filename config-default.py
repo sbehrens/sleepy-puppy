@@ -24,6 +24,11 @@ CALLBACK_HOSTNAME = HOSTNAME
 CALLBACK_PROTOCOL = 'https' # http for local dev, https for deploy
 
 # Email server configuration
+# SES Options:
+EMAILS_USE_SES = False
+SES_REGION = 'us-east-1'
+
+# SMTP Options:
 MAIL_SERVER = 'localhost'
 MAIL_PORT = 25
 MAIL_SENDER =  os.getenv('sender', 'sleepypuppy@domain.com')

@@ -45,15 +45,69 @@ def email_subscriptions(xss_uid, url):
         if len(set(notify_jobs.show_assessment_ids()).intersection(user_subscriptions)) > 0:
             email_list.append(user.email)
 
+    import cgi
+    subject = "[Sleepy Puppy] - Capture Recieved From: {}".format(
+        cgi.escape(url, quote=True)
+    )
+    html = "<b>Associated Assessments: </b>{}<br/>".format(
+        cgi.escape(notify_jobs.show_assessment_names(), quote=True)
+    )
+    html += "<b>URL: </b>{}<br/>".format(
+        cgi.escape(url, quote=True)
+    )
+    html += "<b>Parameter: </b>{}<br/>".format(
+        cgi.escape(notify_jobs.parameter, quote=True)
+    )
+    html += "<b>Payload: </b>{}<br/>".format(
+        cgi.escape(notify_jobs.payload, quote=True)
+    )
+    html += "<b>Notes: </b>{}<br/>".format(
+        cgi.escape(notify_jobs.notes, quote=True)
+    )
+
+    html += "https://ti.ht/admin/capture/{}".format(notify_jobs.id)
+
     # If there are people to email, email them that a capture was recieved
     if email_list:
-        msg = Message(
-            "[Sleepy Puppy] - Capture Recieved From: {}".format(url),
-            sender=app.config['MAIL_SENDER'],
-            recipients=email_list
-        )
-        msg.html = "<b>Associated Assessments: <b>{}<br><br>".format(notify_jobs.show_assessment_names())
-        flask_mail.send(msg)
+        if app.config["EMAILS_USE_SES"]:
+            import boto.ses
+            try:
+                ses_region = app.config.get('SES_REGION', 'us-east-1')
+                ses = boto.ses.connect_to_region(ses_region)
+            except Exception, e:
+                import traceback
+                app.logger.debug(Exception)
+                app.logger.debug(e)
+                app.logger.warn(traceback.format_exc())
+                return
+
+            for email in email_list:
+                try:
+                    ses.send_email(
+                        app.config['MAIL_SENDER'],
+                        subject,
+                        html,
+                        email,
+                        format="html"
+                    )
+                    app.logger.debug("Emailed {} - {} ".format(email, subject))
+                except Exception, e:
+                    m = "Failed to send failure message to {} from {} with subject: {}\n{} {}".format(
+                        email,
+                        app.config['MAIL_SENDER'],
+                        subject,
+                        Exception,
+                        e
+                    )
+                    app.logger.debug(m)
+        else:
+            msg = Message(
+                subject,
+                sender=app.config['MAIL_SENDER'],
+                recipients=email_list
+            )
+            msg.html = html
+            flask_mail.send(msg)
 
 
 # Disable CSRF protection on callback posts
