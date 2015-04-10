@@ -65,7 +65,10 @@ def email_subscriptions(xss_uid, url):
         cgi.escape(notify_jobs.notes, quote=True)
     )
 
-    html += "https://ti.ht/admin/capture/{}".format(notify_jobs.id)
+    html += "https://{}/admin/capture/{}".format(
+        app.config.get('HOSTNAME', 'localhost'),
+        notify_jobs.id
+    )
 
     # If there are people to email, email them that a capture was recieved
     if email_list:
