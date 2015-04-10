@@ -28,8 +28,7 @@ class PayloadView(ModelView):
     hostname = app.config['HOSTNAME']
 
     # Method to cascade delete screenshots when removing a payload
-    @staticmethod
-    def delete_screenshots(model):
+    def delete_screenshots(self, model):
         cascaded_captures = Capture.query.filter_by(payload_id=model.id).all()
         for capture in cascaded_captures:
             try:
@@ -91,7 +90,7 @@ class PayloadView(ModelView):
     column_formatters = dict(
         captured=lambda v, c, m, p: Capture.query.filter_by(payload_id=m.id).first().id
         if Capture.query.filter_by(payload_id=m.id).first() is not None else "None",
-        payload=lambda v, c, m, p: m.payload.replace("$1", "//{}/c.js?u={}".format(app.config['HOSTNAME'], str(m.id)))
+        payload=lambda v, c, m, p: m.payload.replace("$1", "//{}/x?u={}".format(app.config['HOSTNAME'], str(m.id)))
     )
 
     # Make form use dropdown boxes, default text, required form elements

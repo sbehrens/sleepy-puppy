@@ -189,7 +189,9 @@
 
         <script>
         $(document).ready(function () {
+          $('#dom{{row.id}}').highlight('//{{admin_view.hostname}}/x?u=');
           $('#dom{{row.id}}').highlight('//{{admin_view.hostname}}/c.js?u=');
+          $('#dom{{row.id}}').highlight('//{{admin_view.hostname}}/');
       });
         </script>
         {% endautoescape %}

@@ -111,7 +111,7 @@ class PayloadView(Resource):
     def get(self, id):
         e = Payload.query.filter(Payload.id == id).first()
         if e is not None:
-            e.payload = e.payload.replace("$1", "//{}/c.js?u={}".format(app.config['HOSTNAME'], str(e.id)))
+            e.payload = e.payload.replace("$1", "//{}/x?u={}".format(app.config['HOSTNAME'], str(e.id)))
             return e.as_dict()
         else:
             return {}
@@ -126,7 +126,7 @@ class PayloadView(Resource):
                     return {"error": "Assessment not found!"}, 500
                 e.assessments.append(a)
 
-            e.payload = args["payload"].replace("$1", "//{}/c.js?u={}".format(app.config['HOSTNAME'], str(e.id)))
+            e.payload = args["payload"].replace("$1", "//{}/x?u={}".format(app.config['HOSTNAME'], str(e.id)))
             e.url = args["url"]
             e.method = args["method"]
             e.parameter = args["parameter"]
@@ -178,7 +178,7 @@ class PayloadViewList(Resource):
 
         args = parser_payload.parse_args()
         o = Payload()
-        o.payload = args["payload"].replace("$1", "//{}/c.js?u={}".format(app.config['HOSTNAME'], str(o.id)))
+        o.payload = args["payload"].replace("$1", "//{}/x?u={}".format(app.config['HOSTNAME'], str(o.id)))
         o.url = args["url"]
         o.method = args["method"]
         o.parameter = args["parameter"]

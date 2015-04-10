@@ -33,7 +33,7 @@ class Payload(db.Model):
         """
 
         # Replace $1 template with configured hostname
-        payload = self.payload.replace("$1", "//{}/c.js?u={}".format(app.config['HOSTNAME'], str(self.id)))
+        payload = self.payload.replace("$1", "//{}/x?u={}".format(app.config['HOSTNAME'], str(self.id)))
 
         payload_dict = {
             "id": self.id,

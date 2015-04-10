@@ -147,7 +147,9 @@
               {% autoescape false %}
               <script>
               $(document).ready(function () {
+                $('#dom{{capture.id}}').highlight('//{{HOSTNAME}}/x?u=');
                 $('#dom{{capture.id}}').highlight('//{{HOSTNAME}}/c.js?u=');
+                $('#dom{{capture.id}}').highlight('//{{HOSTNAME}}/');
               });
               </script>
               {% endautoescape %}
