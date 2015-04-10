@@ -3,6 +3,7 @@ from werkzeug import secure_filename
 from sleepypuppy import app, csrf_protect
 import os
 from PIL import Image
+from flask import Response
 
 # Only allow png extensions, which is the filetype we generate using HTML5 canvas.
 ALLOWED_EXTENSIONS = set(['png'])
@@ -20,6 +21,13 @@ def upload_file():
     """
     Store filename by timestamp and resize file for thumbnail.
     """
+    response = Response()
+    response.headers.add('Access-Control-Allow-Origin', request.headers.get("Origin", None))
+    response.headers.add('Access-Control-Allow-Methods', 'GET,POST')
+    response.headers.add('Access-Control-Max-Age', '21600')
+    response.headers.add('Access-Control-Allow-Credentials', 'true')
+    response.headers.add('Access-Control-Allow-Headers', "Origin, X-Requested-With, Content-Type, Accept")
+
     size = 256, 256
     if request.method == 'POST':
         file = request.files['file']
@@ -34,7 +42,7 @@ def upload_file():
             im = Image.open(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             im.thumbnail(size, Image.ANTIALIAS)
             im.save(app.config['UPLOAD_FOLDER'] + '/small_' + filename, "PNG")
-    return ""
+    return response
 
 @app.route('/up/<filename>')
 def uploaded_file(filename):
