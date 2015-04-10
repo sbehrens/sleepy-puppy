@@ -63,25 +63,36 @@ def get_callbacks():
     response.headers.add('Access-Control-Allow-Credentials', 'true')
     response.headers.add('Access-Control-Allow-Headers', "Origin, X-Requested-With, Content-Type, Accept")
 
+    app.logger.info("Inside /callbacks")
+
     if request.method == 'POST':
-        url = urllib.unquote(unicode(request.form['uri']))
-        referrer = urllib.unquote(unicode(request.form['referrer']))
-        cookies = urllib.unquote(unicode(request.form['cookies']))
-        user_agent = urllib.unquote(unicode(request.form['user_agent']))
-        assessment = Payload.query.filter_by(id=int(request.form['xss_uid'])).first()
-        xss_uid = Payload.query.filter_by(id=int(request.form['xss_uid'])).first()
-        screenshot = unicode(request.form['screenshot'])
-        dom = urllib.unquote(unicode(request.form['dom']))[:65535]
 
-        # If it's a rogue capture, log it anyway.
-        if assessment is None:
-            client_info = Capture("Not found", url, referrer, cookies, user_agent, "Not found", screenshot, dom)
-        else:
-            # Create the capture with associated assessment/payload
-            client_info = Capture(assessment.id, url, referrer, cookies, user_agent, xss_uid.id, screenshot, dom)
-            email_subscriptions(xss_uid.id, url)
+        try:
+            app.logger.info("request.form.get('xss_uid', 0): {}".format(request.form.get('xss_uid', 0)))
 
-        db.session.add(client_info)
-        db.session.commit()
+            url = urllib.unquote(unicode(request.form.get('uri', '')))
+            referrer = urllib.unquote(unicode(request.form.get('referrer', '')))
+            cookies = urllib.unquote(unicode(request.form.get('cookies', '')))
+            user_agent = urllib.unquote(unicode(request.form.get('user_agent', '')))
+            assessment = Payload.query.filter_by(id=int(request.form.get('xss_uid', 0))).first()
+            xss_uid = assessment # what the heck
+            # Payload.query.filter_by(id=int(request.form['xss_uid'])).first()
+            screenshot = unicode(request.form.get('screenshot', ''))
+            dom = urllib.unquote(unicode(request.form.get('dom', '')))[:65535]
+
+            # If it's a rogue capture, log it anyway.
+            if assessment is None:
+                client_info = Capture("Not found", url, referrer, cookies, user_agent, 1, screenshot, dom)
+            else:
+                # Create the capture with associated assessment/payload
+                client_info = Capture(assessment.id, url, referrer, cookies, user_agent, xss_uid.id, screenshot, dom)
+                email_subscriptions(xss_uid.id, url)
+
+            db.session.add(client_info)
+            db.session.commit()
+        except Exception as e:
+            app.logger.warn("Exception in /callbacks {}\n\n{}".format(Exception, str(e)))
+            import traceback
+            traceback.print_exc()
 
     return response
