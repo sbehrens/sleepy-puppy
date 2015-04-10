@@ -22,7 +22,7 @@ setup(
         'SQLAlchemy==0.9.3',
         'bcrypt==1.1.1',
         'gunicorn==19.0.0',
-        'psycopg2',
-        'boto=2.38.0'
+        'psycopg2==2.6',
+        'boto==2.38.0'
     ]
 )
