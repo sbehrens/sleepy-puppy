@@ -147,12 +147,14 @@
               {% autoescape false %}
               <script>
               $(document).ready(function () {
+                $('#dom{{capture.id}}').highlight('//{{HOSTNAME}}/x?u=');
                 $('#dom{{capture.id}}').highlight('//{{HOSTNAME}}/c.js?u=');
+                $('#dom{{capture.id}}').highlight('//{{HOSTNAME}}/');
               });
               </script>
               {% endautoescape %}
             </td>
-            <td><a href="http://{{HOSTNAME}}/up/{{capture.screenshot}}.png"><img src="http://{{HOSTNAME}}/up/small_{{capture.screenshot}}.png"/></td>
+            <td><a href="/up/{{capture.screenshot}}.png"><img src="/up/small_{{capture.screenshot}}.png"/></a></td>
           </tr>
           {% endfor %}
         </table>

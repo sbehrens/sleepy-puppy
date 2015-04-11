@@ -121,7 +121,7 @@
         {% for c, name in list_columns %}
         {% if c == 'captured' and get_value(row, c) != "None" %}
         {% autoescape false %}
-        <td><a href="http://{{admin_view.hostname}}/admin/capture/{{row.id}}">Yes</a></td>
+        <td><a href="/admin/capture/{{row.id}}">Yes</a></td>
         {% endautoescape %}
         {%- elif c == 'captured' and get_value(row, c) == "None" -%}
         <td>No</td>

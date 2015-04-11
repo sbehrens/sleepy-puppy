@@ -16,10 +16,12 @@ app.config.from_object('config-default')
 app.debug = app.config.get('DEBUG')
 # Log handler functionality
 handler = RotatingFileHandler(app.config.get('LOG_FILE'), maxBytes=10000000, backupCount=100)
-handler.setFormatter(Formatter(
-                        '%(asctime)s %(levelname)s: %(message)s '
-                        '[in %(pathname)s:%(lineno)d]'
-                    ))
+handler.setFormatter(
+    Formatter(
+        '%(asctime)s %(levelname)s: %(message)s '
+        '[in %(pathname)s:%(lineno)d]'
+    )
+)
 handler.setLevel(app.config.get('LOG_LEVEL'))
 app.logger.addHandler(handler)
 
@@ -37,6 +39,8 @@ flask_mail = Mail(app)
 
 # Decorator for Token Auth on API Requests
 from sleepypuppy.admin.admin.models import Admin as AdminModel
+
+
 # The dectorat function for API token auth
 def require_appkey(view_function):
     @wraps(view_function)
@@ -53,6 +57,7 @@ def require_appkey(view_function):
 
 # Initalize the Flask API
 flask_api = Api(app, decorators=[csrf_protect.exempt, require_appkey])
+
 
 # Initalize Flask Login functionality
 def init_login():

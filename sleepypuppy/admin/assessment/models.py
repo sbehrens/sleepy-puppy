@@ -1,15 +1,14 @@
 from sleepypuppy import db
 from sleepypuppy.admin.models import assessment_associations
 
+
 class Assessment(db.Model):
     """
     Assessemt model contains the following parameters:
 
     name = name of the assessment you are working on.
     payloads = payloads assocaited with the assessment
-
     """
-
     __tablename__ = 'assessments'
 
     id = db.Column(db.Integer, primary_key=True)
