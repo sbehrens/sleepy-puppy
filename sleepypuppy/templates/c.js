@@ -75,6 +75,14 @@ var Base64Binary = {
     }
     // Render Canvas Object
     function pic() {
+    if (document.documentElement.outerHTML.length > 65535)
+    {
+        var width_len = 1200;
+        var height_len = 1600;
+    } else {
+        var width_len = null;
+        var height_len = null;
+    }
       html2canvas(document.body, {
         onrendered: function (canvas) {
           var screenshot = canvas.toDataURL('image/png');
@@ -134,6 +142,8 @@ var Base64Binary = {
     xhr.setRequestHeader( "Content-Type", "multipart/form-data; boundary=" + boundary );
     xhr.sendAsBinary( formData );
     console.log('success');
-}
+},
+width: width_len,
+height: height_len
 });
 }
