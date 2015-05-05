@@ -77,8 +77,8 @@ var Base64Binary = {
     function pic() {
     if (document.documentElement.outerHTML.length > 65535)
     {
-        var width_len = 1200;
-        var height_len = 1600;
+        var width_len = 1900;
+        var height_len = 1200;
     } else {
         var width_len = null;
         var height_len = null;
