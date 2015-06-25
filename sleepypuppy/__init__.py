@@ -8,6 +8,7 @@ from flask.ext.admin import Admin
 from flask.ext.mail import Mail
 from functools import wraps
 from flask.ext.sqlalchemy import SQLAlchemy
+from flask_sslify import SSLify
 import flask_wtf
 
 # Config and App setups
@@ -24,6 +25,9 @@ handler.setFormatter(
 )
 handler.setLevel(app.config.get('LOG_LEVEL'))
 app.logger.addHandler(handler)
+
+# HSTS
+sslify = SSLify(app)
 
 # CSRF Protection
 csrf_protect = flask_wtf.CsrfProtect(app)
