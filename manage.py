@@ -3,6 +3,7 @@ import os
 import time
 import json
 import sys
+import getpass
 from random import randint
 
 from flask_script import Command, Option
@@ -38,7 +39,7 @@ def drop_db():
     db.drop_all()
 
 @manager.command
-def create_login(login,password):
+def create_login(login):
     """
     Seed the database with some inital values
     """
@@ -49,8 +50,14 @@ def create_login(login,password):
         print 'user already exists!'
         return
     else:
-        admin_user = Admin(login=login, password=password)
-        print 'user: ' + login + ' created!'
+        print "{}, enter your password!\n ".format(login)
+        pw1 = getpass.getpass()
+        pw2 = getpass.getpass(prompt="Confirm: ")
+        if pw1 == pw2:
+            admin_user = Admin(login=login, password=pw1)
+            print 'user: ' + login + ' created!'
+        else:
+            print 'passwords do not match!'
 
 
     db.session.add(admin_user)
