@@ -7,6 +7,7 @@ from sleepypuppy.admin.payload.models import Payload
 from sleepypuppy.admin.capture.models import Capture
 from sleepypuppy.admin.user.models import User
 from flask import Response
+from urlparse import urlparse
 
 @app.route('/x', methods=['GET'])
 def x_collector(xss_uid=1):
@@ -135,6 +136,13 @@ def get_callbacks():
             app.logger.info("request.form.get('xss_uid', 0): {}".format(request.form.get('xss_uid', 0)))
 
             url = urllib.unquote(unicode(request.form.get('uri', '')))
+
+            if app.config.get('ALLOWED_DOMAINS'):
+                domain = urlparse(url).netloc.split(':')[0]
+                if domain not in app.config.get('ALLOWED_DOMAINS'):
+                    app.logger.info("Ignoring Capture from unapproved domain: [{}]".format(domain))
+                    return response
+
             referrer = urllib.unquote(unicode(request.form.get('referrer', '')))
             cookies = urllib.unquote(unicode(request.form.get('cookies', '')))
             user_agent = urllib.unquote(unicode(request.form.get('user_agent', '')))

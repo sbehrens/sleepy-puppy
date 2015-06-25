@@ -36,3 +36,5 @@ MAIL_SENDER =  os.getenv('sender', 'sleepypuppy@domain.com')
 #MAIL_USE_SSL = False
 #MAIL_USERNAME = 'you'
 #MAIL_PASSWORD = 'your-password'
+
+ALLOWED_DOMAINS = ['localhost']
