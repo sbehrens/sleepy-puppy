@@ -53,7 +53,7 @@ Create the database
     python manage.py create_db
 Create a user to access the application
 
-    python manage.py create_login
+    python manage.py create_login username
 Start the server on localhost:5000
 
     python manage.py runserver
