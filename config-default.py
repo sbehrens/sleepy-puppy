@@ -21,7 +21,7 @@ LOG_FILE = "sleepypuppy.log"
 
 HOSTNAME = 'localhost' # for getting the JS file.
 CALLBACK_HOSTNAME = HOSTNAME
-CALLBACK_PROTOCOL = 'https' # http for local dev, https for deploy
+CALLBACK_PROTOCOL = 'http' # http for local dev, https for deploy
 
 # Email server configuration
 # SES Options:
