@@ -1,7 +1,7 @@
 Sleepy Puppy
 ============
 
-![Sleepy Puppy](http://i.snag.gy/CgvRd.jpg)
+![Sleepy Puppy](http://i.snag.gy/CgvRd.jpg =200)
 
 ##What is Sleepy Puppy?##
 
