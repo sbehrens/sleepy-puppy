@@ -1,13 +1,7 @@
 Sleepy Puppy
 ============
-                                __
-         ,                    ," x`--o
-        ((                   (  | __,'
-         \\~----------------' \_;/
-    hjw  (   alert('yawn')      /
-         /) ._______________.  )
-        (( (               (( (
-         ``-'               ``-'
+
+![Sleepy Puppy}(http://i.snag.gy/CgvRd.jpg)
 
 ##What is Sleepy Puppy?##
 
