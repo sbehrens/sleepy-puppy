@@ -3,7 +3,7 @@ from setuptools import setup
 
 setup(
     name='sleepypuppy',
-    version='0.1',#'$$VERSION$$',
+    version='0.2',#'$$VERSION$$',
     long_description=__doc__,
     packages=['sleepypuppy'],
     include_package_data=True,
