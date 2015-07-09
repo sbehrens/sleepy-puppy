@@ -22,7 +22,7 @@ Sleepy Puppy exposes an API for users who may want to develop plugins for scanne
 
 [API Documentation](https://github.com/sbehrens/sleepy-puppy/blob/master/API.md)
 #Release History#
-V0.1 Beta - 6/29/2015
+V0.1 Alpha - 2/26/2014
 
 Initial Release
 
