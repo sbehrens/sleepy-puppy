@@ -2,7 +2,8 @@ import os
 
 _basedir = os.path.abspath(os.path.dirname(__file__))
 
-DEBUG = False
+DEBUG = True
+SSL = True
 
 # Security configuration settings
 SECRET_KEY = os.getenv('secret_key', 'ThiSISMYDARKSECRET!@#')
@@ -23,7 +24,7 @@ LOG_LEVEL = "DEBUG"
 LOG_FILE = "sleepypuppy.log"
 
 # Callback configuration settings for JS captures
-HOSTNAME = 'localhost' # for getting the JS file.
+HOSTNAME = '10.2.185.19:8000' # for getting the JS file.
 CALLBACK_HOSTNAME = HOSTNAME
 CALLBACK_PROTOCOL = 'http' # http for local dev, https for deploy
 
@@ -43,4 +44,5 @@ MAIL_SENDER =  os.getenv('sender', 'sleepypuppy@domain.com')
 #MAIL_PASSWORD = 'your-password'
 
 # Captures will only be logged from the following list of domains
-ALLOWED_DOMAINS = ['localhost']
+# By default, it will allow all domains if list is empty
+ALLOWED_DOMAINS = []
