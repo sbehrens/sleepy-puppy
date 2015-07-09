@@ -14,6 +14,9 @@ import flask_wtf
 # Config and App setups
 app = Flask(__name__)
 app.config.from_object('config-default')
+app.config.update(dict(
+  PREFERRED_URL_SCHEME = 'https'
+))
 app.debug = app.config.get('DEBUG')
 # Log handler functionality
 handler = RotatingFileHandler(app.config.get('LOG_FILE'), maxBytes=10000000, backupCount=100)
@@ -27,7 +30,24 @@ handler.setLevel(app.config.get('LOG_LEVEL'))
 app.logger.addHandler(handler)
 
 # HSTS
-sslify = SSLify(app)
+#sslify = SSLify(app)
+
+#SSL
+from functools import wraps
+from flask import request, redirect, current_app
+
+def ssl_required(fn):
+    @wraps(fn)
+    def decorated_view(*args, **kwargs):
+        if app.config.get("SSL"):
+            if request.is_secure:
+                return fn(*args, **kwargs)
+            else:
+                return redirect(request.url.replace("http://", "https://"))
+        
+        return fn(*args, **kwargs)
+            
+    return decorated_view
 
 # CSRF Protection
 csrf_protect = flask_wtf.CsrfProtect(app)
@@ -111,6 +131,7 @@ flask_admin.add_view(AdminView(AdminModel, db.session))
 from admin import views
 
 # Default route redirect to admin page
+
 @app.route('/')
 def index():
     return redirect('/admin', 302)

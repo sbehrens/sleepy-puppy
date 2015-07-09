@@ -111,7 +111,11 @@ def email_subscriptions(xss_uid, url):
                 recipients=email_list
             )
             msg.html = html
-            flask_mail.send(msg)
+            try:
+                flask_mail.send(msg)
+            except Exception as err:
+                app.logger.debug(Exception)
+                app.logger.debug(err)
 
 
 # Disable CSRF protection on callback posts
