@@ -1,7 +1,8 @@
 Sleepy Puppy
 ============
-![](http://i.snag.gy/qnNFH.jpg)
-#Overview#
+
+![Sleepy Puppy](http://i.snag.gy/VQfEE.jpg)
+
 ##What is Sleepy Puppy?##
 
 Sleepy Puppy is a blind cross-site scripting (xss) collector which was created to simplify blind xss testing.  
@@ -20,7 +21,6 @@ Sleepy Puppy also supports email notifications for captures received for specifi
 Sleepy Puppy exposes an API for users who may want to develop plugins for scanners such as Burp or Zap.
 
 [API Documentation](https://github.com/sbehrens/sleepy-puppy/blob/master/API.md)
-
 #Release History#
 V0.1 Beta - 6/29/2015
 

@@ -19,14 +19,14 @@ class Capture(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     assessment = db.Column(db.String(200))
-    url = db.Column(db.String(2000), unique=False)
-    referrer = db.Column(db.String(2000), unique=False)
-    cookies = db.Column(db.String(2000), unique=False)
-    user_agent = db.Column(db.String(512), unique=False)
+    url = db.Column(db.Text(), unique=False)
+    referrer = db.Column(db.Text(), unique=False)
+    cookies = db.Column(db.Text(), unique=False)
+    user_agent = db.Column(db.Text(), unique=False)
     payload = db.Column(db.Integer)
     screenshot = db.Column(db.String(20), unique=False)
     pub_date = db.Column(db.String(512), unique=False)
-    dom = db.Column(db.String(65535), unique=False)
+    dom = db.Column(db.Text(), unique=False)
     payload_id = db.Column(db.Integer, db.ForeignKey('payloads.id'))
 
     def as_dict(self):
