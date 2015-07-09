@@ -25,7 +25,7 @@ Sleepy Puppy exposes an API for users who may want to develop plugins for scanne
 V0.1 Alpha - 2/26/2014
 * Initial release
 
-V0.2 Beta - 7/9/2015
+V0.2 "OWASP Beta Release" - 7/9/2015
 * Updated a number of third party dependencies
 * Bug fixes for Jquery and Email Notifications
 * Amazon S3 storage configuration is now available for screenshots
