@@ -23,8 +23,19 @@ Sleepy Puppy exposes an API for users who may want to develop plugins for scanne
 [API Documentation](https://github.com/sbehrens/sleepy-puppy/blob/master/API.md)
 #Release History#
 V0.1 Alpha - 2/26/2014
+* Initial release
 
-Initial Release
+V0.2 Beta - 7/9/2015
+* Updated a number of third party dependencies
+* Bug fixes for Jquery and Email Notifications
+* Amazon S3 storage configuration is now available for screenshots
+* Amazon SES email support is now available
+* Allowed domains config directive allows users to whitelist which domains to log captures for
+* Callback configuration settings for hostname and protocol now supported
+* PEP 8 changes (thanks @monkey_security)
+* manage.py now supports a new commnad 'create_bootstrap_assessment' which adds a number of example payloads and an example assessment
+* Added comprehensive Wiki documentation
+
 
 #Documentation#
 Documentation is maintained in the Github [Wiki](https://github.com/sbehrens/sleepy-puppy/wiki)
