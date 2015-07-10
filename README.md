@@ -27,7 +27,7 @@ V0.1 Alpha - 2/26/2014
 
 V0.2 "OWASP Beta Release" - 7/9/2015
 * Updated a number of third party dependencies
-* Bug fixes for Jquery and Email Notifications
+* Bug fixes for jQuery and Email Notifications
 * Amazon S3 storage configuration is now available for screenshots
 * Amazon SES email support is now available
 * Allowed domains config directive allows users to whitelist which domains to log captures for
