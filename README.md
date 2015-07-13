@@ -20,7 +20,7 @@ Sleepy Puppy also supports email notifications for captures received for specifi
 
 Sleepy Puppy exposes an API for users who may want to develop plugins for scanners such as Burp or Zap.
 
-[API Documentation](https://github.com/sbehrens/sleepy-puppy/blob/master/API.md)
+[API Documentation](https://github.com/sbehrens/sleepy-puppy/wiki/API)
 #Release History#
 V0.1 Alpha - 2/26/2014
 * Initial release
