@@ -57,7 +57,7 @@ def email_subscriptions(xss_uid, url):
         cgi.escape(url, quote=True)
     )
     html += "<b>Parameter: </b>{}<br/>".format(
-        cgi.escape(notify_jobs.parameter, quote=True)
+        cgi.escape(notify_jobs.parameter or "", quote=True)
     )
     html += "<b>Payload: </b>{}<br/>".format(
         cgi.escape(notify_jobs.payload, quote=True)
