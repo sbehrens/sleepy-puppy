@@ -10,6 +10,7 @@ setup(
     zip_safe=False,
     install_requires=[
         'Flask==0.10.1',
+        'WTForms==1.0.5',
         'Flask-Admin==1.0.7',
         'Flask-Bcrypt==0.6.2',
         'Flask-Login==0.2.11',
