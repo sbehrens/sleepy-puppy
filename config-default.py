@@ -15,6 +15,7 @@ SQLALCHEMY_DATABASE_URI = os.getenv('sleepypuppy_db', 'sqlite:////tmp/sleepy-db.
 
 # Screenshot storage configuration settings
 UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'uploads')
+ASSETS_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'sleepypuppy/assets')
 UPLOAD_SCREENSHOTS_TO_S3 = False
 S3_BUCKET = ""
 S3_FILES_PREFIX = "sleepypuppy"
@@ -24,7 +25,7 @@ LOG_LEVEL = "DEBUG"
 LOG_FILE = "sleepypuppy.log"
 
 # Callback configuration settings for JS captures
-HOSTNAME = '10.2.185.19:8000' # for getting the JS file.
+HOSTNAME = '127.0.0.1:8000' # for getting the JS file.
 CALLBACK_HOSTNAME = HOSTNAME
 CALLBACK_PROTOCOL = 'http' # http for local dev, https for deploy
 

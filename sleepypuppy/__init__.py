@@ -1,6 +1,6 @@
 from logging import Formatter
 from logging.handlers import RotatingFileHandler
-from flask import Flask, redirect, request, abort
+from flask import Flask, redirect, request, abort, send_from_directory
 from flask.ext import login
 from flask.ext.bcrypt import Bcrypt
 from flask.ext.restful import Api
@@ -135,4 +135,8 @@ from admin import views
 @app.route('/')
 def index():
     return redirect('/admin', 302)
+
+@app.route('/assets/<path:filename>')
+def send_js(filename):
+    return send_from_directory(app.config['ASSETS_FOLDER'], filename)
 
