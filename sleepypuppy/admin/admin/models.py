@@ -3,7 +3,7 @@ from sqlalchemy import event
 from os import urandom
 
 
-class Admin(db.Model):
+class Administrator(db.Model):
     """
     Admin model contols how users autheticate to Sleepy Puppy
     The model also automatically generates API keys for administrators.
@@ -42,13 +42,13 @@ class Admin(db.Model):
 
 
 # Make sure to encrypt passwords before create and updates
-@event.listens_for(Admin, 'before_insert')
+@event.listens_for(Administrator, 'before_insert')
 def receive_before_insert(mapper, connection, target):
     target.password = bcrypt.generate_password_hash(target.password)
     target.api_key = urandom(40).encode('hex')
 
 
-@event.listens_for(Admin, 'before_update')
+@event.listens_for(Administrator, 'before_update')
 def receive_before_update(mapper, connection, target):
     target.password = bcrypt.generate_password_hash(target.password)
     target.api_key = urandom(40).encode('hex')

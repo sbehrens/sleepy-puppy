@@ -9,7 +9,7 @@ from random import randint
 from flask_script import Command, Option
 from flask_script.commands import ShowUrls, Clean
 from flask.ext.script import Manager, Server
-from sleepypuppy.admin.admin.models import Admin
+from sleepypuppy.admin.admin.models import Administrator
 from sleepypuppy import app, db
 
 manager = Manager(app)
@@ -46,7 +46,7 @@ def create_login(login):
 
     print 'creating admin user'
 
-    if Admin.query.filter_by(login=login).count():
+    if Administrator.query.filter_by(login=login).count():
         print 'user already exists!'
         return
     else:
@@ -54,7 +54,7 @@ def create_login(login):
         pw1 = getpass.getpass()
         pw2 = getpass.getpass(prompt="Confirm: ")
         if pw1 == pw2:
-            admin_user = Admin(login=login, password=pw1)
+            admin_user = Administrator(login=login, password=pw1)
             print 'user: ' + login + ' created!'
         else:
             print 'passwords do not match!'

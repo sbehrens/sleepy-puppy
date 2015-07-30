@@ -10,14 +10,16 @@ setup(
     zip_safe=False,
     install_requires=[
         'Flask==0.10.1',
-        'WTForms==1.0.5',
-        'Flask-Admin==1.0.7',
+        'WTForms==2.0.2',
+        'Flask-Admin==1.2.0',
         'Flask-Bcrypt==0.6.2',
+        # First0.2.11
         'Flask-Login==0.2.11',
         'Flask-Mail==0.9.1',
-        'Flask-RESTful==0.3.3',
+        #updated
+        'Flask-RESTful==0.3.4',
         'Flask-SQLAlchemy==2.0',
-        'Flask-Script==0.6.3',
+        'Flask-Script==2.0.5',
         'Flask-SSLify==0.1.5',
         'Flask-WTF==0.11',
         'Pillow==2.8.2',

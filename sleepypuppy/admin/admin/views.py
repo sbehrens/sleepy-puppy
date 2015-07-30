@@ -5,7 +5,7 @@ from flask.ext.admin import helpers, expose
 from flask.ext.admin.contrib.sqla import ModelView
 from wtforms import form, fields, validators
 from sleepypuppy import db, bcrypt
-from models import Admin
+from models import Administrator
 
 
 # Define login and registration forms (for flask-login)
@@ -27,11 +27,11 @@ class LoginForm(form.Form):
             raise validators.ValidationError('Invalid username or password')
 
     def get_admin(self):
-        # Retrieve the Admin login
-        return db.session.query(Admin).filter_by(login=self.login.data).first()
+        # Retrieve the Administrator login
+        return db.session.query(Administrator).filter_by(login=self.login.data).first()
 
 
-class MyAdminIndexView(admin.AdminIndexView):
+class MyAdministratorIndexView(admin.AdminIndexView):
     """
     Class validates user's login state and then redirects
     to appropriate views.
@@ -40,7 +40,7 @@ class MyAdminIndexView(admin.AdminIndexView):
     def index(self):
         if not login.current_user.is_authenticated():
             return redirect(url_for('.login_view'))
-        return super(MyAdminIndexView, self).index()
+        return super(MyAdministratorIndexView, self).index()
 
     @expose('/login/', methods=('GET', 'POST'))
     def login_view(self):
@@ -53,7 +53,7 @@ class MyAdminIndexView(admin.AdminIndexView):
         if login.current_user.is_authenticated():
             return redirect(url_for('.index'))
         self._template_args['form'] = form
-        return super(MyAdminIndexView, self).index()
+        return super(MyAdministratorIndexView, self).index()
 
     @expose('/logout/')
     def logout_view(self):
@@ -61,9 +61,9 @@ class MyAdminIndexView(admin.AdminIndexView):
         return redirect(url_for('.index'))
 
 
-class AdminView(ModelView):
+class AdministratorView(ModelView):
     """
-    Class overrides Model View from Flask Admin.
+    Class overrides Model View from Flask Administrator.
     """
     # CSRF Protection
     form_base_class = Form
