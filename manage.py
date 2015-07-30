@@ -58,6 +58,7 @@ def create_login(login):
             print 'user: ' + login + ' created!'
         else:
             print 'passwords do not match!'
+            sys.exit(1)
 
     db.session.add(admin_user)
     db.session.commit()
