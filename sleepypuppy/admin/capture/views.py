@@ -21,7 +21,7 @@ class CaptureView(ModelView):
         return login.current_user.is_authenticated()
 
     # Override displayed fields
-    list_template = 'capture_list_template.html'
+    list_template = 'capture_list.html'
 
     # Restrict captures from being created or edited
     can_create = False
@@ -43,7 +43,7 @@ class CaptureView(ModelView):
     column_sortable_list = (
         'pub_date',
         'payload',
-        'assessments',
+        #'assessments',
         'url',
         'referrer',
         'cookies',

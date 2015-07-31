@@ -63,6 +63,7 @@ flask_mail = Mail(app)
 
 # Decorator for Token Auth on API Requests
 from sleepypuppy.admin.admin.models import Administrator
+from sleepypuppy.admin.assessment.models import Assessment
 
 
 # The dectorat function for API token auth
@@ -99,7 +100,7 @@ init_login()
 
 # Create the Flask Admin object
 from admin.admin.views import MyAdministratorIndexView, AdministratorView
-flask_admin = Admin(app, 'Sleepy Puppy', index_view=MyAdministratorIndexView(), base_template='admin/base.html')
+flask_admin = Admin(app, 'Sleepy Puppy', index_view=MyAdministratorIndexView(), base_template='admin/base.html', template_mode='bootstrap3')
 
 # Import the collector which is used to collect capture information
 from collector import views
@@ -122,10 +123,13 @@ from admin.payload.views import PayloadView
 from admin.user.views import UserView
 from admin.assessment.views import AssessmentView
 
+from sqlalchemy.orm import configure_mappers
+configure_mappers()
+
 # # Add all Flask Admin routes
-#flask_admin.add_view(PayloadView(db.session))
-#flask_admin.add_view(CaptureView(db.session))
-#flask_admin.add_view(UserView(db.session))
+flask_admin.add_view(PayloadView(db.session))
+flask_admin.add_view(CaptureView(db.session))
+flask_admin.add_view(UserView(db.session))
 flask_admin.add_view(AssessmentView(db.session))
 flask_admin.add_view(AdministratorView(Administrator, db.session))
 from admin import views
@@ -138,5 +142,6 @@ def index():
 
 @app.route('/assets/<path:filename>')
 def send_js(filename):
+    print send_from_directory(app.config['ASSETS_FOLDER'], filename)
     return send_from_directory(app.config['ASSETS_FOLDER'], filename)
 

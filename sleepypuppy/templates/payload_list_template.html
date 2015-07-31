@@ -6,8 +6,8 @@
 
 {% block head %}
 {{ super() }}
-<link href="{{ admin_static.url(filename='select2/select2.css') }}" rel="stylesheet">
-<link href="{{ admin_static.url(filename='datetimepicker/bootstrap-datetimepicker.css') }}" rel="stylesheet">
+    <link href="{{ admin_static.url(filename='select2/select2.css') }}" rel="stylesheet">
+    <link href="{{ admin_static.url(filename='datetimepicker/bootstrap-datetimepicker.css') }}" rel="stylesheet">
 {% endblock %}
 
 {% block body %}
@@ -153,26 +153,25 @@
 {{ super() }}
 <script src="{{ admin_static.url(filename='datetimepicker/bootstrap-datetimepicker.js') }}"></script>
 <script src="{{ admin_static.url(filename='admin/js/form.js') }}"></script>
-<script src="{{ admin_static.url(filename='admin/js/filters.js') }}"></script>
+<script src="{{ admin_static.url(filename='admin/js/filters.js', v='1.0.0') }}"></script>
 
 {{ actionlib.script(_gettext('Please select at least one model.'),
 actions,
 actions_confirmation) }}
 
-<script language="javascript">
-(function($) {
-    $('[data-role=tooltip]').tooltip({
-        html: true,
-        placement: 'bottom'
-    });
-    {% if filter_groups is not none and filter_data is not none %}
-    var filter = new AdminFilters(
-        '#filter_form', '.field-filters',
-        {{ admin_view._get_filter_dict()|tojson|safe }},
-        {{ filter_data|tojson|safe }},
-        {{ filter_types|tojson|safe }}
-        );
-    {% endif %}
-})(jQuery);
-</script>
+    <script language="javascript">
+        (function($) {
+            $('[data-role=tooltip]').tooltip({
+                html: true,
+                placement: 'bottom'
+            });
+            {% if filter_groups %}
+                var filter = new AdminFilters(
+                    '#filter_form', '.field-filters',
+                    {{ filter_groups|tojson|safe }},
+                    {{ active_filters|tojson|safe }}
+                );
+            {% endif %}
+        })(jQuery);
+    </script>
 {% endblock %}

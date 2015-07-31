@@ -22,8 +22,8 @@ class PayloadView(ModelView):
         return login.current_user.is_authenticated()
 
     # Custom templates for listing models and creating models
-    create_template = 'payload_create_template.html'
-    list_template = 'payload_list_template.html'
+    #create_template = 'payload_create_template.html'
+    list_template = 'payload_list.html'
 
     hostname = app.config['HOSTNAME']
 
@@ -66,8 +66,8 @@ class PayloadView(ModelView):
 
     column_sortable_list = (
         'id',
-        'assessments',
-        'captured',
+        #'assessments',
+        #'captured',
         'payload',
         'url',
         'method',

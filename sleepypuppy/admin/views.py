@@ -4,6 +4,9 @@ from sleepypuppy import app
 from capture.models import Capture
 from payload.models import Payload
 
+#
+# This is legacy code, not really documented/used
+#
 @app.route('/admin/capture/<int:id>')
 @login_required
 def show_capture(id):

@@ -1,0 +1,118 @@
+{% import 'admin/layout.html' as layout with context -%}
+{% import 'admin/static.html' as admin_static with context %}
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>{% block title %}{% if admin_view.category %}{{ admin_view.category }} - {% endif %}{{ admin_view.name }} - {{ admin_view.admin.name }}{% endblock %}</title>
+    {% block head_meta %}
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="">
+        <meta name="author" content="">
+    {% endblock %}
+    {% block head_css %}
+        <link href="{{ admin_static.url(filename='bootstrap/css/bootstrap.css') }}" rel="stylesheet">
+        <link href="{{ admin_static.url(filename='bootstrap/css/bootstrap-responsive.css') }}" rel="stylesheet">
+        <link href="{{ admin_static.url(filename='admin/css/admin.css') }}" rel="stylesheet">
+        <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico')}}" type="image/x-icon">
+        <link rel="icon" href="{{ url_for('static', filename='favicon.ico')}}" type="image/x-icon">
+    {% endblock %}
+    {% block head %}
+    {% endblock %}
+    {% block head_tail %}
+    {% endblock %}
+  </head>
+  <body>
+    {% block page_body %}
+    <div class="container">
+      <div class="navbar">
+        <div class="navbar-inner">
+          {% block brand %}
+          <span class="brand">{{ admin_view.admin.name }}</span>
+          {% endblock %}
+          {% block main_menu %}
+          <ul class="nav">
+            {{ layout.menu() }}
+          </ul>
+          {% endblock %}
+          {% block menu_links %}
+          <ul class="nav pull-right">
+            {{ layout.menu_links() }}
+          </ul>
+          {% endblock %}
+          {% block access_control %}
+{% if current_user.is_authenticated() %}
+<div class="btn-group pull-right">
+    <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+        <i class="icon-user"></i> {{ current_user.login }} <span class="caret"></span>
+    </a>
+    <ul class="dropdown-menu">
+        <li><a href="{{ url_for('admin.logout_view') }}">Log out</a></li>
+    </ul>
+</div>
+{% endif %}
+{% endblock %}
+        </div>
+      </div>
+      {% block messages %}
+      {{ layout.messages() }}
+      {% endblock %}
+
+      {% set render_ctx = h.resolve_ctx() %}
+      {% block body %}
+
+    <div class="container">
+        <div class="well">
+        <div class="row">
+
+    <div>
+      <div class="span6">
+        {% if current_user.is_authenticated() %}
+        <img src="{{ url_for('static', filename='sleepy.jpg')}}">
+        </div>
+        <div class="span6">
+            <h1>Blind XSS Collector</h1>
+            <br>
+           <h4>Total number of captures: <strong>{{total_captures}}<strong><h4>
+        </div>
+        </div>
+    </div>
+    </div>
+        {% else %}
+        <form method="POST" action="">
+        {% if csrf_token %}
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+        {% endif %}
+            {{ form.hidden_tag() if form.hidden_tag }}
+            {% for f in form if f.type != 'CSRFTokenField' %}
+            <div>
+            {{ f.label }}
+            {{ f }}
+            {% if f.errors %}
+            <ul>
+                {% for e in f.errors %}
+                <li>{{ e }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+            </div>
+            {% endfor %}
+            <button class="btn" type="submit">Submit</button>
+        </form>
+        {{ link | safe }}
+        {% endif %}
+    </div>
+
+      {% endblock %}
+    </div>
+    {% endblock %}
+
+    {% block tail_js %}
+    <script src="{{ admin_static.url(filename='vendor/jquery-1.8.3.min.js') }}" type="text/javascript"></script>
+    <script src="{{ admin_static.url(filename='bootstrap/js/bootstrap.min.js') }}" type="text/javascript"></script>
+    <script src="{{ admin_static.url(filename='select2/select2.min.js') }}" type="text/javascript"></script>
+    {% endblock %}
+
+    {% block tail %}
+    {% endblock %}
+  </body>
+</html>
