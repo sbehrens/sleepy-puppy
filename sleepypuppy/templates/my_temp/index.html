@@ -42,7 +42,7 @@
           {% block access_control %}
 {% if current_user.is_authenticated() %}
 <div class="btn-group pull-right">
-    <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+    <a class="btn btn-default dropdown-toggle" data-toggle="dropdown" href="#">
         <i class="icon-user"></i> {{ current_user.login }} <span class="caret"></span>
     </a>
     <ul class="dropdown-menu">
@@ -96,7 +96,7 @@
             {% endif %}
             </div>
             {% endfor %}
-            <button class="btn" type="submit">Submit</button>
+            <button class="btn btn-group" type="submit">Submit</button>
         </form>
         {{ link | safe }}
         {% endif %}

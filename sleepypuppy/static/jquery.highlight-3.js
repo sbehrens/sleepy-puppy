@@ -20,7 +20,7 @@ jQuery.fn.highlight = function(pat) {
   if (node.nodeType == 3) {
    var pos = node.data.toUpperCase().indexOf(pat);
    if (pos >= 0) {
-    var spannode = document.createElement('span');
+    var spannode = document.createElement('mark');
     spannode.className = 'highlight';
     var middlebit = node.splitText(pos);
     var endbit = middlebit.splitText(pat.length);

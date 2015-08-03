@@ -83,7 +83,6 @@ def require_appkey(view_function):
 # Initalize the Flask API
 flask_api = Api(app, decorators=[csrf_protect.exempt, require_appkey])
 
-
 # Initalize Flask Login functionality
 def init_login():
     login_manager = login.LoginManager()
@@ -95,13 +94,12 @@ def init_login():
     def load_user(user_id):
         return db.session.query(Administrator).get(user_id)
 
+# Create the Flask Admin object
+from admin.admin.views import MyAdminIndexView, AdministratorView
+flask_admin = Admin(app, 'Sleepy Puppy', index_view=MyAdminIndexView(), base_template='admin/base.html', template_mode='bootstrap3')
+
 # Intalize the login manager for sleepy puppy
 init_login()
-
-# Create the Flask Admin object
-from admin.admin.views import MyAdministratorIndexView, AdministratorView
-flask_admin = Admin(app, 'Sleepy Puppy', index_view=MyAdministratorIndexView(), base_template='admin/base.html', template_mode='bootstrap3')
-
 # Import the collector which is used to collect capture information
 from collector import views
 

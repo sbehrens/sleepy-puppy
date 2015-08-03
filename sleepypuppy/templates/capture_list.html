@@ -130,9 +130,11 @@
         {% endautoescape %}
         {% elif c =='cookies' and get_value(row, c) != ""-%}
         <td>
-            <a href="#cookie-modal{{row.id}}" role="button" class="btn" onClick="$('#cookie-modal{{row.id}}').modal()">View Cookies</a>
+            <a href="#cookie-modal{{row.id}}" role="button" class="btn btn-default" onClick="$('#cookie-modal{{row.id}}').modal()">View Cookies</a>
 
-            <div id="cookie-modal{{row.id}}" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="cookie-modalLabel{{row.id}}" aria-hidden="true">
+            <div id="cookie-modal{{row.id}}" class="modal fade" tabindex="-1" role="dialog"  aria-labelledby="cookie-modalLabel{{row.id}}">
+                <div class="modal-dialog" role="document">
+                <div class="modal-content">
               <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
                 <h3 id="cookie-modalLabel{{row.id}}">Cookies</h3>
@@ -166,12 +168,17 @@
                     <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
 
                 </div>
+                </div>
+                </div>
             </div>
             {% elif c =='dom' and get_value(row, c) != "" -%}
             <td>
-                <a href="#dom-modal{{row.id}}" role="button" class="btn" onClick="$('#dom-modal{{row.id}}').modal()">View Dom</a>
+               <!-- modal tigger -->
+                <a href="#dom-modal{{row.id}}" role="button" class="btn btn-default" onClick="$('#dom-modal{{row.id}}').modal()">View Dom</a>
 
-                <div id="dom-modal{{row.id}}" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="dom-modalLabel{{row.id}}" aria-hidden="true">
+                <div id="dom-modal{{row.id}}" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dom-modalLabel{{row.id}}">
+                  <div class="modal-dialog" role="document">
+                  <div class="modal-content">
                   <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
                     <h3 id="dom-modalLabel{{row.id}}">Dom</h3>
@@ -184,11 +191,13 @@
             <div class="modal-footer">
                 <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
             </div>
+            </div>
+            </div>
         </div>
 
         {% autoescape false %}
 
-        <script>
+        <script type="text/javascript" defer='defer'>
         $(document).ready(function () {
           $('#dom{{row.id}}').highlight('//{{admin_view.hostname}}/x?u=');
           $('#dom{{row.id}}').highlight('//{{admin_view.hostname}}/c.js?u=');

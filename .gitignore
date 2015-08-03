@@ -50,3 +50,4 @@ TODO
 *.crt
 *.org
 leepy/
+test/
