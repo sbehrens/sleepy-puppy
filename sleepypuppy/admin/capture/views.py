@@ -31,7 +31,7 @@ class CaptureView(ModelView):
     column_list = (
         'pub_date',
         'payload',
-        'assessments',
+        'assessment',
         'url',
         'referrer',
         'cookies',
@@ -43,7 +43,7 @@ class CaptureView(ModelView):
     column_sortable_list = (
         'pub_date',
         'payload',
-        #'assessments',
+        'assessment',
         'url',
         'referrer',
         'cookies',
@@ -56,16 +56,16 @@ class CaptureView(ModelView):
     # Make sure payload exists otherwise it's a zombie capture
     column_formatters = dict(
         payload=lambda v, c, m, p: str(m.payload) if m.payload is not None else "Payload Not Found!",
-        assessments=lambda v, c, m, p: str(
+        assessment=lambda v, c, m, p: str(
             Payload.query.filter_by(id=m.payload)
             .first()
             .assessments if Payload.query.filter_by(id=m.payload).first() is not None else "Not Found"
-        )
+        ).strip('[]')
     )
     form_excluded_columns = ('captures')
 
     # Allow columns to be searched/sorted
-    column_filters = ('payload_id', 'url')
+    column_filters = ('payload_id', 'url', 'assessment')
 
     def delete_from_s3(self, filename):
         if app.config.get('UPLOAD_SCREENSHOTS_TO_S3', False):

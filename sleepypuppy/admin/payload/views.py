@@ -66,7 +66,7 @@ class PayloadView(ModelView):
 
     column_sortable_list = (
         'id',
-        #'assessments',
+        'assessments',
         #'captured',
         'payload',
         'url',
@@ -76,7 +76,7 @@ class PayloadView(ModelView):
 
     column_filters = (
         'id',
-        'assessment',
+        'assessments',
         'payload',
         'url',
         'method',
