@@ -13,6 +13,7 @@
 {% endblock %}
 
 {% block body %}
+<h1>foo
     {% call lib.form_tag(form) %}
         {{ lib.render_form_fields(form, form_opts=form_opts) }}
         {{ lib.render_form_buttons(return_url, extra()) }}

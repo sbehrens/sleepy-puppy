@@ -2,6 +2,8 @@ from sleepypuppy import db
 import datetime
 
 
+from BeautifulSoup import BeautifulSoup as bs
+
 class Capture(db.Model):
     """
     Capture model contains the following parameters:
@@ -42,7 +44,7 @@ class Capture(db.Model):
         self.user_agent = user_agent
         self.payload = payload
         self.screenshot = screenshot
-        self.dom = dom
+        self.dom = bs(dom).prettify()
         self.payload_id = payload
         # Set datetime when a capture is recieved
         if pub_date is None:
