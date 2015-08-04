@@ -55,31 +55,6 @@ class MyAdminIndexView(admin.AdminIndexView):
         # #self._template_args['link'] = link
         return super(MyAdminIndexView, self).index()
 
-
-# class MyAdministratorIndexView(admin.AdminIndexView):
-#     """
-#     Class validates user's login state and then redirects
-#     to appropriate views.
-#     """
-#     @expose('/')
-#     def index(self):
-#         if not login.current_user.is_authenticated():
-#             return redirect(url_for('.login_view'))
-#         return super(MyAdministratorIndexView, self).index()
-
-#     @expose('/login/', methods=('GET', 'POST'))
-#     def login_view(self):
-#         # Handle user login
-#         # form = LoginForm(request.form)
-#         # if helpers.validate_form_on_submit(form):
-#         #     user = form.get_admin()
-#         #     login.login_user(user)
-
-#         # if login.current_user.is_authenticated():
-#         #return redirect(url_for('.index'))
-#         # self._template_args['form'] = form
-#         return super(MyAdministratorIndexView, self).index()
-
     @expose('/logout/')
     def logout_view(self):
         login.logout_user()

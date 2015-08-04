@@ -31,13 +31,13 @@ CALLBACK_PROTOCOL = 'http' # http for local dev, https for deploy
 
 # Email server configuration
 # SES Options:
-EMAILS_USE_SES = False
+EMAILS_USE_SES = True
 SES_REGION = 'us-east-1'
 
 # SMTP Options:
 MAIL_SERVER = 'localhost'
 MAIL_PORT = 25
-MAIL_SENDER =  os.getenv('sender', 'sleepypuppy@domain.com')
+MAIL_SENDER =  os.getenv('sender', 'monterey@saasmail.netflix.com')
 # Uncomment if your SMTP server requires authentication
 #MAIL_USE_TLS = False
 #MAIL_USE_SSL = False

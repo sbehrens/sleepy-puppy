@@ -5,6 +5,7 @@ from sleepypuppy import db, app
 from sleepypuppy.admin.payload.models import Payload
 from sleepypuppy.admin.capture.models import Capture
 from sleepypuppy.admin.assessment.models import Assessment
+from sleepypuppy.admin.access_log.models import AccessLog
 
 # Request parser for API calls to Payload model
 parser_payload = reqparse.RequestParser()
@@ -245,6 +246,50 @@ class CaptureViewList(Resource):
     def get(self):
         results = []
         for row in Capture.query.all():
+            results.append(row.as_dict())
+        return results
+
+class AccessLogView(Resource):
+    """
+    API Provides CRUD operations for AccessLog based on id.
+
+    Methods:
+    GET
+    DELETE
+
+    Captures should be immutable so no PUT operations are permitted.
+    """
+    def get(self, id):
+        e = AccessLog.query.filter(AccessLog.id == id).first()
+        if e is not None:
+            return e.as_dict()
+        else:
+            return {}
+
+    def delete(self, id):
+        access_log = AccessLog.query.filter(AccessLog.id == id).first()
+        if access_log is not None:
+            try:
+                db.session.delete(access_log)
+                db.session.commit()
+            except IntegrityError, exc:
+                return {"error": exc.message}, 500
+        else:
+            return {}
+
+        return access_log.as_dict(), 204
+
+
+class AccessLogViewList(Resource):
+    """
+    API Provides CRUD operations for Access Log.
+
+    Methods:
+    GET
+    """
+    def get(self):
+        results = []
+        for row in AccessLog.query.all():
             results.append(row.as_dict())
         return results
 

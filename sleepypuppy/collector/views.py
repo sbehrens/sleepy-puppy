@@ -15,6 +15,7 @@ from urlparse import urlparse
 # Break out some of this into more modular functions
 # Will log if user has more than one assessment associated
 
+
 #
 @app.route('/x', methods=['GET'])
 def x_collector(xss_uid=1):
@@ -38,6 +39,10 @@ def x_collector(xss_uid=1):
 
                 db.session.add(log_event)
                 db.session.commit()
+            except Exception as err:
+                print err
+            try:
+                email_subscription_accesslog(xss_uid)
             except Exception as err:
                 print err
         break
@@ -69,7 +74,99 @@ def collector(xss_uid=1):
         callback_protocol=app.config.get('CALLBACK_PROTOCOL', 'https')
     )
 
-def email_subscriptions(xss_uid, url):
+def email_subscription_accesslog(xss_uid):
+    """
+    Email all users who are subscribed to assessments for access log entries.
+    """
+    print "in function"
+    email_list = []
+    notify_jobs = Payload.query.filter_by(id=int(xss_uid)).first()
+    access_log_entry = AccessLog.query.filter_by(payload_id=int(xss_uid)).first()
+    user_notify = User.query.all()
+    # Loop through every User and intersect if the capture is associated with
+    # an assessment they are subscribed to recieve notificaitons for.
+    for user in user_notify:
+        user_subscriptions = []
+        for assessment in user.assessments:
+            user_subscriptions.append(assessment.id)
+        print user_subscriptions
+        print notify_jobs.show_assessment_ids()
+        if len(set(notify_jobs.show_assessment_ids()).intersection(user_subscriptions)) > 0:
+            print 'this should be here'
+            email_list.append(user.email)
+
+    import cgi
+    subject = "[Sleepy Puppy] - Access Log Request Recieved For Assessment(s): {}".format(
+        cgi.escape(notify_jobs.show_assessment_names(), quote=True)
+    )
+    html = "<b>Associated Assessments: </b>{}<br/>".format(
+        cgi.escape(notify_jobs.show_assessment_names(), quote=True)
+    )
+    html += "<b>Referrerer: </b>{}<br/>".format(
+        cgi.escape(access_log_entry.referrer or "", quote=True)
+    )
+    html += "<b>User Agent: </b>{}<br/>".format(
+        cgi.escape(access_log_entry.user_agent or "", quote=True)
+    )
+    html += "<b>IP Address: </b>{}<br/>".format(
+        cgi.escape(access_log_entry.ip_address, quote=True)
+    )
+
+    html += "{}://{}/admin/access_log/{}".format(
+        app.config.get('CALLBACK_PROTOCOL', 'https'),
+        app.config.get('HOSTNAME', 'localhost'),
+        access_log_entry.id
+    )
+
+    # If there are people to email, email them that a capture was recieved
+    if email_list:
+        if app.config["EMAILS_USE_SES"]:
+            import boto.ses
+            try:
+                ses_region = app.config.get('SES_REGION', 'us-east-1')
+                ses = boto.ses.connect_to_region(ses_region)
+            except Exception, e:
+                import traceback
+                app.logger.debug(Exception)
+                app.logger.debug(e)
+                app.logger.warn(traceback.format_exc())
+                return
+
+            for email in email_list:
+                try:
+                    ses.send_email(
+                        app.config['MAIL_SENDER'],
+                        subject,
+                        html,
+                        email,
+                        format="html"
+                    )
+                    app.logger.debug("Emailed {} - {} ".format(email, subject))
+                except Exception, e:
+                    m = "Failed to send failure message to {} from {} with subject: {}\n{} {}".format(
+                        email,
+                        app.config['MAIL_SENDER'],
+                        subject,
+                        Exception,
+                        e
+                    )
+                    app.logger.debug(m)
+        else:
+            msg = Message(
+                subject,
+                sender=app.config['MAIL_SENDER'],
+                recipients=email_list
+            )
+            msg.html = html
+            try:
+                flask_mail.send(msg)
+            except Exception as err:
+                app.logger.debug(Exception)
+                app.logger.debug(err)
+
+
+
+def email_subscription_captures(xss_uid, url):
     """
     Email all users who are subscribed to assessments.
     """
@@ -105,7 +202,8 @@ def email_subscriptions(xss_uid, url):
         cgi.escape(notify_jobs.notes, quote=True)
     )
 
-    html += "https://{}/admin/capture/{}".format(
+    html += "{}://{}/admin/capture/{}".format(
+        app.config.get('CALLBACK_PROTOCOL', 'https'),
         app.config.get('HOSTNAME', 'localhost'),
         notify_jobs.id
     )
@@ -202,7 +300,7 @@ def get_callbacks():
             else:
                 # Create the capture with associated assessment/payload
                 client_info = Capture(assessment.id, url, referrer, cookies, user_agent, xss_uid.id, screenshot, dom)
-                email_subscriptions(xss_uid.id, url)
+                email_subscription_captures(xss_uid.id, url)
 
             db.session.add(client_info)
             db.session.commit()
