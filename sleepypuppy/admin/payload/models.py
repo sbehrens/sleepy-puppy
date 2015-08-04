@@ -22,6 +22,8 @@ class Payload(db.Model):
     method = db.Column(db.String(12))
     parameter = db.Column(db.String(50))
     notes = db.Column(db.String(200))
+    snooze = db.Column(db.Boolean)
+    run_once = db.Column(db.Boolean)
     assessment = db.Column(db.Integer, db.ForeignKey('assessments.id'))
 
     # When payloads are deleted, cascade the delete and remove associated captures
@@ -42,6 +44,8 @@ class Payload(db.Model):
             "url": self.url,
             "method": self.method,
             "parameter": self.parameter,
+            "run_once": self.run_once,
+            "snooze": self.snooze,
             "notes": self.notes
         }
 

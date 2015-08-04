@@ -61,6 +61,8 @@ class PayloadView(ModelView):
         'url',
         'method',
         'parameter',
+        'snooze',
+        'run_once',
         'notes'
     )
 
@@ -107,6 +109,12 @@ class PayloadView(ModelView):
             description="Use $1 as a placeholder for the Javascript URL.",
             default="<script src=$1></script>",
             validators=[validators.required()]
+        ),
+        snooze=dict(
+            description="Stop captures for this payload"
+        ),
+        run_once=dict(
+            description="Only run capture once for this payload"
         ),
         assessment=dict(
             validators=[validators.required()]
