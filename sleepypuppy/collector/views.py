@@ -1,6 +1,6 @@
 import urllib
 from flask import request
-from flask import render_template
+from flask import render_template, make_response
 from flask_mail import Message
 from sleepypuppy import app, db, flask_mail, csrf_protect
 from sleepypuppy.admin.payload.models import Payload
@@ -66,13 +66,16 @@ def collector(xss_uid=1):
         pass 
 
     # Default render tempalte, may need to modify based on new JS ideas
-
-    return render_template(
+    headers = {'Content-Type': 'text/javascript'}
+    return make_response(render_template(
         'c.js',
         xss_uid=xss_uid,
         hostname=app.config['CALLBACK_HOSTNAME'],
-        callback_protocol=app.config.get('CALLBACK_PROTOCOL', 'https')
-    )
+        callback_protocol=app.config.get('CALLBACK_PROTOCOL', 'https')),
+        200,
+        headers
+        )
+
 
 def email_subscription_accesslog(xss_uid):
     """
