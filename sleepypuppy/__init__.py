@@ -106,7 +106,7 @@ from collector import views
 # Import the screenshot upload handler
 from upload import upload
 
-# # Initalize all Flask API views
+# # Initalize all Flask API views TODO Add access log
 from api.views import CaptureView, CaptureViewList, PayloadView, PayloadViewList, AssessmentView, AssessmentViewList
 flask_api.add_resource(AssessmentViewList, '/api/assessments')
 flask_api.add_resource(AssessmentView, '/api/assessments/<int:id>')
@@ -117,6 +117,7 @@ flask_api.add_resource(PayloadView, '/api/payloads/<int:id>')
 
 # # Initalize all Flask Admin dashboard views
 from admin.capture.views import CaptureView
+from admin.access_log.views import AccessLogView
 from admin.payload.views import PayloadView
 from admin.user.views import UserView
 from admin.assessment.views import AssessmentView
@@ -127,6 +128,7 @@ configure_mappers()
 # # Add all Flask Admin routes
 flask_admin.add_view(PayloadView(db.session))
 flask_admin.add_view(CaptureView(db.session))
+flask_admin.add_view(AccessLogView(db.session))
 flask_admin.add_view(UserView(db.session))
 flask_admin.add_view(AssessmentView(db.session))
 flask_admin.add_view(AdministratorView(Administrator, db.session))

@@ -5,16 +5,45 @@ from flask_mail import Message
 from sleepypuppy import app, db, flask_mail, csrf_protect
 from sleepypuppy.admin.payload.models import Payload
 from sleepypuppy.admin.capture.models import Capture
+from sleepypuppy.admin.access_log.models import AccessLog
+from sleepypuppy.admin.assessment.models import Assessment
 from sleepypuppy.admin.user.models import User
 from flask import Response
 from urlparse import urlparse
 
+#
+# Break out some of this into more modular functions
+# Will log if user has more than one assessment associated
+
+#
 @app.route('/x', methods=['GET'])
 def x_collector(xss_uid=1):
     """
     shortcut for collector()
     """
-    return collector(request.args.get('u', 1))
+
+    # consider only looking up payload one time for performance
+    payload_id = request.args.get('u', 1)
+    the_payload = Payload.query.filter_by(id=int(xss_uid)).first()
+
+    for assessment_name in the_payload.assessments:
+        print assessment_name
+        the_assessment = Assessment.query.filter_by(name=str(assessment_name)).first()
+        if the_assessment.access_log_enabled:
+            try:
+                referrer = request.headers.get("Referrer", None)
+                user_agent = request.headers.get("User-Agent", None)
+                ip_address = request.remote_addr
+                log_event = AccessLog(xss_uid,referrer,user_agent,ip_address)
+
+                db.session.add(log_event)
+                db.session.commit()
+            except Exception as err:
+                print err
+        break
+    # Log for recording access log records
+    if request.args.get('u', 1):
+        return collector(request.args.get('u', 1))
 
 @app.route('/c.js', methods=['GET'])
 def collector(xss_uid=1):
@@ -32,7 +61,7 @@ def collector(xss_uid=1):
         pass 
 
     # Default render tempalte, may need to modify based on new JS ideas
-    
+
     return render_template(
         'c.js',
         xss_uid=xss_uid,

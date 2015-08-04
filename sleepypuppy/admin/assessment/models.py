@@ -14,6 +14,7 @@ class Assessment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(500))
     payloads = db.relationship("Payload", secondary=assessment_associations, backref="assessments")
+    access_log_enabled = db.Column(db.Boolean)
 
     def as_dict(self):
         """Return Assessment model as JSON object"""
