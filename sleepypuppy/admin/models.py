@@ -12,3 +12,9 @@ assessment_associations = db.Table(
     Column('assessment_id', Integer, ForeignKey('assessments.id')),
     Column('payload_id', Integer, ForeignKey('payloads.id'))
 )
+
+taxonomy = db.Table(
+    'taxonomy',
+    Column( 'javascript_id', Integer, ForeignKey( 'javascript.id' ) ),
+    Column( 'payload_id', Integer, ForeignKey( 'payloads.id' ) ),
+)

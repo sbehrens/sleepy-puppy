@@ -119,15 +119,19 @@ flask_api.add_resource(AccessLogView, '/api/access_log/<int:id>')
 # # Initalize all Flask Admin dashboard views
 from admin.capture.views import CaptureView
 from admin.access_log.views import AccessLogView
+from admin.javascript.views import JavascriptView
 from admin.payload.views import PayloadView
 from admin.user.views import UserView
 from admin.assessment.views import AssessmentView
 
+# TODO not sure if this is needed
 from sqlalchemy.orm import configure_mappers
 configure_mappers()
 
 # # Add all Flask Admin routes
+flask_admin.add_view(JavascriptView(db.session))
 flask_admin.add_view(PayloadView(db.session))
+
 flask_admin.add_view(CaptureView(db.session))
 flask_admin.add_view(AccessLogView(db.session))
 flask_admin.add_view(UserView(db.session))

@@ -29,9 +29,7 @@ class AccessLog(db.Model):
             pub_date = str(datetime.datetime.now())
         self.pub_date = pub_date
 
-    
 
     def as_dict(self):
         """Return Access Log model as JSON object"""
         return {c.name: getattr(self, c.name) for c in self.__table__.columns}
-

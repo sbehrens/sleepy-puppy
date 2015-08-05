@@ -22,10 +22,11 @@ class Payload(db.Model):
     method = db.Column(db.String(12))
     parameter = db.Column(db.String(50))
     notes = db.Column(db.String(200))
+    ordering = db.Column(db.String(200))
     snooze = db.Column(db.Boolean)
     run_once = db.Column(db.Boolean)
     assessment = db.Column(db.Integer, db.ForeignKey('assessments.id'))
-
+    #javascript = db.Column(db.Integer, db.ForeignKey('javascripts.id'))
     # When payloads are deleted, cascade the delete and remove associated captures
     captures = db.relationship("Capture", cascade="all,delete", backref="payloads")
 
@@ -40,6 +41,7 @@ class Payload(db.Model):
         payload_dict = {
             "id": self.id,
             "assessments": [i.as_dict() for i in self.assessments],
+            "javascripts": [i.as_dict() for i in self.javascripts],
             "payload": payload,
             "url": self.url,
             "method": self.method,
