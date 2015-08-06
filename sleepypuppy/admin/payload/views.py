@@ -1,23 +1,19 @@
 import os
+from sleepypuppy import app, db
 from flask.ext.admin.contrib.sqla import ModelView
 from flask.ext.admin.actions import action
 from wtforms import validators
-from wtforms.fields import SelectField, TextAreaField
-from sleepypuppy import app, db
+from wtforms.fields import SelectField, TextAreaField, SelectMultipleField
+from wtforms.widgets import TextInput
+from flask.ext.admin._compat import text_type, as_unicode
+from sleepypuppy.admin.javascript.models import Javascript
 from sleepypuppy.admin.capture.models import Capture
 from models import Payload
-from sleepypuppy.admin.javascript.models import Javascript
 from flask.ext import login
 from flask_wtf import Form
 from wtforms import fields
-from flask.ext.admin import helpers
 
-# class MyForm(Form):
-#     js_order = fields.FieldList('Name')
-
-from wtforms import widgets
-
-class Select2MultipleWidget(widgets.TextInput):
+class Select2MultipleWidget(TextInput):
     """
     (...)
 
@@ -35,11 +31,7 @@ class Select2MultipleWidget(widgets.TextInput):
         return '[' + ','.join(objects) + ']'
 
 
-
-from wtforms import fields
-from flask.ext.admin._compat import text_type, as_unicode
-
-class Select2MultipleField(fields.SelectMultipleField):
+class Select2MultipleField(SelectMultipleField):
     """
         `Select2 <https://github.com/ivaynberg/select2>`_ styled select widget.
 
@@ -124,12 +116,10 @@ class PayloadView(ModelView):
 
     def on_model_change (self, form, model, is_created = False):
         model.ordering = ','.join(str(v) for v in form.javascript_list.data)
+        print model.ordering
+        print 'on_model_change'
         db.session.add(model)
         db.session.commit()
-        # print form.javascript_list.data
-        # # for index, id in enumerate(form.javascript_list.data):
-        # #     print index, id 
-        # Payload(ordering = form.javascript_list.data)
 
     # Method to cascade delete screenshots when removing a payload
     def delete_screenshots(self, model):
@@ -203,7 +193,7 @@ class PayloadView(ModelView):
     # Check if payload has associated captures, and format column if found
     # Format payload string to include hostname
     column_formatters = dict(
-        javascripts=lambda v, c, m, p: [thing for thing in Payload.query.filter_by(id=m.id).first().ordering.split(',')]
+        javascripts=lambda v, c, m, p: [Javascript.query.filter_by(id=thing).first() for thing in Payload.query.filter_by(id=m.id).first().ordering.split(',')]
         if Payload.query.filter_by(id=m.id).first().ordering is not None else "Default",
         captured=lambda v, c, m, p: Capture.query.filter_by(payload_id=m.id).first().id
         if Capture.query.filter_by(payload_id=m.id).first() is not None else "None",
@@ -213,7 +203,7 @@ class PayloadView(ModelView):
     # Extra fields
 
     form_extra_fields = {
-    # 'page_list' name chosen to avoid name conflict with actual properties of Survey
+    # 'javascript_list' name chosen to avoid name conflict with actual properties of Survey
     'javascript_list': Select2MultipleField(
         'Javascripts',
          # choices has to be an iterable of (value, label) pairs

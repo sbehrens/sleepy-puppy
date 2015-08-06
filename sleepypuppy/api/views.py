@@ -2,6 +2,7 @@ import os
 from flask.ext.restful import Resource, reqparse
 from sqlalchemy.exc import IntegrityError
 from sleepypuppy import db, app
+from sleepypuppy.admin.javascript.models import Javascript
 from sleepypuppy.admin.payload.models import Payload
 from sleepypuppy.admin.capture.models import Capture
 from sleepypuppy.admin.assessment.models import Assessment
@@ -18,7 +19,11 @@ parser_payload.add_argument('notes', type=str, location='json')
 # Request parser for API calls to Assessment model
 parser_assessment = reqparse.RequestParser()
 parser_assessment.add_argument('name', type=str, required=False, help="Assessment Name Cannot Be Blank", location='json')
-
+# Request parser for API calls to Javascript model
+parser_javascript = reqparse.RequestParser()
+parser_javascript.add_argument('name', type=str, required=True, help="Name Cannot Be Blank",location='json')
+parser_javascript.add_argument('code', type=str, required=True, help="Code Cannot Be Blank",location='json')
+parser_javascript.add_argument('notes', type=str, required=False, location='json')
 
 class AssessmentView(Resource):
     """
@@ -190,6 +195,88 @@ class PayloadViewList(Resource):
             if a is None:
                 return {"error": "Assessment not found!"}, 500
             o.assessments.append(a)
+
+        try:
+            db.session.add(o)
+            db.session.commit()
+        except IntegrityError, exc:
+            return {"error": exc.message}, 500
+
+        return o.as_dict(), 201
+
+class JavascriptView(Resource):
+    """
+    API Provides CRUD operations for Javascripts based on id.
+
+    Methods:
+    GET
+    PUT
+    TODO: DELETE method
+    """
+    def get(self, id):
+        e = Javascript.query.filter(Javascript.id == id).first()
+        if e is not None:
+            return e.as_dict()
+        else:
+            return {}
+
+    def put(self, id):
+        args = parser_javascript.parse_args()
+        e = Javascript.query.filter(Javascript.id == id).first()
+        if e is not None:
+
+            e.name = ags["name"]
+            e.code = args["code"]
+            e.notes = args["notes"]
+        try:
+            db.session.commit()
+        except IntegrityError, exc:
+            return {"error": exc.message}, 500
+
+        return e.as_dict(), 201
+
+    # def delete(self, id):
+    #     e = Payload.query.filter(Payload.id == id).first()
+    #     if e is not None:
+    #         cascaded_captures = Capture.query.filter_by(payload_id=e.id).all()
+    #         for capture in cascaded_captures:
+    #             try:
+    #                 os.remove("uploads/{}.png".format(capture.screenshot))
+    #                 os.remove("uploads/small_{}.png".format(capture.screenshot))
+    #             except:
+    #                 pass
+    #         try:
+    #             db.session.delete(e)
+    #             db.session.commit()
+    #         except IntegrityError, exc:
+    #             return {"error": exc.message}, 500
+    #     else:
+    #         return {}
+
+    #     return e.as_dict(), 204
+
+
+class JavascriptViewList(Resource):
+    """
+    API Provides CRUD operations for Payloads.
+
+    Methods:
+    GET
+    POST
+    """
+    def get(self):
+        results = []
+        for row in Javascript.query.all():
+            results.append(row.as_dict())
+        return results
+
+    def post(self):
+
+        args = parser_javascript.parse_args()
+        o = Javascript()
+        o.name = args["name"]
+        o.code = args["code"]
+        o.notes = args["notes"]
 
         try:
             db.session.add(o)

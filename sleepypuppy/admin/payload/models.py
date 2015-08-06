@@ -1,6 +1,5 @@
 from sleepypuppy import db, app
 
-
 class Payload(db.Model):
     """
     Payload model contains the following parameters:
@@ -26,9 +25,10 @@ class Payload(db.Model):
     snooze = db.Column(db.Boolean)
     run_once = db.Column(db.Boolean)
     assessment = db.Column(db.Integer, db.ForeignKey('assessments.id'))
+    captures = db.relationship("Capture", cascade="all,delete", backref="payloads")
     #javascript = db.Column(db.Integer, db.ForeignKey('javascripts.id'))
     # When payloads are deleted, cascade the delete and remove associated captures
-    captures = db.relationship("Capture", cascade="all,delete", backref="payloads")
+    
 
     def as_dict(self):
         """

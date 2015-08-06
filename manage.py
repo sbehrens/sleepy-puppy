@@ -30,6 +30,7 @@ def create_db():
     """
     db.create_all()
 
+
 @manager.command
 def drop_db():
     """
@@ -63,6 +64,19 @@ def create_login(login):
     db.session.add(admin_user)
     db.session.commit()
     return
+
+@manager.command
+def default_login():
+    """
+    Seed the database with some inital values
+    """
+
+    admin_user = Administrator(login='admin', password='admin')
+    print 'user: ' + 'admin' + ' created!'
+    db.session.add(admin_user)
+    db.session.commit()
+    return
+
 
 from collections import namedtuple
 DefaultPayload = namedtuple('DefaultPayload', ['payload', 'url', 'method', 'parameter', 'notes'])

@@ -296,13 +296,13 @@ def get_callbacks():
             # Payload.query.filter_by(id=int(request.form['xss_uid'])).first()
             screenshot = unicode(request.form.get('screenshot', ''))
             dom = urllib.unquote(unicode(request.form.get('dom', '')))[:65535]
-
+            returns = unicode(request.form.get('returns', ''))
             # If it's a rogue capture, log it anyway.
             if assessment is None:
-                client_info = Capture("Not found", url, referrer, cookies, user_agent, 0, screenshot, dom)
+                client_info = Capture("Not found", url, referrer, cookies, user_agent, 0, screenshot, dom, returns)
             else:
                 # Create the capture with associated assessment/payload
-                client_info = Capture(assessment.id, url, referrer, cookies, user_agent, xss_uid.id, screenshot, dom)
+                client_info = Capture(assessment.id, url, referrer, cookies, user_agent, xss_uid.id, screenshot, dom, returns)
                 email_subscription_captures(xss_uid.id, url)
 
             db.session.add(client_info)

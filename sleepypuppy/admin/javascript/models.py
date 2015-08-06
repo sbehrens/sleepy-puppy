@@ -1,5 +1,6 @@
-from sleepypuppy import db, app
+from sleepypuppy import db
 from sleepypuppy.admin.models import taxonomy
+
 
 class Javascript(db.Model):
     """
@@ -17,32 +18,7 @@ class Javascript(db.Model):
     name = db.Column(db.String(500), nullable=False)
     code = db.Column(db.Text(), nullable=False)
     notes = db.Column(db.String(500))
-    payloads = db.relationship('Payload', backref='javascript', secondary=taxonomy)
-
-    # When payloads are deleted, cascade the delete and remove associated captures
-
-    # def as_dict(self):
-    #     """
-    #     Return JSON API object
-    #     """
-
-    #     # Replace $1 template with configured hostname
-    #     payload = self.payload.replace("$1", "//{}/x?u={}".format(app.config['HOSTNAME'], str(self.id)))
-
-    #     payload_dict = {
-    #         "id": self.id,
-    #         "assessments": [i.as_dict() for i in self.assessments],
-    #         "javascripts": [i.as_dict() for i in self.javascripts],
-    #         "payload": payload,
-    #         "url": self.url,
-    #         "method": self.method,
-    #         "parameter": self.parameter,
-    #         "run_once": self.run_once,
-    #         "snooze": self.snooze,
-    #         "notes": self.notes
-    #     }
-
-    #     return payload_dict
+    payloads = db.relationship("Payload", backref='javascript', secondary=taxonomy)
 
     def show_javascript_ids(self):
         """

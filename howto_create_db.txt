@@ -1,0 +1,8 @@
+Before you run python manage.py create_db:
+    In sleepypuppy/__init__.py comment out lines 125 and 135
+    python manage.py create_db
+    In sleepypuppy/__init__.py uncomment out lines 125 and 135
+    python manage.py create_bootstrap_assessment
+    python manage.py default_login
+    default login creates admin/admin user acccount
+

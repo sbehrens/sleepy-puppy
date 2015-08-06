@@ -37,6 +37,7 @@ class CaptureView(ModelView):
         'cookies',
         'user_agent',
         'dom',
+        'returns',
         'screenshot'
     )
 

@@ -1,14 +1,9 @@
-import os
 from flask.ext.admin.contrib.sqla import ModelView
-from flask.ext.admin.actions import action
-from wtforms import validators
-from wtforms.fields import SelectField, TextAreaField
-from sleepypuppy import app, db
-from sleepypuppy.admin.capture.models import Capture
 from models import Javascript
+from sleepypuppy.admin.payload.models import Payload
 from flask.ext import login
 from flask_wtf import Form
-
+from sleepypuppy import db
 
 class JavascriptView(ModelView):
     """
@@ -22,6 +17,16 @@ class JavascriptView(ModelView):
         return login.current_user.is_authenticated()
 
     form_excluded_columns = ('payloads')
+
+    def on_model_delete(self,model):
+        payloads = Payload.query.all()
+        for payload in payloads:
+            if payload.ordering is not None:
+                payload.ordering = payload.ordering.replace(str(model.id) + ",", "")
+                payload.ordering = payload.ordering.replace("," + str(model.id), "") 
+                payload.ordering = payload.ordering.replace(str(model.id), "") 
+                db.session.add(payload)
+                db.session.commit()
 
     def __init__(self, session, **kwargs):
         super(JavascriptView, self).__init__(Javascript, session, **kwargs)

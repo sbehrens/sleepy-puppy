@@ -107,10 +107,12 @@ from collector import views
 from upload import upload
 
 # # Initalize all Flask API views TODO Add access log
-from api.views import CaptureView, CaptureViewList, PayloadView, AccessLogView, AccessLogViewList, PayloadViewList, AssessmentView, AssessmentViewList
+from api.views import CaptureView, CaptureViewList, JavascriptView, JavascriptViewList, PayloadView, AccessLogView, AccessLogViewList, PayloadViewList, AssessmentView, AssessmentViewList
 flask_api.add_resource(AssessmentViewList, '/api/assessments')
 flask_api.add_resource(AssessmentView, '/api/assessments/<int:id>')
 flask_api.add_resource(CaptureViewList, '/api/captures')
+flask_api.add_resource(JavascriptView, '/api/javascript/<int:id>')
+flask_api.add_resource(JavascriptViewList, '/api/javascript')
 flask_api.add_resource(CaptureView, '/api/captures/<int:id>')
 flask_api.add_resource(PayloadViewList, '/api/payloads')
 flask_api.add_resource(PayloadView, '/api/payloads/<int:id>')
@@ -131,7 +133,6 @@ configure_mappers()
 # # Add all Flask Admin routes
 flask_admin.add_view(JavascriptView(db.session))
 flask_admin.add_view(PayloadView(db.session))
-
 flask_admin.add_view(CaptureView(db.session))
 flask_admin.add_view(AccessLogView(db.session))
 flask_admin.add_view(UserView(db.session))
