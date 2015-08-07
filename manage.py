@@ -9,10 +9,13 @@ from random import randint
 from flask_script import Command, Option
 from flask_script.commands import ShowUrls, Clean
 from flask.ext.script import Manager, Server
+from flask.ext.migrate import Migrate, MigrateCommand
 from sleepypuppy.admin.admin.models import Administrator
 from sleepypuppy import app, db
 
 manager = Manager(app)
+migrate = Migrate(app, db)
+manager.add_command('db', MigrateCommand)
 
 @manager.shell
 def make_shell_context():

@@ -28,6 +28,7 @@ setup(
         'gunicorn==19.3.0',
         'psycopg2==2.6.1',
         'boto==2.38.0',
-        'BeautifulSoup'
+        'BeautifulSoup',
+        'flask-migrate'
     ]
 )
