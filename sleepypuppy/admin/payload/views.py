@@ -28,6 +28,7 @@ class Select2MultipleWidget(TextInput):
     @staticmethod
     def json_choices (field):
         objects = ('{{"id": {}, "text": "{}"}}'.format(*c) for c in field.iter_choices())
+        print 'i am here'
         return '[' + ','.join(objects) + ']'
 
 
@@ -49,15 +50,20 @@ class Select2MultipleField(SelectMultipleField):
         )
         self.allow_blank = allow_blank
         self.blank_text = blank_text or ' '
+        self.choices = db.session.query(Javascript.id, Javascript.name).all()
 
     def iter_choices(self):
+        # moved the query here so it updates
+        choices = db.session.query(Javascript.id, Javascript.name).all()
         if self.allow_blank:
             yield (u'__None', self.blank_text, self.data is [])
 
-        for value, label in self.choices:
+
+        #for value, label in self.choices:
+        for value, label in choices:
             yield (value, label, self.coerce(value) in self.data)
 
-    def process_data(self, value):
+    def process_data(self, value): 
         if not value:
             self.data = []
         else:
@@ -194,7 +200,7 @@ class PayloadView(ModelView):
     # Format payload string to include hostname
     column_formatters = dict(
         javascripts=lambda v, c, m, p: [Javascript.query.filter_by(id=thing).first() for thing in Payload.query.filter_by(id=m.id).first().ordering.split(',')]
-        if Payload.query.filter_by(id=m.id).first().ordering is not None else "Default",
+        if Payload.query.filter_by(id=m.id).first().ordering is not None or "" else "Default",
         captured=lambda v, c, m, p: Capture.query.filter_by(payload_id=m.id).first().id
         if Capture.query.filter_by(payload_id=m.id).first() is not None else "None",
         payload=lambda v, c, m, p: m.payload.replace("$1", "//{}/x?u={}".format(app.config['HOSTNAME'], str(m.id)))
@@ -207,7 +213,7 @@ class PayloadView(ModelView):
     'javascript_list': Select2MultipleField(
         'Javascripts',
          # choices has to be an iterable of (value, label) pairs
-         choices = db.session.query(Javascript.id, Javascript.name).all(),
+         #choices = db.session.query(Javascript.id, Javascript.name).all(),
          coerce = int ),
     }
 

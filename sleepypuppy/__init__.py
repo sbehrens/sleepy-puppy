@@ -18,6 +18,7 @@ app.config.update(dict(
   PREFERRED_URL_SCHEME = 'https'
 ))
 app.debug = app.config.get('DEBUG')
+
 # Log handler functionality
 handler = RotatingFileHandler(app.config.get('LOG_FILE'), maxBytes=10000000, backupCount=100)
 handler.setFormatter(
@@ -65,7 +66,6 @@ flask_mail = Mail(app)
 from sleepypuppy.admin.admin.models import Administrator
 from sleepypuppy.admin.assessment.models import Assessment
 
-
 # The dectorat function for API token auth
 def require_appkey(view_function):
     @wraps(view_function)
@@ -100,24 +100,26 @@ flask_admin = Admin(app, 'Sleepy Puppy', index_view=MyAdminIndexView(), base_tem
 
 # Intalize the login manager for sleepy puppy
 init_login()
+
 # Import the collector which is used to collect capture information
 from collector import views
 
 # Import the screenshot upload handler
 from upload import upload
 
-# # Initalize all Flask API views TODO Add access log
+# # Initalize all Flask API views (Assessments, Captures, Javascripts, Payload, Access Log)
 from api.views import CaptureView, CaptureViewList, JavascriptView, JavascriptViewList, PayloadView, AccessLogView, AccessLogViewList, PayloadViewList, AssessmentView, AssessmentViewList
 flask_api.add_resource(AssessmentViewList, '/api/assessments')
 flask_api.add_resource(AssessmentView, '/api/assessments/<int:id>')
 flask_api.add_resource(CaptureViewList, '/api/captures')
+flask_api.add_resource(CaptureView, '/api/captures/<int:id>')
 flask_api.add_resource(JavascriptView, '/api/javascript/<int:id>')
 flask_api.add_resource(JavascriptViewList, '/api/javascript')
-flask_api.add_resource(CaptureView, '/api/captures/<int:id>')
 flask_api.add_resource(PayloadViewList, '/api/payloads')
 flask_api.add_resource(PayloadView, '/api/payloads/<int:id>')
 flask_api.add_resource(AccessLogViewList, '/api/access_log')
 flask_api.add_resource(AccessLogView, '/api/access_log/<int:id>')
+
 # # Initalize all Flask Admin dashboard views
 from admin.capture.views import CaptureView
 from admin.access_log.views import AccessLogView
@@ -126,7 +128,7 @@ from admin.payload.views import PayloadView
 from admin.user.views import UserView
 from admin.assessment.views import AssessmentView
 
-# TODO not sure if this is needed
+# Configure mappers for db associations
 from sqlalchemy.orm import configure_mappers
 configure_mappers()
 
@@ -141,11 +143,11 @@ flask_admin.add_view(AdministratorView(Administrator, db.session))
 from admin import views
 
 # Default route redirect to admin page
-
 @app.route('/')
 def index():
     return redirect('/admin', 302)
 
+# Route to serve static asset files via Flask
 @app.route('/assets/<path:filename>')
 def send_js(filename):
     print send_from_directory(app.config['ASSETS_FOLDER'], filename)

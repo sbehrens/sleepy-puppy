@@ -16,15 +16,23 @@ class JavascriptView(ModelView):
     def is_accessible(self):
         return login.current_user.is_authenticated()
 
+    # No need to show the many/many relationship for payloads
     form_excluded_columns = ('payloads')
 
+    # Excluding code from view 
+    
+    column_exclude_list = ('code')
     def on_model_delete(self,model):
+        # TODO: does this work?
         payloads = Payload.query.all()
+        print payloads
         for payload in payloads:
+
             if payload.ordering is not None:
+                print "count: {}".format(payload.ordering)
                 payload.ordering = payload.ordering.replace(str(model.id) + ",", "")
-                payload.ordering = payload.ordering.replace("," + str(model.id), "") 
-                payload.ordering = payload.ordering.replace(str(model.id), "") 
+                payload.ordering = payload.ordering.replace("," + str(model.id), "")
+                payload.ordering = payload.ordering.replace(str(model.id), "")
                 db.session.add(payload)
                 db.session.commit()
 
