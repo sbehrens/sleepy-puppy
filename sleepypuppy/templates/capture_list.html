@@ -5,6 +5,18 @@
 {% import 'admin/actions.html' as actionlib with context %}
 
 {% block head %}
+<script>
+$(function () {
+  $('[data-toggle="tooltip"]').tooltip()
+})
+</script>
+<style>
+div.tooltip-inner {
+  max-width: none;
+  white-space:pre-wrap;
+}
+
+</style>
     {{ super() }}
     {{ lib.form_css() }}
 {% endblock %}
@@ -128,6 +140,20 @@
         {% autoescape false %}
         <td><a href="/up/{{get_value(row, c)}}.png"><img src="/up/small_{{get_value(row, c)}}.png"/></a></td>
         {% endautoescape %}
+        {% elif c == 'url' %}
+        <td><a href="{{get_value(row, c)}}" target="_blank" data-toggle="tooltip" title="{{get_value(row, c)}}" style="white-space: nowrap;">
+        {% if get_value(row, c)|length > 50 %}
+            {{ (get_value(row, c)[:50] + '..') }} </a></td>
+        {% else %}
+            {{ get_value(row, c)}} </a></td>
+        {% endif %}
+        {% elif c == 'referrer' %}
+        <td><a href="{{get_value(row, c)}}" target="_blank" data-toggle="tooltip" title="{{get_value(row, c)}}" style="white-space: nowrap;">
+        {% if get_value(row, c)|length > 50 %}
+            {{ (get_value(row, c)[:50] + '..') }} </a></td>
+        {% else %}
+            {{ get_value(row, c)}} </a></td>
+        {% endif %}
         {% elif c =='cookies' and get_value(row, c) != ""-%}
         <td>
             <a href="#cookie-modal{{row.id}}" role="button" class="btn btn-default" onClick="$('#cookie-modal{{row.id}}').modal()">View Cookies</a>
@@ -211,7 +237,8 @@
     <td><b>Not found</b></td>
     {%- else -%}
 
-    <td><b><a href="/admin/payload/{{get_value(row, c)}}">{{get_value(row, c)}}</a></b></td>
+    <!-- <td><b><a href="/admin/payload/{{get_value(row, c)}}">{{get_value(row, c)}}</a></b></td> -->
+    <td><b>{{get_value(row, c)}}</b></td>
     {% endif %}
     {%- else -%}
     <td>{{ get_value(row, c) }}</td>

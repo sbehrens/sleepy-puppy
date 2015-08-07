@@ -127,6 +127,9 @@
         {% autoescape false %}
         <td><a href="/up/{{get_value(row, c)}}.png"><img src="/up/small_{{get_value(row, c)}}.png"/></a></td>
         {% endautoescape %}
+        {% elif c == 'url' %}
+        <a href="#" data-toggle="tooltip" data-original-title="FOO BAR USA">foo</a>
+                    {{ get_value(row, c) }}
         {% elif c =='cookies' and get_value(row, c) != ""-%}
         <td>
             <a href="#cookie-modal{{row.id}}" role="button" class="btn" onClick="$('#cookie-modal{{row.id}}').modal()">View Cookies</a>

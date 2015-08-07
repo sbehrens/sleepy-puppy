@@ -136,7 +136,8 @@
                     {% else %} -->
                 {% if c == 'captured' and get_value(row, c) != "None" %}
                     {% autoescape false %}
-                        <a href="/admin/capture/{{row.id}}">Yes</a>
+                        <!-- <a href="/admin/capture/{{row.id}}">Yes</a> -->
+                        Yes
                     {% endautoescape %}
                 {%- elif c == 'captured' and get_value(row, c) == "None" -%}
                     No
