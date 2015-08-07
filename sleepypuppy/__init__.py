@@ -108,7 +108,7 @@ from collector import views
 from upload import upload
 
 # # Initalize all Flask API views (Assessments, Captures, Javascripts, Payload, Access Log)
-from api.views import CaptureView, CaptureViewList, JavascriptView, JavascriptViewList, PayloadView, AccessLogView, AccessLogViewList, PayloadViewList, AssessmentView, AssessmentViewList
+from api.views import JavascriptAssociations, CaptureView, CaptureViewList, JavascriptView, JavascriptViewList, PayloadView, AccessLogView, AccessLogViewList, PayloadViewList, AssessmentView, AssessmentViewList
 flask_api.add_resource(AssessmentViewList, '/api/assessments')
 flask_api.add_resource(AssessmentView, '/api/assessments/<int:id>')
 flask_api.add_resource(CaptureViewList, '/api/captures')
@@ -119,6 +119,7 @@ flask_api.add_resource(PayloadViewList, '/api/payloads')
 flask_api.add_resource(PayloadView, '/api/payloads/<int:id>')
 flask_api.add_resource(AccessLogViewList, '/api/access_log')
 flask_api.add_resource(AccessLogView, '/api/access_log/<int:id>')
+flask_api.add_resource(JavascriptAssociations, '/api/javascript_loader/<int:id>')
 
 # # Initalize all Flask Admin dashboard views
 from admin.capture.views import CaptureView

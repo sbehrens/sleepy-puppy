@@ -204,6 +204,27 @@ class PayloadViewList(Resource):
 
         return o.as_dict(), 201
 
+
+class JavascriptAssociations(Resource):
+    from collections import OrderedDict
+    """
+    API Provides GET operations for retriving Javascripts associated with payload
+
+    Methods:
+    GET
+    """
+    def get(self, id):
+        the_list = []
+        the_payload = Payload.query.filter(Payload.id == id).first()
+        if the_payload is not None:
+            for the_javascript in the_payload.ordering.split(','):
+                #return int(the_javascript)
+                the_list.append(Javascript.query.filter_by(id=int(the_javascript)).first().as_dict())
+            return the_list
+        else:
+            return {}
+
+
 class JavascriptView(Resource):
     """
     API Provides CRUD operations for Javascripts based on id.

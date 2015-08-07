@@ -34,5 +34,10 @@ class Javascript(db.Model):
             [i.name for i in self.javascripts]
         )
         
+    def as_dict(self):
+        """Return Assessment model as JSON object"""
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+
+
     def __repr__(self):
         return str(self.name)

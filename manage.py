@@ -110,7 +110,9 @@ def create_bootstrap_assessment(name="General", add_default_payloads=True):
                 url=payload.url,
                 method=payload.method,
                 parameter=payload.parameter,
-                notes=payload.notes
+                notes=payload.notes,
+                snooze=False,
+                run_once=False
             )
             assessment.payloads.append(payload)
     db.session.add(assessment)
