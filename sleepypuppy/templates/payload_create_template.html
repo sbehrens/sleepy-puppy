@@ -30,6 +30,6 @@
 
 {% block tail %}
   {{ super() }}
-      <script src="{{ url_for('admin.static', filename='datetimepicker/bootstrap-datetimepicker.js') }}"></script>
+  <script src="{{ url_for('admin.static', filename='datetimepicker/bootstrap-datetimepicker.js') }}"></script>
   <script src="{{ admin_static.url(filename='admin/js/form.js') }}"></script>
 {% endblock %}

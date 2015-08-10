@@ -51,3 +51,6 @@ TODO
 *.org
 leepy/
 test/
+
+# sublime
+*.sublime*

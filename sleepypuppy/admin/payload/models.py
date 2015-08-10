@@ -28,7 +28,7 @@ class Payload(db.Model):
     captures = db.relationship("Capture", cascade="all,delete", backref="payloads")
     #javascript = db.Column(db.Integer, db.ForeignKey('javascripts.id'))
     # When payloads are deleted, cascade the delete and remove associated captures
-    
+
 
     def as_dict(self):
         """

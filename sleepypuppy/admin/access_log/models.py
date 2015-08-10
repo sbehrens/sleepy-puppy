@@ -1,6 +1,4 @@
-from sleepypuppy import db, bcrypt
-from sqlalchemy import event
-from os import urandom
+from sleepypuppy import db
 import datetime
 
 
@@ -8,13 +6,12 @@ class AccessLog(db.Model):
     """
     Access Log records GET requests to payloads.  This can be helpful
     for payloads that are not executing due to namespace conflicts, client
-    side controls, or other unexpected issues.  
+    side controls, or other unexpected issues.
 
 
     """
 
-    id = db.Column(db.Integer, primary_key=True)
-    payload_id = db.Column(db.Integer)
+    id = db.Column(db.Integer, primary_key=True) payload_id = db.Column(db.Integer)
     pub_date = db.Column(db.String(512), unique=False)
     referrer = db.Column(db.String(1024))
     user_agent = db.Column(db.String(512))

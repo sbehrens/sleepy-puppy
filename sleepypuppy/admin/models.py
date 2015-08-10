@@ -15,6 +15,6 @@ assessment_associations = db.Table(
 
 taxonomy = db.Table(
     'taxonomy',
-    Column( 'javascript_id', Integer, ForeignKey( 'javascript.id' ) ),
-    Column( 'payload_id', Integer, ForeignKey( 'payloads.id' ) ),
+    Column('javascript_id', Integer, ForeignKey('javascript.id')),
+    Column('payload_id', Integer, ForeignKey('payloads.id')),
 )
