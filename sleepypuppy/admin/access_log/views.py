@@ -1,8 +1,5 @@
-import os
 from flask.ext.admin.contrib.sqla import ModelView
 from wtforms.fields import SelectField, TextAreaField
-from sleepypuppy import app, db
-from sleepypuppy.admin.capture.models import Capture
 from models import AccessLog
 from flask.ext import login
 from flask_wtf import Form
@@ -24,7 +21,7 @@ class AccessLogView(ModelView):
     # Disable unnneeded CRUD operations
     can_create = False
     can_edit = False
-    
+
     # Make form use dropdown boxes, default text, required form elements
     form_overrides = dict(
         method=SelectField,

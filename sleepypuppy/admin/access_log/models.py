@@ -7,8 +7,6 @@ class AccessLog(db.Model):
     Access Log records GET requests to payloads.  This can be helpful
     for payloads that are not executing due to namespace conflicts, client
     side controls, or other unexpected issues.
-
-
     """
 
     id = db.Column(db.Integer, primary_key=True)
@@ -26,7 +24,6 @@ class AccessLog(db.Model):
         if pub_date is None:
             pub_date = str(datetime.datetime.now())
         self.pub_date = pub_date
-
 
     def as_dict(self):
         """Return Access Log model as JSON object"""

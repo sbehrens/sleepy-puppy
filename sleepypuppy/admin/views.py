@@ -7,6 +7,8 @@ from payload.models import Payload
 #
 # This is legacy code, not really documented/used
 #
+
+
 @app.route('/admin/capture/<int:id>')
 @login_required
 def show_capture(id):
@@ -22,6 +24,7 @@ def show_capture(id):
         HOSTNAME=app.config['HOSTNAME']
     )
 
+
 @app.context_processor
 def capture_facts():
     """
@@ -30,6 +33,7 @@ def capture_facts():
     return dict(
         total_captures=Capture.query.count()
     )
+
 
 @app.route('/admin/payload/<int:id>')
 @login_required

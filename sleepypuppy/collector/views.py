@@ -11,12 +11,7 @@ from sleepypuppy.admin.user.models import User
 from flask import Response
 from urlparse import urlparse
 
-#
-# Break out some of this into more modular functions
-# Will log if user has more than one assessment associated
 
-
-#
 @app.route('/x', methods=['GET'])
 def x_collector(xss_uid=1):
     """
@@ -24,7 +19,6 @@ def x_collector(xss_uid=1):
     """
 
     # consider only looking up payload one time for performance
-    payload_id = request.args.get('u', 1)
     the_payload = Payload.query.filter_by(id=int(xss_uid)).first()
 
     for assessment_name in the_payload.assessments:
@@ -35,8 +29,7 @@ def x_collector(xss_uid=1):
                 referrer = request.headers.get("Referrer", None)
                 user_agent = request.headers.get("User-Agent", None)
                 ip_address = request.remote_addr
-                log_event = AccessLog(xss_uid,referrer,user_agent,ip_address)
-
+                log_event = AccessLog(xss_uid, referrer, user_agent, ip_address)
                 db.session.add(log_event)
                 db.session.commit()
             except Exception as err:
@@ -49,6 +42,7 @@ def x_collector(xss_uid=1):
     # Log for recording access log records
     if request.args.get('u', 1):
         return collector(request.args.get('u', 1))
+
 
 @app.route('/c.js', methods=['GET'])
 def collector(xss_uid=1):
@@ -63,7 +57,7 @@ def collector(xss_uid=1):
         if the_payload.run_once and Capture.query.filter_by(payload_id=int(xss_uid)).first():
             return ''
     except:
-        pass 
+        pass
 
     # Default render tempalte, may need to modify based on new JS ideas
     headers = {'Content-Type': 'text/javascript'}
@@ -168,7 +162,6 @@ def email_subscription_accesslog(xss_uid):
                 app.logger.debug(err)
 
 
-
 def email_subscription_captures(xss_uid, url):
     """
     Email all users who are subscribed to assessments.
@@ -270,12 +263,12 @@ def get_callbacks():
     response.headers.add('Access-Control-Allow-Methods', 'GET,POST')
     response.headers.add('Access-Control-Max-Age', '21600')
     response.headers.add('Access-Control-Allow-Credentials', 'true')
-    response.headers.add('Access-Control-Allow-Headers', "Origin, X-Requested-With, Content-Type, Accept")
+    response.headers.add('Access-Control-Allow-Headers',
+                         "Origin, X-Requested-With, Content-Type, Accept")
 
     app.logger.info("Inside /callbacks")
 
     if request.method == 'POST':
-
         try:
             app.logger.info("request.form.get('xss_uid', 0): {}".format(request.form.get('xss_uid', 0)))
 
@@ -291,18 +284,35 @@ def get_callbacks():
             cookies = urllib.unquote(unicode(request.form.get('cookies', '')))
             user_agent = urllib.unquote(unicode(request.form.get('user_agent', '')))
             # TODO rename assessment to payload
-            assessment = Payload.query.filter_by(id=int(request.form.get('xss_uid', 0))).first()
-            xss_uid = assessment # what the heck
+            payload = Payload.query.filter_by(id=int(request.form.get('xss_uid', 0))).first()
+            xss_uid = payload
             # Payload.query.filter_by(id=int(request.form['xss_uid'])).first()
             screenshot = unicode(request.form.get('screenshot', ''))
             dom = urllib.unquote(unicode(request.form.get('dom', '')))[:65535]
             returns = unicode(request.form.get('returns', ''))
             # If it's a rogue capture, log it anyway.
-            if assessment is None:
-                client_info = Capture("Not found", url, referrer, cookies, user_agent, 0, screenshot, dom, returns)
+            if payload is None:
+                client_info = Capture("Not found",
+                                      url,
+                                      referrer,
+                                      cookies,
+                                      user_agent,
+                                      0,
+                                      screenshot,
+                                      dom,
+                                      returns)
             else:
                 # Create the capture with associated assessment/payload
-                client_info = Capture(assessment.id, url, referrer, cookies, user_agent, xss_uid.id, screenshot, dom, returns)
+                client_info = Capture(payload.id,
+                                      url,
+                                      referrer,
+                                      cookies,
+                                      user_agent,
+                                      xss_uid.id,
+                                      screenshot,
+                                      dom,
+                                      returns)
+                # Email users subscribed to the Payload's Assessment
                 email_subscription_captures(xss_uid.id, url)
 
             db.session.add(client_info)

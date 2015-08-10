@@ -1,8 +1,7 @@
-from sleepypuppy import db
 import datetime
-
-
+from sleepypuppy import db
 from BeautifulSoup import BeautifulSoup as bs
+
 
 class Capture(db.Model):
     """

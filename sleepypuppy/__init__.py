@@ -15,7 +15,7 @@ import flask_wtf
 app = Flask(__name__)
 app.config.from_object('config-default')
 app.config.update(dict(
-  PREFERRED_URL_SCHEME = 'https'
+    PREFERRED_URL_SCHEME='https'
 ))
 app.debug = app.config.get('DEBUG')
 
@@ -31,13 +31,13 @@ handler.setLevel(app.config.get('LOG_LEVEL'))
 app.logger.addHandler(handler)
 
 # HSTS
-#sslify = SSLify(app)
+# sslify = SSLify(app)
 
-#SSL
-from functools import wraps
-from flask import request, redirect, current_app
 
 def ssl_required(fn):
+    """
+    SSL decorator
+    """
     @wraps(fn)
     def decorated_view(*args, **kwargs):
         if app.config.get("SSL"):
@@ -45,9 +45,9 @@ def ssl_required(fn):
                 return fn(*args, **kwargs)
             else:
                 return redirect(request.url.replace("http://", "https://"))
-        
+
         return fn(*args, **kwargs)
-            
+
     return decorated_view
 
 # CSRF Protection
@@ -64,10 +64,12 @@ flask_mail = Mail(app)
 
 # Decorator for Token Auth on API Requests
 from sleepypuppy.admin.admin.models import Administrator
-from sleepypuppy.admin.assessment.models import Assessment
 
-# The dectorat function for API token auth
+
 def require_appkey(view_function):
+    """
+    Decorator for api using token based authetication
+    """
     @wraps(view_function)
     def decorated_function(*args, **kwargs):
         if request.headers.get('Token'):
@@ -83,8 +85,11 @@ def require_appkey(view_function):
 # Initalize the Flask API
 flask_api = Api(app, decorators=[csrf_protect.exempt, require_appkey])
 
-# Initalize Flask Login functionality
+
 def init_login():
+    """
+    Initalize the Flask Login manager
+    """
     login_manager = login.LoginManager()
     login_manager.init_app(app)
     login_manager.session_protection = "strong"
@@ -96,7 +101,11 @@ def init_login():
 
 # Create the Flask Admin object
 from admin.admin.views import MyAdminIndexView, AdministratorView
-flask_admin = Admin(app, 'Sleepy Puppy', index_view=MyAdminIndexView(), base_template='admin/base.html', template_mode='bootstrap3')
+flask_admin = Admin(app,
+                    'Sleepy Puppy',
+                    index_view=MyAdminIndexView(),
+                    base_template='admin/base.html',
+                    template_mode='bootstrap3')
 
 # Intalize the login manager for sleepy puppy
 init_login()
@@ -107,8 +116,9 @@ from collector import views
 # Import the screenshot upload handler
 from upload import upload
 
-# # Initalize all Flask API views (Assessments, Captures, Javascripts, Payload, Access Log)
-from api.views import JavascriptAssociations, CaptureView, CaptureViewList, JavascriptView, JavascriptViewList, PayloadView, AccessLogView, AccessLogViewList, PayloadViewList, AssessmentView, AssessmentViewList
+# Initalize all Flask API views
+from api.views import JavascriptAssociations, CaptureView, CaptureViewList, JavascriptView, JavascriptViewList, PayloadView, PayloadViewList, AccessLogView, AccessLogViewList, AssessmentView, AssessmentViewList
+
 flask_api.add_resource(AssessmentViewList, '/api/assessments')
 flask_api.add_resource(AssessmentView, '/api/assessments/<int:id>')
 flask_api.add_resource(CaptureViewList, '/api/captures')
@@ -121,13 +131,16 @@ flask_api.add_resource(AccessLogViewList, '/api/access_log')
 flask_api.add_resource(AccessLogView, '/api/access_log/<int:id>')
 flask_api.add_resource(JavascriptAssociations, '/api/javascript_loader/<int:id>')
 
-# # Initalize all Flask Admin dashboard views
+# Initalize all Flask Admin dashboard views
 from admin.capture.views import CaptureView
 from admin.access_log.views import AccessLogView
 from admin.javascript.views import JavascriptView
 from admin.payload.views import PayloadView
 from admin.user.views import UserView
 from admin.assessment.views import AssessmentView
+
+# Import the API views
+from admin import views
 
 # Configure mappers for db associations
 from sqlalchemy.orm import configure_mappers
@@ -141,16 +154,16 @@ flask_admin.add_view(AccessLogView(db.session))
 flask_admin.add_view(UserView(db.session))
 flask_admin.add_view(AssessmentView(db.session))
 flask_admin.add_view(AdministratorView(Administrator, db.session))
-from admin import views
+
 
 # Default route redirect to admin page
 @app.route('/')
 def index():
     return redirect('/admin', 302)
 
+
 # Route to serve static asset files via Flask
 @app.route('/assets/<path:filename>')
 def send_js(filename):
     print send_from_directory(app.config['ASSETS_FOLDER'], filename)
     return send_from_directory(app.config['ASSETS_FOLDER'], filename)
-

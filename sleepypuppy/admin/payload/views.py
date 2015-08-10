@@ -5,13 +5,13 @@ from flask.ext.admin.actions import action
 from wtforms import validators
 from wtforms.fields import SelectField, TextAreaField, SelectMultipleField
 from wtforms.widgets import TextInput
-from flask.ext.admin._compat import text_type, as_unicode
+from flask.ext.admin._compat import text_type
 from sleepypuppy.admin.javascript.models import Javascript
 from sleepypuppy.admin.capture.models import Capture
 from models import Payload
 from flask.ext import login
 from flask_wtf import Form
-from wtforms import fields
+
 
 class Select2MultipleWidget(TextInput):
     """
@@ -26,7 +26,7 @@ class Select2MultipleWidget(TextInput):
         return super(Select2MultipleWidget, self).__call__(field, **kwargs)
 
     @staticmethod
-    def json_choices (field):
+    def json_choices(field):
         objects = ('{{"id": {}, "text": "{}"}}'.format(*c) for c in field.iter_choices())
         print 'i am here'
         return '[' + ','.join(objects) + ']'
@@ -58,12 +58,10 @@ class Select2MultipleField(SelectMultipleField):
         if self.allow_blank:
             yield (u'__None', self.blank_text, self.data is [])
 
-
-        #for value, label in self.choices:
         for value, label in choices:
             yield (value, label, self.coerce(value) in self.data)
 
-    def process_data(self, value): 
+    def process_data(self, value):
         if not value:
             self.data = []
         else:
@@ -85,7 +83,7 @@ class Select2MultipleField(SelectMultipleField):
                         print value
                         self.data.append(self.coerce(value))
                 except ValueError:
-                    raise ValueError(self.gettext(u'Invalid Choice: could not coerce {}'.format(value)))
+                    raise ValueError(self.gettext(u'Invalid: could not coerce {}'.format(value)))
 
     def pre_validate(self, form):
         if self.allow_blank and self.data is []:
@@ -93,7 +91,7 @@ class Select2MultipleField(SelectMultipleField):
 
         super(Select2MultipleField, self).pre_validate(form)
 
-    def _value (self):
+    def _value(self):
         return ','.join(map(str, self.data))
 
 
@@ -108,19 +106,18 @@ class PayloadView(ModelView):
     def is_accessible(self):
         return login.current_user.is_authenticated()
 
-    def on_form_prefill (self, form, id):
-        # help order things in the right way.  
+    def on_form_prefill(self, form, id):
+        # help order things in the right way.
         to_process = self.session.query(Payload.ordering).filter(Payload.id == id).first()
         if to_process[0]:
             form.javascript_list.process_data(to_process[0].split(','))
 
-    # Custom templates for listing models and creating models
-    #create_template = 'payload_create_template.html'
+    # Custom templates for listing models
     list_template = 'payload_list.html'
 
     hostname = app.config['HOSTNAME']
 
-    def on_model_change (self, form, model, is_created = False):
+    def on_model_change(self, form, model, is_created=False):
         model.ordering = ','.join(str(v) for v in form.javascript_list.data)
         print model.ordering
         print 'on_model_change'
@@ -170,7 +167,7 @@ class PayloadView(ModelView):
     column_sortable_list = (
         'id',
         'assessments',
-        #'captured',
+        # 'captured',
         'payload',
         'url',
         'method',
@@ -188,14 +185,15 @@ class PayloadView(ModelView):
 
     form_excluded_columns = ('captures', 'uid')
     form_columns = ('javascript_list',
-        'payload',
-        'url',
-        'method',
-        'parameter',
-        'notes',
-        'snooze',
-        'run_once',
-        'assessments')
+                    'payload',
+                    'url',
+                    'method',
+                    'parameter',
+                    'notes',
+                    'snooze',
+                    'run_once',
+                    'assessments')
+
     # Check if payload has associated captures, and format column if found
     # Format payload string to include hostname
     column_formatters = dict(
@@ -203,18 +201,16 @@ class PayloadView(ModelView):
         if Payload.query.filter_by(id=m.id).first().ordering is not None or "" else "Default",
         captured=lambda v, c, m, p: Capture.query.filter_by(payload_id=m.id).first().id
         if Capture.query.filter_by(payload_id=m.id).first() is not None else "None",
-        payload=lambda v, c, m, p: m.payload.replace("$1", "//{}/x?u={}".format(app.config['HOSTNAME'], str(m.id)))
+        payload=lambda v, c, m, p: m.payload.replace("$1",
+                                                     "//{}/x?u={}".format(app.config['HOSTNAME'], str(m.id)))
     )
 
     # Extra fields
-
+    # 'javascript_list' name chosen to avoid name conflict
     form_extra_fields = {
-    # 'javascript_list' name chosen to avoid name conflict with actual properties of Survey
-    'javascript_list': Select2MultipleField(
-        'Javascripts',
-         # choices has to be an iterable of (value, label) pairs
-         #choices = db.session.query(Javascript.id, Javascript.name).all(),
-         coerce = int ),
+        'javascript_list': Select2MultipleField(
+            'Javascripts',
+            coerce=int),
     }
 
     # Make form use dropdown boxes, default text, required form elements

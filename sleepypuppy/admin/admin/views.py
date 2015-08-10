@@ -50,7 +50,6 @@ class MyAdminIndexView(admin.AdminIndexView):
 
         if login.current_user.is_authenticated():
             return redirect(url_for('.index'))
-        # #link = '<p>Don\'t have an account? <a href="' + url_for('.register_view') + '">Click here to register.</a></p>'
         self._template_args['form'] = form
         # #self._template_args['link'] = link
         return super(MyAdminIndexView, self).index()
@@ -95,4 +94,3 @@ class AdministratorView(ModelView):
             ]
         )
     )
-

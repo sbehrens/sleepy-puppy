@@ -20,9 +20,11 @@ class AssessmentView(ModelView):
 
     form_args = dict(
         access_log_enabled=dict(
-            description="Record requests to payloads regardless if they executed to the 'Access Log' \
+            description="Record requests to payloads regardless if \
+            they executed to the 'Access Log' \
             table for any payload associated with this assessment. \
-            Recommended if you think you may hit namespace conflicts or issues running JS payloads in victim's browser"
+            Recommended if you think you may hit namespace\
+            conflicts or issues running JS payloads in victim's browser"
         )
     )
 

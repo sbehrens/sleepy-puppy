@@ -1,9 +1,8 @@
-import os
 from setuptools import setup
 
 setup(
     name='sleepypuppy',
-    version='0.2',#'$$VERSION$$',
+    version='0.2',
     long_description=__doc__,
     packages=['sleepypuppy'],
     include_package_data=True,
@@ -13,10 +12,8 @@ setup(
         'WTForms==2.0.2',
         'Flask-Admin==1.2.0',
         'Flask-Bcrypt==0.6.2',
-        # First0.2.11
         'Flask-Login==0.2.11',
         'Flask-Mail==0.9.1',
-        #updated
         'Flask-RESTful==0.3.4',
         'Flask-SQLAlchemy==2.0',
         'Flask-Script==2.0.5',

@@ -25,9 +25,11 @@ LOG_LEVEL = "DEBUG"
 LOG_FILE = "sleepypuppy.log"
 
 # Callback configuration settings for JS captures
-HOSTNAME = '127.0.0.1:8000' # for getting the JS file.
+HOSTNAME = '127.0.0.1:8000'
+# for getting the JS file.
 CALLBACK_HOSTNAME = HOSTNAME
-CALLBACK_PROTOCOL = 'http' # http for local dev, https for deploy
+# http for local dev, https for deploy
+CALLBACK_PROTOCOL = 'http'
 
 # Email server configuration
 # SES Options:
@@ -37,12 +39,12 @@ SES_REGION = 'us-east-1'
 # SMTP Options:
 MAIL_SERVER = 'localhost'
 MAIL_PORT = 25
-MAIL_SENDER =  os.getenv('sender', 'monterey@saasmail.netflix.com')
+MAIL_SENDER = os.getenv('sender', 'monterey@saasmail.netflix.com')
 # Uncomment if your SMTP server requires authentication
-#MAIL_USE_TLS = False
-#MAIL_USE_SSL = False
-#MAIL_USERNAME = 'you'
-#MAIL_PASSWORD = 'your-password'
+# MAIL_USE_TLS = False
+# MAIL_USE_SSL = False
+# MAIL_USERNAME = 'you'
+# MAIL_PASSWORD = 'your-password'
 
 # Captures will only be logged from the following list of domains
 # By default, it will allow all domains if list is empty

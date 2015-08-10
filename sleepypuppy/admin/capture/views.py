@@ -1,3 +1,4 @@
+import os
 from flask.ext.admin.contrib.sqla import ModelView
 from flask.ext.admin.actions import action
 from flask.ext import login
@@ -5,8 +6,6 @@ from flask_wtf import Form
 from sleepypuppy import app, db
 from sleepypuppy.admin.payload.models import Payload
 from models import Capture
-
-import os
 
 
 class CaptureView(ModelView):
@@ -56,11 +55,14 @@ class CaptureView(ModelView):
 
     # Make sure payload exists otherwise it's a zombie capture
     column_formatters = dict(
-        payload=lambda v, c, m, p: str(m.payload) if m.payload is not None else "Payload Not Found!",
+        payload=lambda v, c, m, p: str(m.payload)
+        if m.payload is not None else "Payload Not Found",
         assessment=lambda v, c, m, p: str(
             Payload.query.filter_by(id=m.payload)
             .first()
-            .assessments if Payload.query.filter_by(id=m.payload).first() is not None else "Not Found"
+            .assessments
+            if Payload.query.filter_by(id=m.payload).first() is not None
+            else "Not Found"
         ).strip('[]')
     )
     form_excluded_columns = ('captures')

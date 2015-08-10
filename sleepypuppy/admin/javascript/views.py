@@ -5,6 +5,7 @@ from flask.ext import login
 from flask_wtf import Form
 from sleepypuppy import db
 
+
 class JavascriptView(ModelView):
     """
     ModelView override of Flask Admin for JavaScripts.
@@ -19,10 +20,10 @@ class JavascriptView(ModelView):
     # No need to show the many/many relationship for payloads
     form_excluded_columns = ('payloads')
 
-    # Excluding code from view 
-    
+    # Excluding code from view
     column_exclude_list = ('code')
-    def on_model_delete(self,model):
+
+    def on_model_delete(self, model):
         # TODO: does this work?
         payloads = Payload.query.all()
         print payloads
