@@ -11,7 +11,8 @@ class AccessLog(db.Model):
 
     """
 
-    id = db.Column(db.Integer, primary_key=True) payload_id = db.Column(db.Integer)
+    id = db.Column(db.Integer, primary_key=True)
+    payload_id = db.Column(db.Integer)
     pub_date = db.Column(db.String(512), unique=False)
     referrer = db.Column(db.String(1024))
     user_agent = db.Column(db.String(512))
