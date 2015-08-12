@@ -28,7 +28,7 @@ class Capture(db.Model):
     screenshot = db.Column(db.String(20), unique=False)
     pub_date = db.Column(db.String(512), unique=False)
     dom = db.Column(db.Text(), unique=False)
-    returns = db.Column(db.Text(), unique=False)
+    # returns = db.Column(db.Text(), unique=False)
     payload_id = db.Column(db.Integer, db.ForeignKey('payloads.id'))
 
     def as_dict(self):
@@ -46,7 +46,7 @@ class Capture(db.Model):
         self.screenshot = screenshot
         self.dom = bs(dom).prettify()
         self.payload_id = payload
-        self.returns = returns
+        # self.returns = returns
         # Set datetime when a capture is recieved
         if pub_date is None:
             pub_date = str(datetime.datetime.now())

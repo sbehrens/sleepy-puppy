@@ -143,6 +143,7 @@ from admin.javascript.views import JavascriptView
 from admin.payload.views import PayloadView
 from admin.user.views import UserView
 from admin.assessment.views import AssessmentView
+from admin.collector.views import GenericCollectorView
 
 # Import the API views
 from admin import views  # noqa
@@ -155,6 +156,7 @@ configure_mappers()
 flask_admin.add_view(JavascriptView(db.session))
 flask_admin.add_view(PayloadView(db.session))
 flask_admin.add_view(CaptureView(db.session))
+flask_admin.add_view(GenericCollectorView(db.session))
 flask_admin.add_view(AccessLogView(db.session))
 flask_admin.add_view(UserView(db.session))
 flask_admin.add_view(AssessmentView(db.session))

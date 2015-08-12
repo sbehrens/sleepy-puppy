@@ -30,6 +30,8 @@ class Payload(db.Model):
     # cascade the delete and remove associated captures
     captures = db.relationship("Capture", cascade="all,delete", backref="payloads")
 
+    collection = db.relationship("GenericCollector", cascade="all,delete", backref="payloads")
+
     def as_dict(self):
         """
         Return JSON API object
@@ -67,3 +69,10 @@ class Payload(db.Model):
         return ','.join(
             [i.name for i in self.assessments]
         )
+
+    # def __repr__(self):
+    #     return "{}: {}".format(str(self.id), str(self.payload.replace("$1",
+    #                                    "//{}/x?u={}".format(app.config['HOSTNAME'], str(self.id)))))
+
+    def __repr__(self):
+        return str(self.id)

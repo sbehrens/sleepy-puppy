@@ -43,7 +43,7 @@ class Javascript(db.Model):
         js_dict['code'] = render_template_string(self.code,
                                                  hostname=app.config['CALLBACK_HOSTNAME'],
                                                  callback_protocol=app.config.get('CALLBACK_PROTOCOL', 'https'),
-                                                 xss_uid=payload_id)
+                                                 payload_id=payload_id)
         return js_dict
 
 

