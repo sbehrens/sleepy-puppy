@@ -1,6 +1,6 @@
 import urllib
 from flask import request
-from flask import render_template, make_response
+from flask import render_template, make_response, render_template_string
 from flask_mail import Message
 from sleepypuppy import app, db, flask_mail, csrf_protect
 from sleepypuppy.admin.payload.models import Payload
@@ -259,12 +259,12 @@ def get_callbacks():
     Method to handle Capture creation.
     """
     response = Response()
-    response.headers.add('Access-Control-Allow-Origin', request.headers.get("Origin", None))
-    response.headers.add('Access-Control-Allow-Methods', 'GET,POST')
-    response.headers.add('Access-Control-Max-Age', '21600')
-    response.headers.add('Access-Control-Allow-Credentials', 'true')
-    response.headers.add('Access-Control-Allow-Headers',
-                         "Origin, X-Requested-With, Content-Type, Accept")
+    # response.headers.add('Access-Control-Allow-Origin', request.headers.get("Origin", None))
+    # response.headers.add('Access-Control-Allow-Methods', 'GET,POST')
+    # response.headers.add('Access-Control-Max-Age', '21600')
+    # response.headers.add('Access-Control-Allow-Credentials', 'true')
+    # response.headers.add('Access-Control-Allow-Headers',
+    #                      "Origin, X-Requested-With, Content-Type, Accept")
 
     app.logger.info("Inside /callbacks")
 

@@ -123,10 +123,9 @@
             {% endblock %}
         </td>
         {% for c, name in list_columns %}
-        {% if c == 'screenshot' %}
-        {% autoescape false %}
+        {% if c == 'screenshot' and get_value(row, c)}} != "" %}
         <td><a href="/up/{{get_value(row, c)}}.png"><img src="/up/small_{{get_value(row, c)}}.png"/></a></td>
-        {% endautoescape %}
+
         {% elif c == 'url' %}
         <a href="#" data-toggle="tooltip" data-original-title="FOO BAR USA">foo</a>
                     {{ get_value(row, c) }}

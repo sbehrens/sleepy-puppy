@@ -12,7 +12,7 @@ from flask_sslify import SSLify
 import flask_wtf
 
 # Config and App setups
-app = Flask(__name__)
+app = Flask(__name__, static_folder='static')
 app.config.from_object('config-default')
 app.config.update(dict(
     PREFERRED_URL_SCHEME='https'
@@ -72,6 +72,11 @@ def require_appkey(view_function):
     """
     @wraps(view_function)
     def decorated_function(*args, **kwargs):
+
+        # If the user is attempting to get list of javascripts
+        # return the javascripts without token auth
+        if request.method == "GET" and request.path.split('/')[2] == 'javascript_loader':
+                return view_function(*args, **kwargs)
         if request.headers.get('Token'):
             for keys in Administrator.query.all():
                 print keys.api_key
@@ -114,7 +119,7 @@ init_login()
 from collector import views
 
 # Import the screenshot upload handler
-from upload import upload
+from upload import upload  # noqa
 
 # Initalize all Flask API views
 from api.views import JavascriptAssociations, CaptureView, CaptureViewList, JavascriptView, JavascriptViewList, PayloadView, PayloadViewList, AccessLogView, AccessLogViewList, AssessmentView, AssessmentViewList
@@ -140,7 +145,7 @@ from admin.user.views import UserView
 from admin.assessment.views import AssessmentView
 
 # Import the API views
-from admin import views
+from admin import views  # noqa
 
 # Configure mappers for db associations
 from sqlalchemy.orm import configure_mappers
@@ -156,14 +161,20 @@ flask_admin.add_view(AssessmentView(db.session))
 flask_admin.add_view(AdministratorView(Administrator, db.session))
 
 
+@app.after_request
+def after_request(response):
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    response.headers.add('Access-Control-Allow-Methods', 'GET,POST')
+    return response
+
+
 # Default route redirect to admin page
 @app.route('/')
 def index():
     return redirect('/admin', 302)
 
 
-# Route to serve static asset files via Flask
-@app.route('/assets/<path:filename>')
+# # Route to serve static asset files via Flask
+@app.route('/static/<filename>')
 def send_js(filename):
-    print send_from_directory(app.config['ASSETS_FOLDER'], filename)
-    return send_from_directory(app.config['ASSETS_FOLDER'], filename)
+    return send_from_directory(app.static_folder, filename)

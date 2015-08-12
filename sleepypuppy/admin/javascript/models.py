@@ -1,5 +1,6 @@
-from sleepypuppy import db
+from sleepypuppy import db, app
 from sleepypuppy.admin.models import taxonomy
+from flask import render_template_string
 
 
 class Javascript(db.Model):
@@ -34,9 +35,17 @@ class Javascript(db.Model):
             [i.name for i in self.javascripts]
         )
 
-    def as_dict(self):
+    def as_dict(self, payload_id=1):
         """Return Assessment model as JSON object"""
-        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+        # render_template_string
+        js_dict = {}
+        js_dict['name'] = self.name
+        js_dict['code'] = render_template_string(self.code,
+                                                 hostname=app.config['CALLBACK_HOSTNAME'],
+                                                 callback_protocol=app.config.get('CALLBACK_PROTOCOL', 'https'),
+                                                 xss_uid=payload_id)
+        return js_dict
+
 
     def __repr__(self):
         return str(self.name)

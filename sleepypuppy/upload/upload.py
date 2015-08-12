@@ -22,11 +22,11 @@ def upload_file():
     Store filename by timestamp and resize file for thumbnail.
     """
     response = Response()
-    response.headers.add('Access-Control-Allow-Origin', request.headers.get("Origin", None))
-    response.headers.add('Access-Control-Allow-Methods', 'GET,POST')
-    response.headers.add('Access-Control-Max-Age', '21600')
-    response.headers.add('Access-Control-Allow-Credentials', 'true')
-    response.headers.add('Access-Control-Allow-Headers', "Origin, X-Requested-With, Content-Type, Accept")
+    # response.headers.add('Access-Control-Allow-Origin', request.headers.get("Origin", None))
+    # response.headers.add('Access-Control-Allow-Methods', 'GET,POST')
+    # response.headers.add('Access-Control-Max-Age', '21600')
+    # response.headers.add('Access-Control-Allow-Credentials', 'true')
+    # response.headers.add('Access-Control-Allow-Headers', "Origin, X-Requested-With, Content-Type, Accept")
 
     size = 256, 256
     if request.method == 'POST':

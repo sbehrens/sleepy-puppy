@@ -250,11 +250,14 @@ class JavascriptAssociations(Resource):
     def get(self, id):
         the_list = []
         the_payload = Payload.query.filter(Payload.id == id).first()
-        if the_payload is not None:
-            for the_javascript in the_payload.ordering.split(','):
-                the_list.append(Javascript.query.filter_by(id=int(the_javascript)).first().as_dict())
-            return the_list
-        else:
+        try:
+            if the_payload is not None:
+                for the_javascript in the_payload.ordering.split(','):
+                    the_list.append(Javascript.query.filter_by(id=int(the_javascript)).first().as_dict())
+                return the_list
+            else:
+                return {}
+        except:
             return {}
 
 
@@ -319,6 +322,8 @@ class JavascriptViewList(Resource):
     POST
     """
     def get(self):
+        print self
+        print dir(self)
         results = []
         for row in Javascript.query.all():
             results.append(row.as_dict())

@@ -23,6 +23,9 @@ class JavascriptView(ModelView):
     # Excluding code from view
     column_exclude_list = ('code')
 
+    # Flask create template
+    #create_template = 'create_javascript_template.html'
+
     def on_model_delete(self, model):
         # TODO: does this work?
         payloads = Payload.query.all()

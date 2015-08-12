@@ -136,10 +136,10 @@ div.tooltip-inner {
                 </td>
                 {% endblock %}
        {% for c, name in list_columns %}
-        {% if c == 'screenshot' %}
-        {% autoescape false %}
+        {% if c == 'screenshot' and get_value(row, c) != "" %}
         <td><a href="/up/{{get_value(row, c)}}.png"><img src="/up/small_{{get_value(row, c)}}.png"/></a></td>
-        {% endautoescape %}
+        {% elif c == 'screenshot' and get_value(row, c) == "" %}
+        <td>No screenshot</td>
         {% elif c == 'url' %}
         <td><a href="{{get_value(row, c)}}" target="_blank" data-toggle="tooltip" title="{{get_value(row, c)}}" style="white-space: nowrap;">
         {% if get_value(row, c)|length > 50 %}
