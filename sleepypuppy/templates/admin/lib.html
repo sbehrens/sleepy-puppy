@@ -108,9 +108,16 @@
           &nbsp;
         {%- endif %}
     </label>
+
     <div class="{{ kwargs.get('column_class', 'col-md-10') }}">
       {% set _dummy = kwargs.setdefault('class', 'form-control') %}
+      {% if field.id == "code" %}
+       <div id="editor" style="height:500px; margin-bottom:18px;">
+      {{ field(**{'style':'display:none'})|safe }}
+      <div>
+      {% else %}
       {{ field(**kwargs)|safe }}
+      {% endif %}
       {% if field.description %}
       <p class="help-block">{{ field.description }}</p>
       {% endif %}
@@ -203,6 +210,7 @@
 
 {% macro form_js() %}
   {% if config.MAPBOX_MAP_ID %}
+
   <script>
   window.MAPBOX_MAP_ID = "{{ config.MAPBOX_MAP_ID }}";
   {% if config.MAPBOX_ACCESS_TOKEN %}
@@ -217,4 +225,17 @@
   <script src="{{ admin_static.url(filename='vendor/x-editable/js/bootstrap3-editable-1.5.1.min.js') }}"></script>
   {% endif %}
   <script src="{{ admin_static.url(filename='admin/js/form-1.0.0.js') }}"></script>
+<script>
+         var textarea = $('#code');
+
+   var editor = ace.edit("editor");
+   editor.setTheme("ace/theme/twilight");
+   editor.getSession().setMode("ace/mode/javascript");
+
+   editor.getSession().on('change', function () {
+       textarea.val(editor.getSession().getValue());
+   });
+
+   textarea.val(editor.getSession().getValue());
+</script>
 {% endmacro %}

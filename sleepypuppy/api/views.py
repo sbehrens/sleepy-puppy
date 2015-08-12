@@ -7,6 +7,7 @@ from sleepypuppy.admin.payload.models import Payload
 from sleepypuppy.admin.capture.models import Capture
 from sleepypuppy.admin.assessment.models import Assessment
 from sleepypuppy.admin.access_log.models import AccessLog
+from sleepypuppy.admin.collector.models import GenericCollector
 
 # Request parser for API calls to Payload model
 parser_payload = reqparse.RequestParser()
@@ -292,25 +293,27 @@ class JavascriptView(Resource):
 
         return e.as_dict(), 201
 
-    # def delete(self, id):
-    #     e = Payload.query.filter(Payload.id == id).first()
-    #     if e is not None:
-    #         cascaded_captures = Capture.query.filter_by(payload_id=e.id).all()
-    #         for capture in cascaded_captures:
-    #             try:
-    #                 os.remove("uploads/{}.png".format(capture.screenshot))
-    #                 os.remove("uploads/small_{}.png".format(capture.screenshot))
-    #             except:
-    #                 pass
-    #         try:
-    #             db.session.delete(e)
-    #             db.session.commit()
-    #         except IntegrityError, exc:
-    #             return {"error": exc.message}, 500
-    #     else:
-    #         return {}
-
-    #     return e.as_dict(), 204
+    def delete(self, id):
+        result = Javascript.query.filter(Javascript.id == id).first()
+        if result is not None:
+            try:
+                payloads = Payload.query.all()
+                for payload in payloads:
+                    if payload.ordering is not None:
+                        payload.ordering = payload.ordering.replace(str(result.id) + ",", "")
+                        payload.ordering = payload.ordering.replace("," + str(result.id), "")
+                        payload.ordering = payload.ordering.replace(str(result.id), "")
+                        db.session.add(payload)
+                        db.session.commit()
+            except Exception as err:
+                app.logger.warn(err)
+            try:
+                db.session.delete(result)
+                db.session.commit()
+            except IntegrityError, exc:
+                return {"error": exc.message}, 500
+        else:
+            return {}
 
 
 class JavascriptViewList(Resource):
@@ -392,6 +395,51 @@ class CaptureViewList(Resource):
     def get(self):
         results = []
         for row in Capture.query.all():
+            results.append(row.as_dict())
+        return results
+
+
+class GenericCollectorView(Resource):
+    """
+    API Provides CRUD operations for Captures based on id.
+
+    Methods:
+    GET
+    DELETE
+
+    Captures should be immutable so no PUT operations are permitted.
+    """
+    def get(self, id):
+        e = GenericCollector.query.filter(GenericCollector.id == id).first()
+        if e is not None:
+            return e.as_dict()
+        else:
+            return {}
+
+    def delete(self, id):
+        capture = GenericCollector.query.filter(GenericCollector.id == id).first()
+        if capture is not None:
+            try:
+                db.session.delete(capture)
+                db.session.commit()
+            except IntegrityError, exc:
+                return {"error": exc.message}, 500
+        else:
+            return {}
+
+        return capture.as_dict(), 204
+
+
+class GenericCollectorViewList(Resource):
+    """
+    API Provides CRUD operations for Captures.
+
+    Methods:
+    GET
+    """
+    def get(self):
+        results = []
+        for row in GenericCollector.query.all():
             results.append(row.as_dict())
         return results
 

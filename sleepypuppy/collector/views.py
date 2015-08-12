@@ -34,18 +34,18 @@ def x_collector(payload_id=1):
                 db.session.add(client_info)
                 db.session.commit()
             except Exception as err:
-                print err
+                app.logger.warn(err)
             try:
                 email_subscription(payload_id, None, client_info, 'access_log')
             except Exception as err:
-                print err
+                app.logger.warn(err)
         break
     # Log for recording access log records
     if request.args.get('u', 1):
         return collector(request.args.get('u', 1))
 
 
-@app.route('/c.js', methods=['GET'])
+@app.route('/loader.js', methods=['GET'])
 def collector(payload_id=1):
     """
     Render Javascript payload with unique identifier and hosts for callback.
@@ -57,13 +57,13 @@ def collector(payload_id=1):
             return ''
         if the_payload.run_once and Capture.query.filter_by(payload_id=int(payload_id)).first():
             return ''
-    except:
-        pass
+    except Exception as err:
+        app.logger.warn(err)
 
     # Default render tempalte, may need to modify based on new JS ideas
     headers = {'Content-Type': 'text/javascript'}
     return make_response(render_template(
-        'c.js',
+        'loader.js',
         payload_id=payload_id,
         hostname=app.config['CALLBACK_HOSTNAME'],
         callback_protocol=app.config.get('CALLBACK_PROTOCOL', 'https')),
@@ -152,7 +152,6 @@ def email_subscription(payload_id, url, client_info, model):
             app.config.get('CALLBACK_PROTOCOL', 'https'),
             app.config.get('HOSTNAME', 'localhost'),
             client_info.id)
-
 
     # If there are people to email, email them that a capture was recieved
     if email_list:

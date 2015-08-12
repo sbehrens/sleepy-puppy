@@ -122,7 +122,7 @@ from collector import views
 from upload import upload  # noqa
 
 # Initalize all Flask API views
-from api.views import JavascriptAssociations, CaptureView, CaptureViewList, JavascriptView, JavascriptViewList, PayloadView, PayloadViewList, AccessLogView, AccessLogViewList, AssessmentView, AssessmentViewList
+from api.views import JavascriptAssociations, CaptureView, CaptureViewList, JavascriptView, JavascriptViewList, PayloadView, PayloadViewList, AccessLogView, AccessLogViewList, AssessmentView, AssessmentViewList, GenericCollectorView, GenericCollectorViewList  # noqa
 
 flask_api.add_resource(AssessmentViewList, '/api/assessments')
 flask_api.add_resource(AssessmentView, '/api/assessments/<int:id>')
@@ -134,6 +134,8 @@ flask_api.add_resource(PayloadViewList, '/api/payloads')
 flask_api.add_resource(PayloadView, '/api/payloads/<int:id>')
 flask_api.add_resource(AccessLogViewList, '/api/access_log')
 flask_api.add_resource(AccessLogView, '/api/access_log/<int:id>')
+flask_api.add_resource(GenericCollectorViewList, '/api/generic_collector')
+flask_api.add_resource(GenericCollectorView, '/api/generic_collector/<int:id>')
 flask_api.add_resource(JavascriptAssociations, '/api/javascript_loader/<int:id>')
 
 # Initalize all Flask Admin dashboard views

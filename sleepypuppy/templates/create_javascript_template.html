@@ -35,3 +35,14 @@ editor.getSession().setValue(textarea.val());
 editor.getSession().on('change', function(){
   textarea.val(editor.getSession().getValue());
 });
+   var textarea = $('#code');
+
+   var editor = ace.edit("editor");
+   editor.setTheme("ace/theme/twilight");
+   editor.getSession().setMode("ace/mode/javascript");
+
+   editor.getSession().on('change', function () {
+       textarea.val(editor.getSession().getValue());
+   });
+
+   textarea.val(editor.getSession().getValue());
