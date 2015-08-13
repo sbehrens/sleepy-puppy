@@ -26,8 +26,7 @@
             self.select2({
                 data:self.data().choices,
                 multiple:true,
-                sortable:true,
-                width:'220px'
+                sortable:true
             });
             self.on("change", function() {
                 $("#" + self.id + "_val").html(self.val());

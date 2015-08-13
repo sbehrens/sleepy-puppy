@@ -96,7 +96,9 @@
   {% endif %}
 </ul>
 {%- endmacro %}
-
+<!--     <div class="col-md-6">
+<div id="editor" style="height:20px; margin-bottom:1px;"><div>
+</div> -->
 {# ---------------------- Forms -------------------------- #}
 {% macro render_field(form, field, kwargs={}, caller=None) %}
   {% set direct_error = h.is_field_error(field.errors) %}
@@ -112,9 +114,8 @@
     <div class="{{ kwargs.get('column_class', 'col-md-10') }}">
       {% set _dummy = kwargs.setdefault('class', 'form-control') %}
       {% if field.id == "code" %}
-       <div id="editor" style="height:500px; margin-bottom:18px;">
-      {{ field(**{'style':'display:none'})|safe }}
-      <div>
+
+      {{ field(**kwargs)|safe }}
       {% else %}
       {{ field(**kwargs)|safe }}
       {% endif %}
@@ -225,8 +226,11 @@
   <script src="{{ admin_static.url(filename='vendor/x-editable/js/bootstrap3-editable-1.5.1.min.js') }}"></script>
   {% endif %}
   <script src="{{ admin_static.url(filename='admin/js/form-1.0.0.js') }}"></script>
-<script>
-         var textarea = $('#code');
+  <script src="../../../static/src-noconflict/ace.js"></script>
+
+  {% if request.endpoint == "javascript.create_view" or request.endpoint == "javascript.edit_view" %}
+<!-- <script>
+   var textarea = $('#code');
 
    var editor = ace.edit("editor");
    editor.setTheme("ace/theme/twilight");
@@ -236,6 +240,46 @@
        textarea.val(editor.getSession().getValue());
    });
 
+   $('form').on('click', function () {
+    console.log(editor.getSession().getValue());
+       textarea.val(editor.getSession().getValue());
+   });
+
    textarea.val(editor.getSession().getValue());
+   // console.log('beforeeditor');
+   // console.log(editor.getSession().getValue());
+   // console.log('beoretextarea');
+   // console.log(textarea.val());
+   // console.log('ack');
+
+</script> -->
+<script>
+    // Hook up ACE editor to all textareas with data-editor attribute
+    $(function () {
+        $('textarea').each(function () {
+            var textarea = $(this);
+            var mode = "javascript";
+            var editDiv = $('<div>', {
+                position: 'absolute',
+                width: '945px',
+                height: '500px',
+                'class': textarea.attr('class')
+            }).insertBefore(textarea);
+            textarea.css('display', 'none');
+            var editor = ace.edit(editDiv[0]);
+            editor.setTheme("ace/theme/twilight");
+            editor.$blockScrolling = Infinity;
+            editor.renderer.setShowGutter(true);
+            editor.getSession().setValue(textarea.val());
+            editor.getSession().setMode("ace/mode/" + mode);
+            // editor.setTheme("ace/theme/idle_fingers");
+
+            // copy back to textarea on form submit...
+            textarea.closest('form').submit(function () {
+                textarea.val(editor.getSession().getValue());
+            })
+        });
+    });
 </script>
+{% endif %}
 {% endmacro %}
