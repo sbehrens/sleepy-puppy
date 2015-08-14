@@ -36,7 +36,7 @@ function loader () {
     var return_information = [];
     $.ajax({
     type: 'GET',
-    url: "{{callback_protocol}}://{{hostname}}/api/javascript_loader/{{payload_id}}",
+    url: "{{callback_protocol}}://{{hostname}}/api/javascript_loader/{{payload}}",
     dataType: 'json',
     success: function (data) {
         $.each(data, function(index, element) {

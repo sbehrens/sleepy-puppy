@@ -36,7 +36,6 @@ class CaptureView(ModelView):
         'cookies',
         'user_agent',
         'dom',
-        # 'returns',
         'screenshot'
     )
 
@@ -68,7 +67,7 @@ class CaptureView(ModelView):
     form_excluded_columns = ('captures')
 
     # Allow columns to be searched/sorted
-    column_filters = ('id','payload_id', 'url', 'assessment')
+    column_filters = ('id', 'payload_id', 'url', 'assessment')
 
     def delete_from_s3(self, filename):
         if app.config.get('UPLOAD_SCREENSHOTS_TO_S3', False):

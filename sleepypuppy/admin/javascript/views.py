@@ -23,18 +23,18 @@ class JavascriptView(ModelView):
     # Excluding code from view
     column_exclude_list = ('code')
 
-    # Flask create template
-    #create_template = 'create_javascript_template.html'
-
     def on_model_delete(self, model):
         # TODO: does this work?
         try:
             payloads = Payload.query.all()
             for payload in payloads:
                 if payload.ordering is not None:
-                    payload.ordering = payload.ordering.replace(str(model.id) + ",", "")
-                    payload.ordering = payload.ordering.replace("," + str(model.id), "")
-                    payload.ordering = payload.ordering.replace(str(model.id), "")
+                    payload.ordering = payload.ordering.replace(
+                        str(model.id) + ",", "")
+                    payload.ordering = payload.ordering.replace(
+                        "," + str(model.id), "")
+                    payload.ordering = payload.ordering.replace(
+                        str(model.id), "")
                     db.session.add(payload)
                     db.session.commit()
         except Exception as err:

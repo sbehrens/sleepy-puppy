@@ -70,6 +70,7 @@ class Payload(db.Model):
             [i.name for i in self.assessments]
         )
 
+    # More metadata repr, but I found it too busy
     # def __repr__(self):
     #     return "{}: {}".format(str(self.id), str(self.payload.replace("$1",
     #                                    "//{}/x?u={}".format(app.config['HOSTNAME'], str(self.id)))))

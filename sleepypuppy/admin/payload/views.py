@@ -27,7 +27,8 @@ class Select2MultipleWidget(TextInput):
 
     @staticmethod
     def json_choices(field):
-        objects = ('{{"id": {}, "text": "{}"}}'.format(*c) for c in field.iter_choices())
+        objects = ('{{"id": {}, "text": "{}"}}'.format(*c)
+                   for c in field.iter_choices())
         print 'i am here'
         return '[' + ','.join(objects) + ']'
 
@@ -83,7 +84,8 @@ class Select2MultipleField(SelectMultipleField):
                         print value
                         self.data.append(self.coerce(value))
                 except ValueError:
-                    raise ValueError(self.gettext(u'Invalid: could not coerce {}'.format(value)))
+                    raise ValueError(
+                        self.gettext(u'Invalid: Please set a Javascript for this payload {}'.format(value)))
 
     def pre_validate(self, form):
         if self.allow_blank and self.data is []:
@@ -108,7 +110,8 @@ class PayloadView(ModelView):
 
     def on_form_prefill(self, form, id):
         # help order things in the right way.
-        to_process = self.session.query(Payload.ordering).filter(Payload.id == id).first()
+        to_process = self.session.query(
+            Payload.ordering).filter(Payload.id == id).first()
         if to_process[0]:
             form.javascript_list.process_data(to_process[0].split(','))
 
@@ -118,11 +121,12 @@ class PayloadView(ModelView):
     hostname = app.config['HOSTNAME']
 
     def on_model_change(self, form, model, is_created=False):
-        model.ordering = ','.join(str(v) for v in form.javascript_list.data)
-        print model.ordering
-        print 'on_model_change'
-        db.session.add(model)
-        db.session.commit()
+        try:
+            model.ordering = ','.join(str(v) for v in form.javascript_list.data)
+            db.session.add(model)
+            db.session.commit()
+        except Exception as err:
+            app.logger.warn(err)
 
     # Method to cascade delete screenshots when removing a payload
     def delete_screenshots(self, model):
@@ -138,16 +142,21 @@ class PayloadView(ModelView):
     @action('delete', 'Delete', 'Are you sure you want to delete?')
     def action_delete(self, items):
         for record in items:
-            cascaded_captures = Capture.query.filter_by(payload_id=record).all()
+            cascaded_captures = Capture.query.filter_by(
+                payload_id=record).all()
             for capture in cascaded_captures:
                 try:
                     os.remove("uploads/{}.png".format(capture.screenshot))
-                    os.remove("uploads/small_{}.png".format(capture.screenshot))
+                    os.remove(
+                        "uploads/small_{}.png".format(capture.screenshot))
                 except:
                     pass
-            page = Payload.query.get(record)
-            db.session.delete(page)
-            db.session.commit()
+            try:
+                page = Payload.query.get(record)
+                db.session.delete(page)
+                db.session.commit()
+            except Exception as err:
+                app.logger.warn(err)
 
     # Column tweaks
     column_list = (
@@ -167,7 +176,6 @@ class PayloadView(ModelView):
     column_sortable_list = (
         'id',
         'assessments',
-        # 'captured',
         'payload',
         'url',
         'method',
@@ -197,9 +205,11 @@ class PayloadView(ModelView):
     # Check if payload has associated captures, and format column if found
     # Format payload string to include hostname
     column_formatters = dict(
-        javascripts=lambda v, c, m, p: [Javascript.query.filter_by(id=thing).first() for thing in Payload.query.filter_by(id=m.id).first().ordering.split(',')]
+        javascripts=lambda v, c, m, p: [Javascript.query.filter_by(id=thing).first(
+        ) for thing in Payload.query.filter_by(id=m.id).first().ordering.split(',')]
         if Payload.query.filter_by(id=m.id).first().ordering is not None or "" else "Default",
-        captured=lambda v, c, m, p: Capture.query.filter_by(payload_id=m.id).first().id
+        captured=lambda v, c, m, p: Capture.query.filter_by(
+            payload_id=m.id).first().id
         if Capture.query.filter_by(payload_id=m.id).first() is not None else "None",
         payload=lambda v, c, m, p: m.payload.replace("$1",
                                                      "//{}/x?u={}".format(app.config['HOSTNAME'], str(m.id)))
@@ -221,7 +231,8 @@ class PayloadView(ModelView):
 
     form_args = dict(
         method=dict(
-            choices=[('GET', 'GET'), ('POST', 'POST'), ('PUT', 'PUT'), ('DELETE', 'DELETE')]
+            choices=[('GET', 'GET'), ('POST', 'POST'),
+                     ('PUT', 'PUT'), ('DELETE', 'DELETE')]
         ),
         payload=dict(
             description="Use $1 as a placeholder for the Javascript URL.",

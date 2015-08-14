@@ -14,7 +14,7 @@ from urlparse import urlparse
 
 
 @app.route('/x', methods=['GET'])
-def x_collector(payload_id=1):
+def x_collector(payload=1):
     """
     Determine the payload assocaited with the request.
     If accesslog is enabled for the payload, record the event
@@ -22,7 +22,7 @@ def x_collector(payload_id=1):
     """
 
     # consider only looking up payload one time for performance
-    the_payload = Payload.query.filter_by(id=int(payload_id)).first()
+    the_payload = Payload.query.filter_by(id=int(payload)).first()
 
     for assessment_name in the_payload.assessments:
         print assessment_name
@@ -34,13 +34,13 @@ def x_collector(payload_id=1):
                 user_agent = request.headers.get("User-Agent", None)
                 ip_address = request.remote_addr
                 client_info = AccessLog(
-                    payload_id, referrer, user_agent, ip_address)
+                    payload, referrer, user_agent, ip_address)
                 db.session.add(client_info)
                 db.session.commit()
             except Exception as err:
                 app.logger.warn(err)
             try:
-                email_subscription(payload_id, None, client_info, 'access_log')
+                email_subscription(payload, None, client_info, 'access_log')
             except Exception as err:
                 app.logger.warn(err)
         break
@@ -50,28 +50,28 @@ def x_collector(payload_id=1):
 
 
 @app.route('/loader.js', methods=['GET'])
-def collector(payload_id=1):
+def collector(payload=1):
     """
     Render Javascript payload with unique identifier and hosts for callback.
     Enforce snooze and run_once directives.
     """
-    payload_id = request.args.get('u', 1)
+    payload = request.args.get('u', 1)
     try:
-        the_payload = Payload.query.filter_by(id=int(payload_id)).first()
+        the_payload = Payload.query.filter_by(id=int(payload)).first()
         if the_payload.snooze:
             return ''
-        if the_payload.run_once and Capture.query.filter_by(payload_id=int(payload_id)).first():
+        if the_payload.run_once and Capture.query.filter_by(payload=int(payload)).first():
             return ''
     except Exception as err:
         app.logger.warn(err)
 
-    # Render the template and include payload_id, hostname, callback_protocol.
+    # Render the template and include payload, hostname, callback_protocol.
     # If you need to expose additiional server side
     # information for your JavaScripts, do it here.
     headers = {'Content-Type': 'text/javascript'}
     return make_response(render_template(
         'loader.js',
-        payload_id=payload_id,
+        payload=payload,
         hostname=app.config['CALLBACK_HOSTNAME'],
         callback_protocol=app.config.get('CALLBACK_PROTOCOL', 'https')),
         200,
@@ -79,12 +79,12 @@ def collector(payload_id=1):
     )
 
 
-def email_subscription(payload_id, url, client_info, model):
+def email_subscription(payload, url, client_info, model):
     """
     Email notifications for captures, generic collections, and access log
     """
     email_list = []
-    notify_jobs = Payload.query.filter_by(id=payload_id).first()
+    notify_jobs = Payload.query.filter_by(id=payload).first()
     user_notify = User.query.all()
     for user in user_notify:
         user_subscriptions = []
@@ -218,7 +218,7 @@ def get_generic_callback():
 
     Expects
     Method:          POST
-    Data:            payload_id, javascript_name, data
+    Data:            payload, javascript_name, data
     Optional Data:   referrer, url
     """
     response = Response()
@@ -227,8 +227,8 @@ def get_generic_callback():
 
     if request.method == 'POST':
         try:
-            app.logger.info("request.form.get('payload_id', 0): {}".format(
-                request.form.get('payload_id', 0)))
+            app.logger.info("request.form.get('payload', 0): {}".format(
+                request.form.get('payload', 0)))
 
             javascript_name = urllib.unquote(
                 unicode(request.form.get('javascript_name', '')))
@@ -251,7 +251,7 @@ def get_generic_callback():
             data = urllib.unquote(unicode(request.form.get('data', '')))
 
             payload = Payload.query.filter_by(
-                id=int(request.form.get('payload_id', 0))).first()
+                id=int(request.form.get('payload', 0))).first()
 
             # If it's a rogue capture, log it anyway.
             if payload is None:
@@ -289,7 +289,7 @@ def get_callbacks():
     If you need to modify the default captures, provide the following:
 
     Method:   POST
-    Data:     assessment(payload.id will work here), url, referrer, cookies, user_agent, payload_id,
+    Data:     assessment(payload.id will work here), url, referrer, cookies, user_agent, payload,
               screenshot, dom
     """
     response = Response()
@@ -298,8 +298,8 @@ def get_callbacks():
 
     if request.method == 'POST':
         try:
-            app.logger.info("request.form.get('payload_id', 0): {}".format(
-                request.form.get('payload_id', 0)))
+            app.logger.info("request.form.get('payload', 0): {}".format(
+                request.form.get('payload', 0)))
 
             url = urllib.unquote(unicode(request.form.get('uri', '')))
 
@@ -317,7 +317,7 @@ def get_callbacks():
                 unicode(request.form.get('user_agent', '')))
             # TODO rename assessment to payload
             payload = Payload.query.filter_by(
-                id=int(request.form.get('payload_id', 0))).first()
+                id=int(request.form.get('payload', 0))).first()
             screenshot = unicode(request.form.get('screenshot', ''))
             dom = urllib.unquote(unicode(request.form.get('dom', '')))[:65535]
             # If it's a rogue capture, log it anyway.
@@ -344,7 +344,7 @@ def get_callbacks():
             db.session.add(client_info)
             db.session.commit()
             # Email users subscribed to the Payload's Assessment
-            email_subscription(payload_id.id, url, client_info, 'capture')
+            email_subscription(payload.id, url, client_info, 'capture')
         except Exception as e:
             app.logger.warn(
                 "Exception in /callbacks {}\n\n{}".format(Exception, str(e)))

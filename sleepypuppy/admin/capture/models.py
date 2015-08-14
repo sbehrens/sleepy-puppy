@@ -45,7 +45,6 @@ class Capture(db.Model):
         self.screenshot = screenshot
         self.dom = bs(dom).prettify()
         self.payload_id = payload
-        # self.returns = returns
         # Set datetime when a capture is recieved
         if pub_date is None:
             pub_date = str(datetime.datetime.now())

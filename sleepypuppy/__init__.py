@@ -10,6 +10,7 @@ from functools import wraps
 from flask.ext.sqlalchemy import SQLAlchemy
 from flask_sslify import SSLify
 import flask_wtf
+import os
 
 # Config and App setups
 app = Flask(__name__, static_folder='static')
@@ -182,3 +183,9 @@ def index():
 @app.route('/static/<filename>')
 def send_js(filename):
     return send_from_directory(app.static_folder, filename)
+
+
+@app.route('/favicon.ico')
+def favicon():
+    return send_from_directory(os.path.join(app.root_path, 'static'),
+                               'favicon.ico', mimetype='image/vnd.microsoft.icon')

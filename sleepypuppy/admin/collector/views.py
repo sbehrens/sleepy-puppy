@@ -24,25 +24,25 @@ class GenericCollectorView(ModelView):
     list_template = 'generic_list.html'
     column_list = (
         'pub_date',
-        'payload_id',
+        'payload',
         'assessment',
         'javascript_name',
         'url',
         'referrer',
         'data'
     )
-    column_filters = ('id', 'payload_id', 'javascript_name', 'url', 'referrer')
+    column_filters = ('id', 'payload', 'javascript_name', 'url', 'referrer')
 
     column_sortable_list = (
         'pub_date',
-        'payload_id',
+        'payload',
         'javascript_name',
         'url',
         'referrer'
     )
 
     column_formatters = dict(
-        payload_id=lambda v, c, m, p: str(m.payloads)
+        payload=lambda v, c, m, p: str(m.payloads)
         if m.payloads is not None else "Payload Not Found",
         assessment=lambda v, c, m, p: str(
             Payload.query.filter_by(id=m.payloads.id)

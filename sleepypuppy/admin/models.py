@@ -7,18 +7,12 @@ user_associations = db.Table(
     Column('user_id', Integer, ForeignKey('users.id')),
     Column('assessment_id', Integer, ForeignKey('assessments.id')),
 )
+
 assessment_associations = db.Table(
     'assessment_associations',
     Column('assessment_id', Integer, ForeignKey('assessments.id')),
     Column('payload_id', Integer, ForeignKey('payloads.id'))
 )
-
-# Remove
-# collection_associations = db.Table(
-#     'collection_associations',
-#     Column('collection_id', Integer, ForeignKey('collection.id')),
-#     Column('payload_id', Integer, ForeignKey('payloads.id')),
-# )
 
 taxonomy = db.Table(
     'taxonomy',

@@ -4,6 +4,7 @@ from flask import render_template_string
 
 
 class Javascript(db.Model):
+
     """
     Javascript model contains the following parameters:
 
@@ -19,7 +20,8 @@ class Javascript(db.Model):
     name = db.Column(db.String(500), nullable=False)
     code = db.Column(db.Text(), nullable=False)
     notes = db.Column(db.String(500))
-    payloads = db.relationship("Payload", backref='javascript', secondary=taxonomy)
+    payloads = db.relationship(
+        "Payload", backref='javascript', secondary=taxonomy)
 
     def show_javascript_ids(self):
         """
@@ -35,17 +37,23 @@ class Javascript(db.Model):
             [i.name for i in self.javascripts]
         )
 
-    def as_dict(self, payload_id=1):
-        """Return Assessment model as JSON object"""
-        # render_template_string
+    def as_dict(self, payload=1):
+        """
+        Return Assessment model as JSON object
+
+        If you need to expose addtional variables to your Javascript
+        templates, this is the place to do it.
+        """
+
         js_dict = {}
         js_dict['name'] = self.name
         js_dict['code'] = render_template_string(self.code,
-                                                 hostname=app.config['CALLBACK_HOSTNAME'],
-                                                 callback_protocol=app.config.get('CALLBACK_PROTOCOL', 'https'),
-                                                 payload_id=payload_id)
+                                                 hostname=app.config[
+                                                     'CALLBACK_HOSTNAME'],
+                                                 callback_protocol=app.config.get(
+                                                     'CALLBACK_PROTOCOL', 'https'),
+                                                 payload=payload)
         return js_dict
-
 
     def __repr__(self):
         return str(self.name)

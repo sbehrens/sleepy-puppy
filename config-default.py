@@ -16,7 +16,6 @@ SQLALCHEMY_DATABASE_URI = os.getenv('sleepypuppy_db', 'sqlite:////tmp/sleepy-db.
 # Screenshot storage configuration settings
 UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'uploads')
 ASSETS_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'sleepypuppy/assets')
-print ASSETS_FOLDER
 UPLOAD_SCREENSHOTS_TO_S3 = False
 S3_BUCKET = ""
 S3_FILES_PREFIX = "sleepypuppy"

@@ -5,8 +5,10 @@ import os
 from PIL import Image
 from flask import Response
 
-# Only allow png extensions, which is the filetype we generate using HTML5 canvas.
+# Only allow png extensions, which is the filetype we generate using HTML5
+# canvas.
 ALLOWED_EXTENSIONS = set(['png'])
+
 
 def allowed_file(filename):
     """
@@ -15,6 +17,7 @@ def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
 
+
 @csrf_protect.exempt
 @app.route('/up', methods=['GET', 'POST'])
 def upload_file():
@@ -22,11 +25,6 @@ def upload_file():
     Store filename by timestamp and resize file for thumbnail.
     """
     response = Response()
-    # response.headers.add('Access-Control-Allow-Origin', request.headers.get("Origin", None))
-    # response.headers.add('Access-Control-Allow-Methods', 'GET,POST')
-    # response.headers.add('Access-Control-Max-Age', '21600')
-    # response.headers.add('Access-Control-Allow-Credentials', 'true')
-    # response.headers.add('Access-Control-Allow-Headers', "Origin, X-Requested-With, Content-Type, Accept")
 
     size = 256, 256
     if request.method == 'POST':
@@ -39,7 +37,8 @@ def upload_file():
                 os.makedirs(app.config['UPLOAD_FOLDER'])
 
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            im = Image.open(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            im = Image.open(
+                os.path.join(app.config['UPLOAD_FOLDER'], filename))
             im.thumbnail(size, Image.ANTIALIAS)
             im.save(app.config['UPLOAD_FOLDER'] + '/small_' + filename, "PNG")
             _upload_to_s3(filename)
@@ -48,6 +47,9 @@ def upload_file():
 
 
 def _upload_to_s3(filename):
+    """
+    If configured, store screenshots in S3
+    """
     if not app.config.get('UPLOAD_SCREENSHOTS_TO_S3', False):
         return
 
@@ -99,7 +101,7 @@ def uploaded_file(filename):
         from flask import redirect
         conn = boto.connect_s3()
         url = conn.generate_url(
-            expires_in=long(60*60*2),  # 2 hour expiry
+            expires_in=long(60 * 60 * 2),  # 2 hour expiry
             method='GET',
             bucket=app.config['S3_BUCKET'],
             key='{}/{}'.format(

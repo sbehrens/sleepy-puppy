@@ -61,7 +61,7 @@ parser_javascript.add_argument('notes',
 
 class AssessmentView(Resource):
     """
-    API Provides CRUD operations for Specific Assessment based on id.
+    API Provides CRUD operations for a specific Assessment based on id.
 
     Methods:
     GET
@@ -89,6 +89,7 @@ class AssessmentView(Resource):
         try:
             db.session.commit()
         except IntegrityError, exc:
+            app.logger.warn(exc.message)
             return {"error": exc.message}, 500
 
         return e.as_dict(), 201
@@ -103,6 +104,7 @@ class AssessmentView(Resource):
                 db.session.delete(e)
                 db.session.commit()
             except IntegrityError, exc:
+                app.logger.warn(exc.message)
                 return {"error": exc.message}, 500
         else:
             return {}
@@ -133,6 +135,7 @@ class AssessmentViewList(Resource):
             db.session.add(o)
             db.session.commit()
         except IntegrityError, exc:
+            app.logger.warn(exc.message)
             return {"error": exc.message}, 500
 
         return o.as_dict(), 201
@@ -176,6 +179,7 @@ class PayloadView(Resource):
         try:
             db.session.commit()
         except IntegrityError, exc:
+            app.logger.warn(exc.message)
             return {"error": exc.message}, 500
 
         return e.as_dict(), 201
@@ -194,6 +198,7 @@ class PayloadView(Resource):
                 db.session.delete(e)
                 db.session.commit()
             except IntegrityError, exc:
+                app.logger.warn(exc.message)
                 return {"error": exc.message}, 500
         else:
             return {}
@@ -236,6 +241,7 @@ class PayloadViewList(Resource):
             db.session.add(o)
             db.session.commit()
         except IntegrityError, exc:
+            app.logger.warn(exc.message)
             return {"error": exc.message}, 500
 
         return o.as_dict(), 201
@@ -269,7 +275,7 @@ class JavascriptView(Resource):
     Methods:
     GET
     PUT
-    TODO: DELETE method
+    DELETE
     """
     def get(self, id):
         e = Javascript.query.filter(Javascript.id == id).first()
@@ -289,6 +295,7 @@ class JavascriptView(Resource):
         try:
             db.session.commit()
         except IntegrityError, exc:
+            app.logger.warn(exc.message)
             return {"error": exc.message}, 500
 
         return e.as_dict(), 201
@@ -311,6 +318,7 @@ class JavascriptView(Resource):
                 db.session.delete(result)
                 db.session.commit()
             except IntegrityError, exc:
+                app.logger.warn(exc.message)
                 return {"error": exc.message}, 500
         else:
             return {}
@@ -318,15 +326,13 @@ class JavascriptView(Resource):
 
 class JavascriptViewList(Resource):
     """
-    API Provides CRUD operations for Payloads.
+    API Provides CRUD operations for Javascripts.
 
     Methods:
     GET
     POST
     """
     def get(self):
-        print self
-        print dir(self)
         results = []
         for row in Javascript.query.all():
             results.append(row.as_dict())
@@ -344,6 +350,7 @@ class JavascriptViewList(Resource):
             db.session.add(o)
             db.session.commit()
         except IntegrityError, exc:
+            app.logger.warn(exc.message)
             return {"error": exc.message}, 500
 
         return o.as_dict(), 201
@@ -378,6 +385,7 @@ class CaptureView(Resource):
                 db.session.delete(capture)
                 db.session.commit()
             except IntegrityError, exc:
+                app.logger.warn(exc.message)
                 return {"error": exc.message}, 500
         else:
             return {}
@@ -423,6 +431,7 @@ class GenericCollectorView(Resource):
                 db.session.delete(capture)
                 db.session.commit()
             except IntegrityError, exc:
+                app.logger.warn(exc.message)
                 return {"error": exc.message}, 500
         else:
             return {}
@@ -468,6 +477,7 @@ class AccessLogView(Resource):
                 db.session.delete(access_log)
                 db.session.commit()
             except IntegrityError, exc:
+                app.logger.warn(exc.message)
                 return {"error": exc.message}, 500
         else:
             return {}
