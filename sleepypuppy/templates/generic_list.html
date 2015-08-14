@@ -135,154 +135,64 @@ div.tooltip-inner {
                     {% endblock %}
                 </td>
                 {% endblock %}
-       {% for c, name in list_columns %}
-        {% if c == 'screenshot' and get_value(row, c) != "" %}
-        <td><a href="/up/{{get_value(row, c)}}.png"><img src="/up/small_{{get_value(row, c)}}.png"/></a></td>
-        {% elif c == 'screenshot' and get_value(row, c) == "" %}
-        <td>No screenshot</td>
-        {% elif c == 'url' %}
-        <td><a href="{{get_value(row, c)}}" target="_blank" data-toggle="tooltip" title="{{get_value(row, c)}}" style="white-space: nowrap;">
-        {% if get_value(row, c)|length > 50 %}
-            {{ (get_value(row, c)[:50] + '..') }} </a></td>
+                {% for c, name in list_columns %}
+                    <td class="col-{{c}}">
+                    {% if admin_view.is_editable(c) %}
+                        {% if form.csrf_token %}
+                        {{ form[c](pk=get_pk_value(row), value=get_value(row, c), csrf=form.csrf_token._value()) }}
+                        {% else %}
+                        {{ form[c](pk=get_pk_value(row), value=get_value(row, c)) }}
+                        {% endif %}
+                    {% else %}
+                        {% if c == 'url' %}
+                            <a href="{{get_value(row, c)}}" target="_blank" data-toggle="tooltip" title="{{get_value(row, c)}}" style="white-space: nowrap;">
+                            {% if get_value(row, c)|length > 50 %}
+                                {{ (get_value(row, c)[:50] + '..') }} </a>
+                            {% else %}
+                                {{ get_value(row, c)}} </a>
+                            {% endif %}
+                        {% elif c == 'referrer' %}
+                            <a href="{{get_value(row, c)}}" target="_blank" data-toggle="tooltip" title="{{get_value(row, c)}}" style="white-space: nowrap;">
+                            {% if get_value(row, c)|length > 50 %}
+                                {{ (get_value(row, c)[:50] + '..') }} </a></td>
+                            {% else %}
+                                {{ get_value(row, c)}} </a></td>
+                            {% endif %}
+                        {% else %}
+                        {{ get_value(row, c) }}
+                     {% endif %}
+                    {% endif %}
+                    </td>
+                {% endfor %}
+            {% endblock %}
+        </tr>
         {% else %}
-            {{ get_value(row, c)}} </a></td>
-        {% endif %}
-        {% elif c == 'referrer' %}
-        <td><a href="{{get_value(row, c)}}" target="_blank" data-toggle="tooltip" title="{{get_value(row, c)}}" style="white-space: nowrap;">
-        {% if get_value(row, c)|length > 50 %}
-            {{ (get_value(row, c)[:50] + '..') }} </a></td>
-        {% else %}
-            {{ get_value(row, c)}} </a></td>
-        {% endif %}
-        {% elif c =='cookies' and get_value(row, c) != ""-%}
-        <td>
-            <a href="#cookie-modal{{row.id}}" role="button" class="btn btn-default" onClick="$('#cookie-modal{{row.id}}').modal()">View Cookies</a>
-
-            <div id="cookie-modal{{row.id}}" class="modal fade" tabindex="-1" role="dialog"  aria-labelledby="cookie-modalLabel{{row.id}}">
-                <div class="modal-dialog" role="document">
-                <div class="modal-content">
-              <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                <h3 id="cookie-modalLabel{{row.id}}">Cookies</h3>
-            </div>
-            <div class="modal-body">
-                <table class="table table-striped table-bordered" style="table-layout: fixed;word-wrap: break-word;">
-                  <thead>
-                    <tr>
-                        <th>Cookie</th>
-                        <th>Value</th>
-                    </tr>
-                </thead>
-                <tdbody>
-                    {% set count = 1 %}
-                    {% for cookies in get_value(row, c).split('; ') %}
-                    {% set count = loop.index %}
-                    <tr>
-                        <td>
-                            {% set cookie = cookies.split('=', 1)%}
-                            {{cookie[0]}}
-                        </td>
-                        <td>
-                            {{cookie[1]}}
-                        </td>
-                        <tr>
-                            {% endfor %}
-                        </tdbody>
-                    </table>
+        <tr>
+            <td colspan="999">
+                {% block empty_list_message %}
+                <div class="text-center">
+                    {{ admin_view.get_empty_list_message() }}
                 </div>
-                <div class="modal-footer">
-                    <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">Close</button>
-
-                </div>
-                </div>
-                </div>
-            </div>
-            {% elif c =='dom' and get_value(row, c) != "" -%}
-            <td>
-               <!-- modal tigger -->
-                <a href="#dom-modal{{row.id}}" role="button" class="btn btn-default" onClick="$('#dom-modal{{row.id}}').modal()">View Dom</a>
-
-                <div id="dom-modal{{row.id}}" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dom-modalLabel{{row.id}}">
-                  <div class="modal-dialog" role="document">
-                  <div class="modal-content">
-                  <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                    <h3 id="dom-modalLabel{{row.id}}">Dom</h3>
-                </div>
-                <div class="modal-body">
-                   <pre id="dom{{row.id}}"class="prettyprint">
-                    {{get_value(row,c)}}
-                </pre>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">Close</button>
-            </div>
-            </div>
-            </div>
-        </div>
-
-        {% autoescape false %}
-
-        <script type="text/javascript" defer='defer'>
-        $(document).ready(function () {
-          $('#dom{{row.id}}').highlight('//{{admin_view.hostname}}/x?u=');
-          $('#dom{{row.id}}').highlight('//{{admin_view.hostname}}/c.js?u=');
-          $('#dom{{row.id}}').highlight('//{{admin_view.hostname}}/');
-      });
-        </script>
-        {% endautoescape %}
-    </td>
-    {%- elif c == 'payload' -%}
-    {%- if get_value(row,c) == "None" -%}
-    <td><b>Not found</b></td>
-    {%- else -%}
-
-    <!-- <td><b><a href="/admin/payload/{{get_value(row, c)}}">{{get_value(row, c)}}</a></b></td> -->
-    <td><b>{{get_value(row, c)}}</b></td>
+                {% endblock %}
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% block list_pager %}
+    {% if num_pages is not none %}
+    {{ lib.pager(page, num_pages, pager_url) }}
+    {% else %}
+    {{ lib.simple_pager(page, data|length == page_size, pager_url) }}
     {% endif %}
-    {%- else -%}
-    <td>{{ get_value(row, c) }}</td>
-    {% endif %}
-    {% endfor %}
     {% endblock %}
-</tr>
-{% else %}
-<tr>
-    <td colspan="999">
-        {% block empty_list_message %}
-        <div class="text-center">
-            {{ admin_view.get_empty_list_message() }}
-        </div>
-        {% endblock %}
-    </td>
-</tr>
-{% endfor %}
-</table>
-{{ lib.pager(page, num_pages, pager_url) }}
-{% endblock %}
+    {% endblock %}
 
-{{ actionlib.form(actions, url_for('.action_view')) }}
+    {{ actionlib.form(actions, get_url('.action_view')) }}
 {% endblock %}
 
 {% block tail %}
-{{ super() }}
-
-
-<script src="{{ admin_static.url(filename='admin/js/form-1.0.0.js') }}"></script>
-
-<script src="{{ url_for('static', filename='run_prettify.js')}}"></script>
-<script src="{{ url_for('static', filename='jquery.highlight-3.js')}}"></script>
-<script src="{{ admin_static.url(filename='admin/js/filters-1.0.0.js') }}"></script>
-
-
-
-
-
-
-
-
-
-
+    {{ super() }}
+    <script src="{{ admin_static.url(filename='admin/js/filters-1.0.0.js') }}"></script>
     {{ lib.form_js() }}
 
     {{ actionlib.script(_gettext('Please select at least one record.'),

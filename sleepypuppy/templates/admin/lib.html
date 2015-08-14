@@ -229,57 +229,34 @@
   <script src="../../../static/src-noconflict/ace.js"></script>
 
   {% if request.endpoint == "javascript.create_view" or request.endpoint == "javascript.edit_view" %}
-<!-- <script>
-   var textarea = $('#code');
+  <script>
+      // Hook up ACE editor to all textareas with data-editor attribute
+      $(function () {
+          $('textarea').each(function () {
+              var textarea = $(this);
+              var mode = "javascript";
+              var editDiv = $('<div>', {
+                  position: 'absolute',
+                  width: '945px',
+                  height: '500px',
+                  'class': textarea.attr('class')
+              }).insertBefore(textarea);
+              textarea.css('display', 'none');
+              var editor = ace.edit(editDiv[0]);
+              editor.setTheme("ace/theme/twilight");
+              editor.$blockScrolling = Infinity;
+              editor.renderer.setShowGutter(true);
+              editor.getSession().setUseWorker(false);
+              editor.getSession().setValue(textarea.val());
+              editor.getSession().setMode("ace/mode/" + mode);
+              // editor.setTheme("ace/theme/idle_fingers");
 
-   var editor = ace.edit("editor");
-   editor.setTheme("ace/theme/twilight");
-   editor.getSession().setMode("ace/mode/javascript");
-
-   editor.getSession().on('change', function () {
-       textarea.val(editor.getSession().getValue());
-   });
-
-   $('form').on('click', function () {
-    console.log(editor.getSession().getValue());
-       textarea.val(editor.getSession().getValue());
-   });
-
-   textarea.val(editor.getSession().getValue());
-   // console.log('beforeeditor');
-   // console.log(editor.getSession().getValue());
-   // console.log('beoretextarea');
-   // console.log(textarea.val());
-   // console.log('ack');
-
-</script> -->
-<script>
-    // Hook up ACE editor to all textareas with data-editor attribute
-    $(function () {
-        $('textarea').each(function () {
-            var textarea = $(this);
-            var mode = "javascript";
-            var editDiv = $('<div>', {
-                position: 'absolute',
-                width: '945px',
-                height: '500px',
-                'class': textarea.attr('class')
-            }).insertBefore(textarea);
-            textarea.css('display', 'none');
-            var editor = ace.edit(editDiv[0]);
-            editor.setTheme("ace/theme/twilight");
-            editor.$blockScrolling = Infinity;
-            editor.renderer.setShowGutter(true);
-            editor.getSession().setValue(textarea.val());
-            editor.getSession().setMode("ace/mode/" + mode);
-            // editor.setTheme("ace/theme/idle_fingers");
-
-            // copy back to textarea on form submit...
-            textarea.closest('form').submit(function () {
-                textarea.val(editor.getSession().getValue());
-            })
-        });
-    });
-</script>
-{% endif %}
+              // copy back to textarea on form submit...
+              textarea.closest('form').submit(function () {
+                  textarea.val(editor.getSession().getValue());
+              })
+          });
+      });
+  </script>
+  {% endif %}
 {% endmacro %}

@@ -21,10 +21,11 @@ class GenericCollectorView(ModelView):
     can_create = False
     can_edit = False
 
+    list_template = 'generic_list.html'
     column_list = (
         'pub_date',
-        'assessment',
         'payload_id',
+        'assessment',
         'javascript_name',
         'url',
         'referrer',

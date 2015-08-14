@@ -32,7 +32,9 @@ class LoginForm(form.Form):
 
 
 class MyAdminIndexView(admin.AdminIndexView):
-
+    """
+    Exposes routes and mechanisms for application authentication
+    """
     @expose('/')
     def index(self):
         if not login.current_user.is_authenticated():
@@ -51,7 +53,7 @@ class MyAdminIndexView(admin.AdminIndexView):
         if login.current_user.is_authenticated():
             return redirect(url_for('.index'))
         self._template_args['form'] = form
-        # #self._template_args['link'] = link
+
         return super(MyAdminIndexView, self).index()
 
     @expose('/logout/')
@@ -87,7 +89,7 @@ class AdministratorView(ModelView):
 
     form_args = dict(
         login=dict(
-            description="Login name for sleepy puppy dashboard",
+            description="Login name for Sleepy Puppy dashboard",
             validators=[
                 validators.required(),
                 validators.Length(min=4, max=25)
