@@ -73,12 +73,15 @@ def default_login():
     """
     Seed the database with some inital values
     """
-
-    admin_user = Administrator(login='admin', password='admin')
-    print 'user: ' + 'admin' + ' created!'
-    db.session.add(admin_user)
-    db.session.commit()
-    return
+    existing_admin = Administrator.query.filter(Administrator.login == 'admin').first()
+    if existing_admin:
+        print "Admin account (admin) already exists, skipping."
+    else:
+        admin_user = Administrator(login='admin', password='admin')
+        print 'user: ' + 'admin' + ' created!'
+        db.session.add(admin_user)
+        db.session.commit()
+        return
 
 
 from collections import namedtuple
@@ -123,34 +126,45 @@ def create_bootstrap_assessment(name="General", add_default_payloads=True):
 
     assessment = Assessment.query.filter(Assessment.name == name).first()
     if assessment:
-        print("Assessment with name", name, "already exists.")
+        print("Assessment with name", name, "already exists, exiting.")
+        return
     else:
         assessment = Assessment(name=name, access_log_enabled=False)
 
-    if add_default_payloads:
-        for payload in DEFAULT_PAYLOADS:
-            payload = Payload(
-                payload=payload.payload,
-                url=payload.url,
-                method=payload.method,
-                parameter=payload.parameter,
-                notes=payload.notes,
-                ordering=u'1',
-                snooze=False,
-                run_once=False
-            )
-            assessment.payloads.append(payload)
-    db.session.add(assessment)
-    db.session.commit()
+    existing_payload = Payload.query.filter(Payload.id == 1).first()
 
-    for javascript in DEFAULT_JAVASCRIPTS:
-        javascript = Javascript(
-            name=javascript.name,
-            code=javascript.code,
-            notes=javascript.notes
-        )
-        db.session.add(javascript)
-    db.session.commit()
+    if existing_payload:
+        print("Payloads already exists, exiting.")
+    else:
+        if add_default_payloads:
+            for payload in DEFAULT_PAYLOADS:
+                payload = Payload(
+                    payload=payload.payload,
+                    url=payload.url,
+                    method=payload.method,
+                    parameter=payload.parameter,
+                    notes=payload.notes,
+                    ordering=u'1',
+                    snooze=False,
+                    run_once=False
+                )
+                assessment.payloads.append(payload)
+        db.session.add(assessment)
+        db.session.commit()
+
+    existing_javascript = Javascript.query.filter(Javascript.id == 1).first()
+
+    if existing_javascript:
+        print("Javascripts already exists, exiting.")
+    else:
+        for javascript in DEFAULT_JAVASCRIPTS:
+            javascript = Javascript(
+                name=javascript.name,
+                code=javascript.code,
+                notes=javascript.notes
+            )
+            db.session.add(javascript)
+        db.session.commit()
 
 
 @manager.command
