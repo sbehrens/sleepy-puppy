@@ -5,18 +5,23 @@ Sleepy Puppy
 
 ##What is Sleepy Puppy?##
 
-Sleepy Puppy is a blind cross-site scripting (xss) collector which was created to simplify blind xss testing.  
+Sleepy Puppy is a cross-site scripting (XSS) payload management framework which simplifies the ability to capture, manage, and track XSS propigation over long peirods of time.
 
 ##Why Should I use Sleepy Puppy?##
-Often when testing for client side injections (HTML/JS/etc.) security engineers are looking for where the injection occurs within the application they are testing *only*.  While this provides ample coverage for the application in scope, there is a possibility that the code engineers are injecting may be reflected back in a completely separate application.  
+Often when testing for client side injections (HTML/JS/etc.) security engineers are looking for where the injection occurs within the application they are testing *only*.  While this provides ample coverage for the application in scope, there is a possibility that the code engineers are injecting may be reflected back in a completely separate application.
 
-Sleepy Puppy helps facilitate inter-application xss testing by providing JavaScript payloads that callback to the Sleepy Puppy application. 
+Sleepy Puppy helps facilitate inter-application xss testing by providing JavaScript payloads that callback to the Sleepy Puppy application.
+
+These payloads and the JavaScripts that define them are compleltey customizable, allowing you to capture only the information you need depending on your enviornment.
 
 ##How Does Sleepy Puppy Do It?##
+Sleepy Puppy provides you with a number of payloads, Javascripts, and captures/collectors.  Payloads are the actual XSS strings that are used to load Sleepy Puppy Javascripts.  The JavaScripts provide a way to collect the information on the client and application where the payload was executed.  Captures and Collectors allow you to view the data you have retruend from your Javascripts.  Everyting is configurable and you can create your own payloads and javascripts as needed.
 
-Sleepy Puppy provides a JavaScript payload that security engineers can use for Blind xss testing.  The callback functions provided by the Javascript generate useful capture metadata including the uri, DOM, user-agent, cookies, referer header, and a screenshot where the payload executed.  This allows a tester to generate unique JavaScript payloads and trace what applications they execute in throughout the payload lifecycle.  
+Testers can leverage Sleepy Puppy's Assessment model, to categorize payloads and subscribe to email notifications when delayed cross-site scripting events are triggered.
 
-Sleepy Puppy also supports email notifications for captures received for specific assessments. 
+The default JavaScript we use most often generates useful capture metadata including the url, DOM with payload highlighting, user-agent, cookies, referer header, and a screenshot of the application where the payload executed.  This provides the tester ample knowledge to quickly identify what the application is so they may mitigate the vulnerability quickly.  As payloads propigate throught a network, the tester can trace what applications the payload executes in throughout the payload's lifecycle.
+
+Sleepy Puppy also supports email notifications for captures received for specific assessments.
 
 Sleepy Puppy exposes an API for users who may want to develop plugins for scanners such as Burp or Zap.
 
