@@ -23,14 +23,14 @@ class AccessLog(db.Model):
     """
 
     id = db.Column(db.Integer, primary_key=True)
-    payload_id = db.Column(db.Integer)
+    payload = db.Column(db.Integer)
     pub_date = db.Column(db.String(512), unique=False)
     referrer = db.Column(db.String(1024))
     user_agent = db.Column(db.String(512))
     ip_address = db.Column(db.String(80))
 
-    def __init__(self, payload_id, referrer, user_agent, ip_address, pub_date=None):
-        self.payload_id = payload_id
+    def __init__(self, payload, referrer, user_agent, ip_address, pub_date=None):
+        self.payload = payload
         self.referrer = referrer
         self.user_agent = user_agent
         self.ip_address = ip_address

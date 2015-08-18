@@ -56,10 +56,10 @@ class AccessLogView(ModelView):
     # Format the data in these columns
     column_formatters = dict(
         assessment=lambda v, c, m, p: str(
-            Payload.query.filter_by(id=m.payload_id)
+            Payload.query.filter_by(id=m.payload)
             .first()
             .assessments
-            if Payload.query.filter_by(id=m.payload_id).first() is not None
+            if Payload.query.filter_by(id=m.payload).first() is not None
             else "Not Found"
         ).strip('[]')
     )
