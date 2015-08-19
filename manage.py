@@ -183,8 +183,8 @@ def create_bootstrap_assessment(name="General", add_default_payloads=True):
 @manager.command
 def setup_sleepy_puppy():
     create_db()
-    default_login()
     create_bootstrap_assessment()
+    create_login('admin')
 
 
 @manager.command
