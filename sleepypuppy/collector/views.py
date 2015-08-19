@@ -56,7 +56,7 @@ def x_collector(payload=1):
                 email_subscription(payload, None, client_info, 'access_log')
             except Exception as err:
                 app.logger.warn(err)
-        break
+
     # Log for recording access log records
     if request.args.get('u', 1):
         return collector(request.args.get('u', 1))
