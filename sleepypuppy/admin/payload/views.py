@@ -172,7 +172,7 @@ class PayloadView(ModelView):
     # Column tweaks
     column_list = (
         'id',
-        'assessments',
+        # 'assessments',
         'captured',
         'payload',
         'url',
@@ -186,7 +186,7 @@ class PayloadView(ModelView):
 
     column_sortable_list = (
         'id',
-        'assessments',
+        # 'assessments',
         'payload',
         'url',
         'method',
@@ -195,7 +195,7 @@ class PayloadView(ModelView):
 
     column_filters = (
         'id',
-        'assessments',
+        # 'assessments',
         'payload',
         'url',
         'method',
@@ -210,8 +210,8 @@ class PayloadView(ModelView):
                     'parameter',
                     'notes',
                     'snooze',
-                    'run_once',
-                    'assessments')
+                    'run_once')
+
 
     # Check if payload has associated captures, and format column if found
     # Format payload string to include hostname
@@ -256,9 +256,9 @@ class PayloadView(ModelView):
         run_once=dict(
             description="Only run capture once for this payload"
         ),
-        assessment=dict(
-            validators=[validators.required()]
-        ),
+        # assessment=dict(
+        #     validators=[validators.required()]
+        # ),
         javascript_list=dict(
             description="Stuff.",
             label="Javascripts",

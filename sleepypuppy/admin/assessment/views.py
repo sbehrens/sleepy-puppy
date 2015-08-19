@@ -13,8 +13,23 @@
 #     limitations under the License.
 from flask.ext.admin.contrib.sqla import ModelView
 from models import Assessment
+from sleepypuppy.admin.payload.models import Payload
 from flask.ext import login
 from flask_wtf import Form
+from sleepypuppy import app
+import collections
+
+
+@app.context_processor
+def utility_processor():
+    def get_payloads():
+        the_payloads = Payload.query.all()
+        results = collections.OrderedDict()
+        for i in the_payloads:
+            results[i] = i.payload
+        return results
+    return dict(get_payloads=get_payloads)
+
 
 
 class AssessmentView(ModelView):
@@ -28,9 +43,12 @@ class AssessmentView(ModelView):
     def is_accessible(self):
         return login.current_user.is_authenticated()
 
+    list_template = 'assessment_list.html'
+
     # Only display form columns listed below
     form_columns = ['name', 'access_log_enabled']
 
+    column_list = ['name', 'payloads']
     form_args = dict(
         access_log_enabled=dict(
             description="Record requests to payloads regardless if \
@@ -40,6 +58,10 @@ class AssessmentView(ModelView):
             conflicts or issues running JS payloads in victim's browser"
         )
     )
+
+    column_formatters = dict(
+        payloads=lambda v, c, m, p: [Payload.query.all()])
+
 
     def __init__(self, session, **kwargs):
         super(AssessmentView, self).__init__(Assessment, session, **kwargs)

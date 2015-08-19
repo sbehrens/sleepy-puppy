@@ -14,6 +14,8 @@
 from sleepypuppy import db, app
 
 
+
+
 class Payload(db.Model):
     """
     Payload model contains the following parameters:
@@ -38,7 +40,7 @@ class Payload(db.Model):
     ordering = db.Column(db.String(200))
     snooze = db.Column(db.Boolean)
     run_once = db.Column(db.Boolean)
-    assessment = db.Column(db.Integer, db.ForeignKey('assessments.id'))
+    #assessment = db.Column(db.Integer, db.ForeignKey('assessments.id'))
     # When payloads are deleted,
     # cascade the delete and remove associated captures
     captures = db.relationship("Capture", cascade="all,delete", backref="payloads")
@@ -51,14 +53,14 @@ class Payload(db.Model):
         """
 
         # Replace $1 template with configured hostname
-        payload = self.payload.replace("$1",
-                                       "//{}/x?u={}".format(app.config['HOSTNAME'], str(self.id)))
+        # payload = self.payload.replace("$1",
+        #                                "//{}/x?u={}".format(app.config['HOSTNAME'], str(self.id)))
 
         payload_dict = {
             "id": self.id,
-            "assessments": [i.as_dict() for i in self.assessments],
+            # "assessments": [i.as_dict() for i in self.assessments],
             "javascripts": [i.as_dict() for i in self.javascripts],
-            "payload": payload,
+            "payload": self.payload,
             "url": self.url,
             "method": self.method,
             "parameter": self.parameter,

@@ -12,7 +12,6 @@
 #     See the License for the specific language governing permissions and
 #     limitations under the License.
 from sleepypuppy import db
-from sleepypuppy.admin.models import assessment_associations
 
 
 class Assessment(db.Model):
@@ -26,7 +25,8 @@ class Assessment(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(500))
-    payloads = db.relationship("Payload", secondary=assessment_associations, backref="assessments")
+    #payloads = db.relationship("Payload", secondary=assessment_associations, backref="assessments")
+
     access_log_enabled = db.Column(db.Boolean)
 
     def as_dict(self):

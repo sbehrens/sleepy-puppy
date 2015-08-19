@@ -143,6 +143,9 @@ def create_bootstrap_assessment(name="General", add_default_payloads=True):
         return
     else:
         assessment = Assessment(name=name, access_log_enabled=False)
+        # add assessment
+        db.session.add(assessment)
+        db.session.commit()
 
     existing_payload = Payload.query.filter(Payload.id == 1).first()
 
@@ -161,9 +164,9 @@ def create_bootstrap_assessment(name="General", add_default_payloads=True):
                     snooze=False,
                     run_once=False
                 )
-                assessment.payloads.append(payload)
-        db.session.add(assessment)
-        db.session.commit()
+                #assessment.payloads.append(payload)
+                db.session.add(payload)
+                db.session.commit()
 
     existing_javascript = Javascript.query.filter(Javascript.id == 1).first()
 
