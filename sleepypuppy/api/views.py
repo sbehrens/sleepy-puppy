@@ -188,6 +188,8 @@ class PayloadView(Resource):
             e.method = args["method"]
             e.parameter = args["parameter"]
             e.notes = args["notes"]
+            e.snooze = args["snooze"]
+            e.run_once = args["run_once"]
 
         try:
             db.session.commit()
@@ -243,6 +245,8 @@ class PayloadViewList(Resource):
         o.method = args["method"]
         o.parameter = args["parameter"]
         o.notes = args["notes"]
+        o.snooze = args["snooze"]
+        o.run_once = args["run_once"]
 
         for assessment_id in args["assessments"]:
             a = Assessment.query.filter(Assessment.id == assessment_id).first()

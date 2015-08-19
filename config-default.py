@@ -16,7 +16,6 @@ import os
 _basedir = os.path.abspath(os.path.dirname(__file__))
 
 DEBUG = True
-SSL = True
 
 # Security configuration settings
 SECRET_KEY = os.getenv('secret_key', 'ThiSISMYDARKSECRET!@#')

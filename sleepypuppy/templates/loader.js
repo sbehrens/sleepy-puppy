@@ -47,7 +47,6 @@ if (typeof jQuery === 'undefined') {
 }
 
 function loader () {
-    var return_information = [];
     $.ajax({
     type: 'GET',
     url: "{{callback_protocol}}://{{hostname}}/api/javascript_loader/{{payload}}",
