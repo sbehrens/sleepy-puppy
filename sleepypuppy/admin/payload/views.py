@@ -172,58 +172,32 @@ class PayloadView(ModelView):
     # Column tweaks
     column_list = (
         'id',
-        # 'assessments',
-        'captured',
         'payload',
-        'url',
-        'method',
-        'parameter',
-        'snooze',
-        'run_once',
         'javascripts',
         'notes'
     )
 
     column_sortable_list = (
         'id',
-        # 'assessments',
         'payload',
-        'url',
-        'method',
-        'parameter'
     )
 
     column_filters = (
         'id',
-        # 'assessments',
         'payload',
-        'url',
-        'method',
-        'parameter'
     )
 
     form_excluded_columns = ('captures', 'uid')
     form_columns = ('javascript_list',
                     'payload',
-                    'url',
-                    'method',
-                    'parameter',
-                    'notes',
-                    'snooze',
-                    'run_once')
-
+                    'notes')
 
     # Check if payload has associated captures, and format column if found
     # Format payload string to include hostname
     column_formatters = dict(
         javascripts=lambda v, c, m, p: [Javascript.query.filter_by(id=thing).first(
         ) for thing in Payload.query.filter_by(id=m.id).first().ordering.split(',')]
-        if Payload.query.filter_by(id=m.id).first().ordering is not None or "" else "Default",
-        captured=lambda v, c, m, p: Capture.query.filter_by(
-            payload_id=m.id).first().id
-        if Capture.query.filter_by(payload_id=m.id).first() is not None else "None",
-        payload=lambda v, c, m, p: m.payload.replace("$1",
-                                                     "//{}/x?u={}".format(app.config['HOSTNAME'], str(m.id)))
+        if Payload.query.filter_by(id=m.id).first().ordering is not None or "" else "Default"
     )
 
     # Extra fields
@@ -241,24 +215,11 @@ class PayloadView(ModelView):
     )
 
     form_args = dict(
-        method=dict(
-            choices=[('GET', 'GET'), ('POST', 'POST'),
-                     ('PUT', 'PUT'), ('DELETE', 'DELETE')]
-        ),
         payload=dict(
             description="Use $1 as a placeholder for the Javascript URL.",
             default="<script src=$1></script>",
             validators=[validators.required()]
         ),
-        snooze=dict(
-            description="Stop captures for this payload"
-        ),
-        run_once=dict(
-            description="Only run capture once for this payload"
-        ),
-        # assessment=dict(
-        #     validators=[validators.required()]
-        # ),
         javascript_list=dict(
             description="Stuff.",
             label="Javascripts",

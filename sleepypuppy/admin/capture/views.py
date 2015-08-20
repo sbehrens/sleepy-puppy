@@ -68,14 +68,14 @@ class CaptureView(ModelView):
     # Make sure payload exists otherwise it's a zombie capture
     column_formatters = dict(
         payload=lambda v, c, m, p: str(m.payload)
-        if m.payload is not None else "Payload Not Found",
-        assessment=lambda v, c, m, p: str(
-            Payload.query.filter_by(id=m.payload)
-            .first()
-            .assessments
-            if Payload.query.filter_by(id=m.payload).first() is not None
-            else "Not Found"
-        ).strip('[]')
+        if m.payload is not None else "Payload Not Found"
+        # assessment=lambda v, c, m, p: str(
+        #     Payload.query.filter_by(id=m.payload)
+        #     .first()
+        #     .assessments
+        #     if Payload.query.filter_by(id=m.payload).first() is not None
+        #     else "Not Found"
+        # ).strip('[]')
     )
     form_excluded_columns = ('captures')
 

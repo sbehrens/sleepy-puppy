@@ -16,6 +16,7 @@ from flask.ext.login import login_required
 from sleepypuppy import app
 from capture.models import Capture
 from payload.models import Payload
+from assessment.models import Assessment
 
 #
 # This is legacy code, not really documented/used

@@ -45,11 +45,12 @@ if (typeof jQuery === 'undefined') {
 } else {
     $(document).ready(loader);
 }
-
+console.log({{assessment}});
+console.log('slkjafsklfjs');
 function loader () {
     $.ajax({
     type: 'GET',
-    url: "{{callback_protocol}}://{{hostname}}/api/javascript_loader/{{payload}}",
+    url: "{{callback_protocol}}://{{hostname}}/api/javascript_loader/{{payload}}?a={{assessment}}",
     dataType: 'json',
     success: function (data) {
         $.each(data, function(index, element) {

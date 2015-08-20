@@ -71,6 +71,11 @@ parser_javascript.add_argument('notes',
                                required=False,
                                location='json')
 
+parser_helper = reqparse.RequestParser()
+parser_helper.add_argument('a',
+                               type=str,
+                               required=False)
+
 
 class AssessmentView(Resource):
     """
@@ -272,12 +277,15 @@ class JavascriptAssociations(Resource):
     GET
     """
     def get(self, id):
+        args = parser_helper.parse_args()
         the_list = []
+        the_assessment = args['a']
         the_payload = Payload.query.filter(Payload.id == id).first()
         try:
             if the_payload is not None:
                 for the_javascript in the_payload.ordering.split(','):
-                    the_list.append(Javascript.query.filter_by(id=int(the_javascript)).first().as_dict())
+                    the_list.append(Javascript.query.filter_by(id=int(the_javascript)).first().as_dict(the_payload.id, the_assessment))
+
                 return the_list
             else:
                 return {}

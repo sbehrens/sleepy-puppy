@@ -13,7 +13,6 @@
 #     limitations under the License.
 from flask.ext.admin.contrib.sqla import ModelView
 from models import GenericCollector
-from sleepypuppy.admin.payload.models import Payload
 from flask.ext import login
 from flask_wtf import Form
 
@@ -44,26 +43,15 @@ class GenericCollectorView(ModelView):
         'referrer',
         'data'
     )
-    column_filters = ('id', 'payload', 'javascript_name', 'url', 'referrer')
+    column_filters = ('id', 'assessment', 'payload', 'javascript_name', 'url', 'referrer')
 
     column_sortable_list = (
         'pub_date',
         'payload',
+        'assessment',
         'javascript_name',
         'url',
         'referrer'
-    )
-
-    column_formatters = dict(
-        payload=lambda v, c, m, p: str(m.payloads)
-        if m.payloads is not None else "Payload Not Found",
-        assessment=lambda v, c, m, p: str(
-            Payload.query.filter_by(id=m.payloads.id)
-            .first()
-            .assessments
-            if Payload.query.filter_by(id=m.payloads.id).first() is not None
-            else "Not Found"
-        ).strip('[]')
     )
 
     def __init__(self, session, **kwargs):

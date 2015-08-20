@@ -96,7 +96,11 @@
             </tr>
         </thead>
         {% for row in data %}
+        {% if loop.index0 == 0 %}
+        <tr class="highlight">
+        {% else %}
         <tr>
+        {% endif %}
             {% block list_row scoped %}
                 {% if actions %}
                 <td>
@@ -128,9 +132,11 @@
                     {% endblock %}
                 </td>
                 {% endblock %}
+                {% set counter = 0 -%}
                 {% for c, name in list_columns %}
-                    {% if c == 'name' and get_value(row, c) == 'General' %}
+                    {% if c == 'name' and counter == 0 %}
                     <td class="col-{{c}}-assessment-{{row.id}} highlight" style="cursor: pointer;">
+                    {% set counter = counter + 1 %}
                     {% else %}
                     <td class="col-{{c}}-assessment-{{row.id}}" style="cursor: pointer;">
                     {% endif %}
@@ -176,6 +182,8 @@
     <thead>
     <tr>
         <th>Id</th>
+        <th>Capture</th>
+        <th>Generic Collector</th>
         <th>Payload</th>
     </tr>
     </thead>
@@ -186,7 +194,13 @@
        <td class="col-payload-{{key}}">
        {{ key }}
        </td>
-       <td class="col-payload-payload">
+       <td class="col-capture-{{key}}">
+
+       </td>
+       <td class="col-collector-{{key}}">
+
+       </td>
+       <td class="col-payload-ignore">
        {{ value }}
        </td>
        </tr>
@@ -194,10 +208,6 @@
 
     </tbody>
     </table>
-
-
-
-
 
     {% block list_pager %}
     {% if num_pages is not none %}
@@ -221,24 +231,62 @@
                         actions,
                         actions_confirmation) }}
 <script>
-//$($("div")[2]).attr("class")
+var capture_data = {{get_captures()|safe}}
+</script>
+
+<script>
 $('#assessments').on('click', 'tbody tr', function(event) {
     $(this).addClass('highlight').siblings().removeClass('highlight');
-    console.log($('#assessments'));
+    var assessment1 = $($(".highlight td")[2]).attr("class").split(' ')[0].split('-')[3];
+
+    $("#payloads tbody tr td").each(function(index, value) {
+        text = $(this).clone(true);
+
+        if ($(this)[0].className.indexOf("ignore") != -1) {
+            var text = $(this).text();
+            text = text.replace(/&a=\d+/, "&a=" + assessment1);
+            $(this).text(text);
+        }
+    });
+
 });
 
-$('#payloads').on('load', function(event) {
-    console.log('foo');
-    //$(this).addClass('highlight').siblings().removeClass('highlight');
-    console.log($('#payloads'));
-});
+
+var text = "";
 
 $( document ).ready(function() {
-    $("#payloads tbody tr td").each(function() {
-        var text = $(this).text();
-        text = text.replace("$1", "marshmellows");
-        console.log($($(".highlight td")[2]).attr("class"));
-        $(this).text(text);
+    var assessment = $($(".highlight td")[2]).attr("class").split(' ')[0].split('-')[3];
+
+    var payloads = Array();
+    $("#payloads tbody tr td").each(function(index, value) {
+        capture = $(this).clone(true);
+        text = $(this).clone(true);
+
+        if ($(capture)[0].className.indexOf("capture") !== -1){
+            var results;
+            for (results in capture_data){
+
+                try{
+                    var capture_id = $(capture)[results].className.split('-')[2];
+                    var total_captures = capture_data[results][assessment][capture_id];
+                    console.log($(this)[0]);
+                   $(this).text(total_captures);
+                }
+                catch(err){
+
+                }
+                //var capture_id = $(capture)[results].className.split('-')[2];
+                //console.log(capture_data[results][assessment]);
+            }
+        }
+        if ($(this)[0].className.indexOf("ignore") === -1) {
+            payloads.push($(this)[0].className.split('-')[2]);
+        }
+        if ($(this)[0].className.indexOf("ignore") != -1) {
+            var text = $(this).text();
+            text = text.replace("$1", "//{{ get_hostname() }}/x?u=" + payloads.pop() + "&a=" + assessment);
+            $(this).text(text);
+        }
     });
 });
 

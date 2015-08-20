@@ -14,6 +14,7 @@
 from flask.ext.admin.contrib.sqla import ModelView
 from models import Assessment
 from sleepypuppy.admin.payload.models import Payload
+from sleepypuppy.admin.capture.models import Capture
 from flask.ext import login
 from flask_wtf import Form
 from sleepypuppy import app
@@ -31,6 +32,33 @@ def utility_processor():
     return dict(get_payloads=get_payloads)
 
 
+@app.context_processor
+def utility_processor2():
+    def get_hostname():
+        return app.config['HOSTNAME']
+    return dict(get_hostname=get_hostname)
+
+import json
+@app.context_processor
+def utility_processor3():
+    def get_captures():
+        results = []
+        magic_string = ""
+        magic_string += "["
+        the_assessments = Assessment.query.all()
+        the_payloads = Payload.query.all()
+        for the_assessment in the_assessments:
+            magic_string += "{\'" + str(the_assessment.id) + "': {"
+            for the_payload in the_payloads:
+                cap_count = Capture.query.filter_by(assessment=the_assessment.name, payload=the_payload.id).count()
+                #results.append({str(the_assessment.name): [the_payload, cap_count]})
+                magic_string += str(the_payload.id) + ":" + str(cap_count) + ","
+            magic_string += "}},"
+            print magic_string
+        magic_string += "]"
+        return magic_string
+    return dict(get_captures=get_captures)
+
 
 class AssessmentView(ModelView):
     """
@@ -46,9 +74,9 @@ class AssessmentView(ModelView):
     list_template = 'assessment_list.html'
 
     # Only display form columns listed below
-    form_columns = ['name', 'access_log_enabled']
+    form_columns = ['name', 'access_log_enabled', 'snooze', 'run_once']
+    column_list = ['name', 'snooze', 'run_once', 'access_log_enabled']
 
-    column_list = ['name', 'payloads']
     form_args = dict(
         access_log_enabled=dict(
             description="Record requests to payloads regardless if \
@@ -56,7 +84,13 @@ class AssessmentView(ModelView):
             table for any payload associated with this assessment. \
             Recommended if you think you may hit namespace\
             conflicts or issues running JS payloads in victim's browser"
-        )
+        ),
+        snooze=dict(
+            description="Stop captures for this payload"
+        ),
+        run_once=dict(
+            description="Only run capture once for this payload"
+        ),
     )
 
     column_formatters = dict(

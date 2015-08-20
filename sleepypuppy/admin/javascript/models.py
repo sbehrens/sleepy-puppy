@@ -50,7 +50,7 @@ class Javascript(db.Model):
             [i.name for i in self.javascripts]
         )
 
-    def as_dict(self, payload=1):
+    def as_dict(self, payload=1, assessment=1):
         """
         Return Assessment model as JSON object
 
@@ -65,7 +65,7 @@ class Javascript(db.Model):
                                                      'CALLBACK_HOSTNAME'],
                                                  callback_protocol=app.config.get(
                                                      'CALLBACK_PROTOCOL', 'https'),
-                                                 payload=payload)
+                                                 payload=payload, assessment=assessment)
         return js_dict
 
     def __repr__(self):
