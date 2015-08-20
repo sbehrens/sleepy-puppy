@@ -12,8 +12,8 @@
 #     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #     See the License for the specific language governing permissions and
 #     limitations under the License.
-import sys
 import getpass
+import os
 
 from flask_script.commands import ShowUrls, Clean
 from flask.ext.script import Manager
@@ -57,7 +57,7 @@ def drop_db():
 @manager.command
 def create_login(login):
     """
-    Seed the database with some inital values
+    Seed the database with an admin user.
     """
 
     print 'creating admin user'
@@ -65,20 +65,27 @@ def create_login(login):
     if Administrator.query.filter_by(login=login).count():
         print 'user already exists!'
         return
+
+    # Check env for credentials (used by docker)
+    docker_admin_pass = os.getenv('DOCKER_ADMIN_PASS', None)
+    if docker_admin_pass:
+        admin_user = Administrator(login=login, password=docker_admin_pass)
     else:
-        print "{}, enter your password!\n ".format(login)
-        pw1 = getpass.getpass()
-        pw2 = getpass.getpass(prompt="Confirm: ")
-        if pw1 == pw2:
-            admin_user = Administrator(login=login, password=pw1)
-            print 'user: ' + login + ' created!'
-        else:
-            print 'passwords do not match!'
-            sys.exit(1)
+        # else, ask on stdin:
+        while True:
+            print "{}, enter your password!\n ".format(login)
+            pw1 = getpass.getpass()
+            pw2 = getpass.getpass(prompt="Confirm: ")
+
+            if pw1 == pw2:
+                admin_user = Administrator(login=login, password=pw1)
+                break
+            else:
+                print 'passwords do not match!'
 
     db.session.add(admin_user)
     db.session.commit()
-    return
+    print 'user: ' + login + ' created!'
 
 
 @manager.command
