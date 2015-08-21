@@ -24,11 +24,11 @@ user_associations = db.Table(
 assessment_associations = db.Table(
     'assessment_associations',
     Column('assessment_id', Integer, ForeignKey('assessments.id')),
-    Column('payload_id', Integer, ForeignKey('payloads.id'))
+    Column('payload', Integer, ForeignKey('payloads.id'))
 )
 
 taxonomy = db.Table(
     'taxonomy',
     Column('javascript_id', Integer, ForeignKey('javascript.id')),
-    Column('payload_id', Integer, ForeignKey('payloads.id')),
+    Column('payload', Integer, ForeignKey('payloads.id')),
 )

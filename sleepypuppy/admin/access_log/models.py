@@ -23,14 +23,16 @@ class AccessLog(db.Model):
     """
 
     id = db.Column(db.Integer, primary_key=True)
-    payload = db.Column(db.Integer)
+    payload = db.Column(db.Integer())
+    assessment = db.Column(db.String(512))
     pub_date = db.Column(db.String(512), unique=False)
     referrer = db.Column(db.String(1024))
     user_agent = db.Column(db.String(512))
     ip_address = db.Column(db.String(80))
 
-    def __init__(self, payload, referrer, user_agent, ip_address, pub_date=None):
+    def __init__(self, payload, assessment, referrer, user_agent, ip_address, pub_date=None):
         self.payload = payload
+        self.assessment = assessment
         self.referrer = referrer
         self.user_agent = user_agent
         self.ip_address = ip_address

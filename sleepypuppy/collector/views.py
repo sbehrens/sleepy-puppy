@@ -34,28 +34,31 @@ def x_collector(payload=1):
     and email users subscribed to the payload's assessment.
     """
 
-    # consider only looking up payload one time for performance
-    the_payload = Payload.query.filter_by(id=int(payload)).first()
+    the_payload = Payload.query.filter_by(
+        id=int(request.args.get('u', 1))).first()
+    assessment_id = request.args.get('a', 1)
 
-    for assessment_name in the_payload.assessments:
-        print assessment_name
-        the_assessment = Assessment.query.filter_by(
-            name=str(assessment_name)).first()
-        if the_assessment.access_log_enabled:
-            try:
-                referrer = request.headers.get("Referrer", None)
-                user_agent = request.headers.get("User-Agent", None)
-                ip_address = request.remote_addr
-                client_info = AccessLog(
-                    payload, referrer, user_agent, ip_address)
-                db.session.add(client_info)
-                db.session.commit()
-            except Exception as err:
-                app.logger.warn(err)
-            try:
-                email_subscription(payload, None, client_info, 'access_log')
-            except Exception as err:
-                app.logger.warn(err)
+    # consider only looking up payload one time for performance
+
+    the_assessment = Assessment.query.filter_by(
+        id=int(assessment_id)).first()
+    if the_assessment.access_log_enabled:
+        try:
+            referrer = request.headers.get("Referrer", None)
+            user_agent = request.headers.get("User-Agent", None)
+            ip_address = request.remote_addr
+            client_info = AccessLog(
+                the_payload.id, the_assessment.name, referrer, user_agent, ip_address)
+            db.session.add(client_info)
+            db.session.commit()
+
+        except Exception as err:
+            app.logger.warn(err)
+        try:
+            email_subscription(
+                the_payload.id, the_assessment, None, client_info, 'access_log')
+        except Exception as err:
+            app.logger.warn(err)
 
     # Log for recording access log records
     if request.args.get('u', 1):
@@ -69,15 +72,15 @@ def collector(payload=1):
     Enforce snooze and run_once directives.
     """
     payload = request.args.get('u', 1)
+    assessment = request.args.get('a', 1)
     try:
-        the_payload = Payload.query.filter_by(id=int(payload)).first()
-        if the_payload.snooze:
+        the_assessment = Assessment.query.filter_by(id=int(assessment)).first()
+        if the_assessment.snooze:
             return ''
-        if the_payload.run_once and Capture.query.filter_by(payload=int(payload)).first():
+        if the_assessment.run_once and Capture.query.filter_by(payload=int(payload), assessment=the_assessment.name).first():
             return ''
     except Exception as err:
         app.logger.warn(err)
-
     # Render the template and include payload, hostname, callback_protocol.
     # If you need to expose additiional server side
     # information for your JavaScripts, do it here.
@@ -85,6 +88,7 @@ def collector(payload=1):
     return make_response(render_template(
         'loader.js',
         payload=payload,
+        assessment=the_assessment.id,
         hostname=app.config['CALLBACK_HOSTNAME'],
         callback_protocol=app.config.get('CALLBACK_PROTOCOL', 'https')),
         200,
@@ -92,7 +96,7 @@ def collector(payload=1):
     )
 
 
-def email_subscription(payload, url, client_info, model):
+def email_subscription(payload, the_assessment, url, client_info, model):
     """
     Email notifications for captures, generic collections, and access log
     """
@@ -103,7 +107,7 @@ def email_subscription(payload, url, client_info, model):
         user_subscriptions = []
         for assessment in user.assessments:
             user_subscriptions.append(assessment.id)
-        if len(set(notify_jobs.show_assessment_ids()).intersection(user_subscriptions)) > 0:
+        if the_assessment.id in user_subscriptions:
             email_list.append(user.email)
 
     import cgi
@@ -111,33 +115,31 @@ def email_subscription(payload, url, client_info, model):
         subject = "[Sleepy Puppy] - Capture Recieved From: {}".format(
             cgi.escape(url, quote=True)
         )
-        html = "<b>Associated Assessments: </b>{}<br/>".format(
-            cgi.escape(notify_jobs.show_assessment_names(), quote=True)
+        html = "<b>Associated Assessment: </b>{}<br/>".format(
+            cgi.escape(the_assessment.name, quote=True)
         )
         html += "<b>URL: </b>{}<br/>".format(
             cgi.escape(url, quote=True)
         )
-        html += "<b>Parameter: </b>{}<br/>".format(
-            cgi.escape(notify_jobs.parameter or "", quote=True)
-        )
         html += "<b>Payload: </b>{}<br/>".format(
             cgi.escape(notify_jobs.payload, quote=True)
         )
-        html += "<b>Notes: </b>{}<br/>".format(
-            cgi.escape(notify_jobs.notes, quote=True)
-        )
+        if notify_jobs.notes is not None:
+            html += "<b>Notes: </b>{}<br/>".format(
+                cgi.escape(notify_jobs.notes, quote=True)
+            )
 
-        html += "<b>Capture: </b>{}://{}/admin/capture/?flt1_0={}".format(
+        html += "<b>Capture: </b>{}://{}/admin/capture/?flt1_0={}&flt3_14={}".format(
             app.config.get('CALLBACK_PROTOCOL', 'https'),
             app.config.get('HOSTNAME', 'localhost'),
-            client_info.id)
+            client_info.id, the_assessment.name)
 
     elif model == "access_log":
         subject = "[Sleepy Puppy] - Access Log Request Recieved For Assessment(s): {}".format(
-            cgi.escape(notify_jobs.show_assessment_names(), quote=True)
+            cgi.escape(the_assessment.name, quote=True)
         )
-        html = "<b>Associated Assessments: </b>{}<br/>".format(
-            cgi.escape(notify_jobs.show_assessment_names(), quote=True)
+        html = "<b>Associated Assessment: </b>{}<br/>".format(
+            cgi.escape(the_assessment.name, quote=True)
         )
         html += "<b>Referer: </b>{}<br/>".format(
             cgi.escape(client_info.referrer or "", quote=True)
@@ -149,17 +151,17 @@ def email_subscription(payload, url, client_info, model):
             cgi.escape(client_info.ip_address, quote=True)
         )
 
-        html += "<b>AccessLog: </b>{}://{}/admin/accesslog/?flt1_0={}".format(
+        html += "<b>AccessLog: </b>{}://{}/admin/accesslog/?flt1_7={}&flt2_14={}".format(
             app.config.get('CALLBACK_PROTOCOL', 'https'),
             app.config.get('HOSTNAME', 'localhost'),
-            client_info.id)
+            client_info.id, the_assessment.name)
 
     elif model == "generic_collector":
         subject = "[Sleepy Puppy] - Generic Collector Recieved From: {}".format(
             cgi.escape(client_info.url, quote=True)
         )
-        html = "<b>Associated Assessments: </b>{}<br/>".format(
-            cgi.escape(notify_jobs.show_assessment_names(), quote=True)
+        html = "<b>Associated Assessment: </b>{}<br/>".format(
+            cgi.escape(the_assessment.name, quote=True)
         )
         html += "<b>Javascript Name: </b>{}<br/>".format(
             cgi.escape(client_info.javascript_name or "", quote=True)
@@ -171,10 +173,11 @@ def email_subscription(payload, url, client_info, model):
             cgi.escape(client_info.referrer or "", quote=True)
         )
 
-        html += "<b>Generic Collector: </b>{}://{}/admin/genericcollector/?flt1_0={}".format(
+        html += "<b>Generic Collector: </b>{}://{}/admin/genericcollector/?flt1_0={}&flt2_7={}".format(
             app.config.get('CALLBACK_PROTOCOL', 'https'),
             app.config.get('HOSTNAME', 'localhost'),
-            client_info.id)
+            client_info.id,
+            the_assessment.name)
 
     # If there are people to email, email them that a capture was recieved
     if email_list:
@@ -264,20 +267,23 @@ def get_generic_callback():
             payload = Payload.query.filter_by(
                 id=int(request.form.get('payload', 0))).first()
 
+            assessment = Assessment.query.filter_by(
+                id=int(request.form.get('assessment', 0))).first()
+
             # If it's a rogue capture, log it anyway.
-            if payload is None:
+            if payload is None or assessment is None:
                 client_info = GenericCollector(
-                    0, javascript_name, url, referrer, data)
+                    0, 0, javascript_name, url, referrer, data)
             else:
                 # Create the capture with associated assessment/payload
                 client_info = GenericCollector(
-                    payload.id, javascript_name, url, referrer, data)
+                    payload.id, assessment.name, javascript_name, url, referrer, data)
 
             db.session.add(client_info)
             db.session.commit()
             # Email users subscribed to the Payload's Assessment
             email_subscription(
-                payload.id, url, client_info, 'generic_collector')
+                payload.id, assessment, url, client_info, 'generic_collector')
         except Exception as e:
             app.logger.warn(
                 "Exception in /generic_callback {}\n\n{}".format(Exception, str(e)))
@@ -329,10 +335,12 @@ def get_callbacks():
             # TODO rename assessment to payload
             payload = Payload.query.filter_by(
                 id=int(request.form.get('payload', 0))).first()
+            assessment = Assessment.query.filter_by(
+                id=int(request.form.get('assessment', 0))).first()
             screenshot = unicode(request.form.get('screenshot', ''))
             dom = urllib.unquote(unicode(request.form.get('dom', '')))[:65535]
             # If it's a rogue capture, log it anyway.
-            if payload is None:
+            if payload is None or assessment is None:
                 client_info = Capture("Not found",
                                       url,
                                       referrer,
@@ -343,7 +351,7 @@ def get_callbacks():
                                       dom)
             else:
                 # Create the capture with associated assessment/payload
-                client_info = Capture(payload.id,
+                client_info = Capture(assessment.name,
                                       url,
                                       referrer,
                                       cookies,
@@ -355,7 +363,8 @@ def get_callbacks():
             db.session.add(client_info)
             db.session.commit()
             # Email users subscribed to the Payload's Assessment
-            email_subscription(payload.id, url, client_info, 'capture')
+            email_subscription(
+                payload.id, assessment, url, client_info, 'capture')
         except Exception as e:
             app.logger.warn(
                 "Exception in /callbacks {}\n\n{}".format(Exception, str(e)))

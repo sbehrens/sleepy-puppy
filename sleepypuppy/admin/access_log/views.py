@@ -13,7 +13,6 @@
 #     limitations under the License.
 from flask.ext.admin.contrib.sqla import ModelView
 from wtforms.fields import SelectField, TextAreaField
-from sleepypuppy.admin.payload.models import Payload
 from models import AccessLog
 from flask.ext import login
 from flask_wtf import Form
@@ -32,7 +31,7 @@ class AccessLogView(ModelView):
 
     form_excluded_columns = ('captures', 'uid')
 
-    column_filters = ('id', 'ip_address', 'user_agent', 'referrer')
+    column_filters = ('id', 'payload', 'assessment', 'ip_address', 'user_agent', 'referrer')
 
     # Disable unnneeded CRUD operations
     can_create = False
@@ -48,20 +47,10 @@ class AccessLogView(ModelView):
     column_list = (
         'pub_date',
         'assessment',
+        'payload',
         'referrer',
         'user_agent',
         'ip_address'
-    )
-
-    # Format the data in these columns
-    column_formatters = dict(
-        assessment=lambda v, c, m, p: str(
-            Payload.query.filter_by(id=m.payload)
-            .first()
-            .assessments
-            if Payload.query.filter_by(id=m.payload).first() is not None
-            else "Not Found"
-        ).strip('[]')
     )
 
     def __init__(self, session, **kwargs):

@@ -17,7 +17,6 @@ from flask.ext.admin.actions import action
 from flask.ext import login
 from flask_wtf import Form
 from sleepypuppy import app, db
-from sleepypuppy.admin.payload.models import Payload
 from models import Capture
 
 
@@ -58,9 +57,7 @@ class CaptureView(ModelView):
         'assessment',
         'url',
         'referrer',
-        'cookies',
-        'user_agent',
-        'screenshot'
+        'user_agent'
     )
 
     hostname = app.config['HOSTNAME']
@@ -68,19 +65,12 @@ class CaptureView(ModelView):
     # Make sure payload exists otherwise it's a zombie capture
     column_formatters = dict(
         payload=lambda v, c, m, p: str(m.payload)
-        if m.payload is not None else "Payload Not Found",
-        assessment=lambda v, c, m, p: str(
-            Payload.query.filter_by(id=m.payload)
-            .first()
-            .assessments
-            if Payload.query.filter_by(id=m.payload).first() is not None
-            else "Not Found"
-        ).strip('[]')
+        if m.payload is not None else "Payload Not Found"
     )
     form_excluded_columns = ('captures')
 
     # Allow columns to be searched/sorted
-    column_filters = ('id', 'payload_id', 'url', 'assessment')
+    column_filters = ('id', 'payload', 'assessment', 'url')
 
     def delete_from_s3(self, filename):
         if app.config.get('UPLOAD_SCREENSHOTS_TO_S3', False):

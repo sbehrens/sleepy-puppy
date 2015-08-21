@@ -37,7 +37,6 @@ class JavascriptView(ModelView):
     column_exclude_list = ('code')
 
     def on_model_delete(self, model):
-        # TODO: does this work?
         try:
             payloads = Payload.query.all()
             for payload in payloads:
