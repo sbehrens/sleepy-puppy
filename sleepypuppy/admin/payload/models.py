@@ -12,7 +12,7 @@
 #     See the License for the specific language governing permissions and
 #     limitations under the License.
 from sleepypuppy import db
-
+from sleepypuppy.admin.javascript.models import Javascript
 
 class Payload(db.Model):
     """
@@ -42,13 +42,15 @@ class Payload(db.Model):
         """
         Return JSON API object
         """
+        javascripts = []
+        for item in self.ordering.split(','):
+            my_js = Javascript.query.filter_by(id=int(item)).first()
+            javascripts.append(my_js.name)
 
         payload_dict = {
             "id": self.id,
-            "javascripts": [i.as_dict() for i in self.javascripts],
+            "javascripts": javascripts,
             "payload": self.payload,
-            "run_once": self.run_once,
-            "snooze": self.snooze,
             "notes": self.notes
         }
 

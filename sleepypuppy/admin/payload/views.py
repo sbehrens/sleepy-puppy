@@ -150,25 +150,6 @@ class PayloadView(ModelView):
                 pass
     on_model_delete = delete_screenshots
 
-    @action('delete', 'Delete', 'Are you sure you want to delete?')
-    def action_delete(self, items):
-        for record in items:
-            cascaded_captures = Capture.query.filter_by(
-                payload=record).all()
-            for capture in cascaded_captures:
-                try:
-                    os.remove("uploads/{}.png".format(capture.screenshot))
-                    os.remove(
-                        "uploads/small_{}.png".format(capture.screenshot))
-                except:
-                    pass
-            try:
-                page = Payload.query.get(record)
-                db.session.delete(page)
-                db.session.commit()
-            except Exception as err:
-                app.logger.warn(err)
-
     # Column tweaks
     column_list = (
         'id',

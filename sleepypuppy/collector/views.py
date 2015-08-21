@@ -39,7 +39,6 @@ def x_collector(payload=1):
     assessment_id = request.args.get('a', 1)
 
     # consider only looking up payload one time for performance
-
     the_assessment = Assessment.query.filter_by(
         id=int(assessment_id)).first()
     if the_assessment.access_log_enabled:
@@ -132,7 +131,7 @@ def email_subscription(payload, the_assessment, url, client_info, model):
         html += "<b>Capture: </b>{}://{}/admin/capture/?flt1_0={}&flt3_14={}".format(
             app.config.get('CALLBACK_PROTOCOL', 'https'),
             app.config.get('HOSTNAME', 'localhost'),
-            client_info.id, the_assessment.name)
+            payload, the_assessment.name)
 
     elif model == "access_log":
         subject = "[Sleepy Puppy] - Access Log Request Recieved For Assessment(s): {}".format(
@@ -154,7 +153,7 @@ def email_subscription(payload, the_assessment, url, client_info, model):
         html += "<b>AccessLog: </b>{}://{}/admin/accesslog/?flt1_7={}&flt2_14={}".format(
             app.config.get('CALLBACK_PROTOCOL', 'https'),
             app.config.get('HOSTNAME', 'localhost'),
-            client_info.id, the_assessment.name)
+            payload, the_assessment.name)
 
     elif model == "generic_collector":
         subject = "[Sleepy Puppy] - Generic Collector Recieved From: {}".format(
@@ -176,7 +175,7 @@ def email_subscription(payload, the_assessment, url, client_info, model):
         html += "<b>Generic Collector: </b>{}://{}/admin/genericcollector/?flt1_0={}&flt2_7={}".format(
             app.config.get('CALLBACK_PROTOCOL', 'https'),
             app.config.get('HOSTNAME', 'localhost'),
-            client_info.id,
+            payload,
             the_assessment.name)
 
     # If there are people to email, email them that a capture was recieved
@@ -332,7 +331,6 @@ def get_callbacks():
             cookies = urllib.unquote(unicode(request.form.get('cookies', '')))
             user_agent = urllib.unquote(
                 unicode(request.form.get('user_agent', '')))
-            # TODO rename assessment to payload
             payload = Payload.query.filter_by(
                 id=int(request.form.get('payload', 0))).first()
             assessment = Assessment.query.filter_by(

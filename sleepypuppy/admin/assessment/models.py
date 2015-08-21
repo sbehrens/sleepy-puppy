@@ -27,8 +27,6 @@ class Assessment(db.Model):
     name = db.Column(db.String(500))
     snooze = db.Column(db.Boolean)
     run_once = db.Column(db.Boolean)
-    url = db.Column(db.String(500))
-
     access_log_enabled = db.Column(db.Boolean)
 
     def as_dict(self):

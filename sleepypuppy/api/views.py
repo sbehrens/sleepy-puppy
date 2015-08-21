@@ -33,15 +33,6 @@ parser_payload.add_argument('payload',
                             required=False,
                             help="Payload Cannot Be Blank",
                             location='json')
-parser_payload.add_argument('url',
-                            type=str,
-                            location='json')
-parser_payload.add_argument('method',
-                            type=str,
-                            location='json')
-parser_payload.add_argument('parameter',
-                            type=str,
-                            location='json')
 parser_payload.add_argument('notes',
                             type=str,
                             location='json')
@@ -52,6 +43,18 @@ parser_assessment.add_argument('name',
                                type=str,
                                required=False,
                                help="Assessment Name Cannot Be Blank",
+                               location='json')
+parser_assessment.add_argument('access_log_enabled',
+                               type=bool,
+                               required=False,
+                               location='json')
+parser_assessment.add_argument('snooze',
+                               type=bool,
+                               required=False,
+                               location='json')
+parser_assessment.add_argument('run_once',
+                               type=bool,
+                               required=False,
                                location='json')
 
 # Request parser for API calls to Javascript model
@@ -73,11 +76,12 @@ parser_javascript.add_argument('notes',
 
 parser_helper = reqparse.RequestParser()
 parser_helper.add_argument('a',
-                               type=str,
-                               required=False)
+                           type=str,
+                           required=False)
 
 
 class AssessmentView(Resource):
+
     """
     API Provides CRUD operations for a specific Assessment based on id.
 
@@ -86,6 +90,7 @@ class AssessmentView(Resource):
     PUT
     DELETE
     """
+
     def get(self, id):
         """
         Retrieve an assessment based on id.
@@ -104,6 +109,9 @@ class AssessmentView(Resource):
         e = Assessment.query.filter(Assessment.id == id).first()
         if e is not None:
             e.name = args["name"]
+            e.name = args["access_log_enabled"]
+            e.name = args["snooze"]
+            e.name = args["run_once"]
         try:
             db.session.commit()
         except IntegrityError, exc:
@@ -119,6 +127,10 @@ class AssessmentView(Resource):
         e = Assessment.query.filter(Assessment.id == id).first()
         if e is not None:
             try:
+                # Delete everything asssociated with Assessment
+                Capture.query.filter_by(assessment=e.name).delete()
+                AccessLog.query.filter_by(assessment=e.name).delete()
+                GenericCollector.query.filter_by(assessment=e.name).delete()
                 db.session.delete(e)
                 db.session.commit()
             except IntegrityError, exc:
@@ -131,6 +143,7 @@ class AssessmentView(Resource):
 
 
 class AssessmentViewList(Resource):
+
     """
     API Provides CRUD operations for Assessments.
 
@@ -138,6 +151,7 @@ class AssessmentViewList(Resource):
     GET
     POST
     """
+
     def get(self):
         results = []
         for row in Assessment.query.all():
@@ -148,6 +162,9 @@ class AssessmentViewList(Resource):
         args = parser_assessment.parse_args()
         o = Assessment()
         o.name = args["name"]
+        o.access_log_enabled = args["access_log_enabled"]
+        o.snooze = args["snooze"]
+        o.run_once = args["run_once"]
 
         try:
             db.session.add(o)
@@ -160,6 +177,7 @@ class AssessmentViewList(Resource):
 
 
 class PayloadView(Resource):
+
     """
     API Provides CRUD operations for Payloads based on id.
 
@@ -168,34 +186,20 @@ class PayloadView(Resource):
     PUT
     DELETE
     """
+
     def get(self, id):
         e = Payload.query.filter(Payload.id == id).first()
         if e is not None:
-            e.payload = e.payload.replace("$1",
-                                          "//{}/x?u={}".format(app.config['HOSTNAME'], str(e.id)))
             return e.as_dict()
         else:
-            return {}
+            return 'payload or assesment not found!'
 
     def put(self, id):
         args = parser_payload.parse_args()
         e = Payload.query.filter(Payload.id == id).first()
         if e is not None:
-            for assessment_id in args["assessments"]:
-                a = Assessment.query.filter(Assessment.id == assessment_id).first()
-                if a is None:
-                    return {"error": "Assessment not found!"}, 500
-                e.assessments.append(a)
-
-            e.payload = args["payload"].replace("$1",
-                                                "//{}/x?u={}".format(app.config['HOSTNAME'], str(e.id)))
-            e.url = args["url"]
-            e.method = args["method"]
-            e.parameter = args["parameter"]
             e.notes = args["notes"]
-            e.snooze = args["snooze"]
-            e.run_once = args["run_once"]
-
+            e.payload = args["payload"]
         try:
             db.session.commit()
         except IntegrityError, exc:
@@ -207,13 +211,6 @@ class PayloadView(Resource):
     def delete(self, id):
         e = Payload.query.filter(Payload.id == id).first()
         if e is not None:
-            cascaded_captures = Capture.query.filter_by(payload=e.id).all()
-            for capture in cascaded_captures:
-                try:
-                    os.remove("uploads/{}.png".format(capture.screenshot))
-                    os.remove("uploads/small_{}.png".format(capture.screenshot))
-                except:
-                    pass
             try:
                 db.session.delete(e)
                 db.session.commit()
@@ -227,6 +224,7 @@ class PayloadView(Resource):
 
 
 class PayloadViewList(Resource):
+
     """
     API Provides CRUD operations for Payloads.
 
@@ -234,6 +232,7 @@ class PayloadViewList(Resource):
     GET
     POST
     """
+
     def get(self):
         results = []
         for row in Payload.query.all():
@@ -244,20 +243,10 @@ class PayloadViewList(Resource):
 
         args = parser_payload.parse_args()
         o = Payload()
-        o.payload = args["payload"].replace("$1",
-                                            "//{}/x?u={}".format(app.config['HOSTNAME'], str(o.id)))
-        o.url = args["url"]
-        o.method = args["method"]
-        o.parameter = args["parameter"]
-        o.notes = args["notes"]
-        o.snooze = args["snooze"]
-        o.run_once = args["run_once"]
 
-        for assessment_id in args["assessments"]:
-            a = Assessment.query.filter(Assessment.id == assessment_id).first()
-            if a is None:
-                return {"error": "Assessment not found!"}, 500
-            o.assessments.append(a)
+        o.payload = args["payload"]
+        o.ordering = 1
+        o.notes = args["notes"]
 
         try:
             db.session.add(o)
@@ -270,12 +259,14 @@ class PayloadViewList(Resource):
 
 
 class JavascriptAssociations(Resource):
+
     """
     API Provides GET operations for retriving Javascripts associated with payload
 
     Methods:
     GET
     """
+
     def get(self, id):
         args = parser_helper.parse_args()
         the_list = []
@@ -284,7 +275,8 @@ class JavascriptAssociations(Resource):
         try:
             if the_payload is not None:
                 for the_javascript in the_payload.ordering.split(','):
-                    the_list.append(Javascript.query.filter_by(id=int(the_javascript)).first().as_dict(the_payload.id, the_assessment))
+                    the_list.append(Javascript.query.filter_by(
+                        id=int(the_javascript)).first().as_dict(the_payload.id, the_assessment))
 
                 return the_list
             else:
@@ -293,7 +285,35 @@ class JavascriptAssociations(Resource):
             return {}
 
 
+class AssessmentAssociations(Resource):
+
+    """
+    API Provides GET operation for retriving Payloads associated with an Assessment
+
+    Methods:
+    GET
+    """
+
+    def get(self, id):
+        the_list = []
+        assessment = Assessment.query.filter_by(id=id).first()
+        payloads = Payload.query.all()
+
+        try:
+            if assessment is not None:
+                for payload in payloads:
+                    results = payload.payload.replace("$1",
+                                                      "//{}/x?u={}&a={}".format(app.config['HOSTNAME'], str(payload.id), str(assessment.id)))
+                    the_list.append(results)
+                return the_list
+            else:
+                return {}
+        except:
+            return {}
+
+
 class JavascriptView(Resource):
+
     """
     API Provides CRUD operations for Javascripts based on id.
 
@@ -302,6 +322,7 @@ class JavascriptView(Resource):
     PUT
     DELETE
     """
+
     def get(self, id):
         e = Javascript.query.filter(Javascript.id == id).first()
         if e is not None:
@@ -332,9 +353,12 @@ class JavascriptView(Resource):
                 payloads = Payload.query.all()
                 for payload in payloads:
                     if payload.ordering is not None:
-                        payload.ordering = payload.ordering.replace(str(result.id) + ",", "")
-                        payload.ordering = payload.ordering.replace("," + str(result.id), "")
-                        payload.ordering = payload.ordering.replace(str(result.id), "")
+                        payload.ordering = payload.ordering.replace(
+                            str(result.id) + ",", "")
+                        payload.ordering = payload.ordering.replace(
+                            "," + str(result.id), "")
+                        payload.ordering = payload.ordering.replace(
+                            str(result.id), "")
                         db.session.add(payload)
                         db.session.commit()
             except Exception as err:
@@ -350,6 +374,7 @@ class JavascriptView(Resource):
 
 
 class JavascriptViewList(Resource):
+
     """
     API Provides CRUD operations for Javascripts.
 
@@ -357,6 +382,7 @@ class JavascriptViewList(Resource):
     GET
     POST
     """
+
     def get(self):
         results = []
         for row in Javascript.query.all():
@@ -382,6 +408,7 @@ class JavascriptViewList(Resource):
 
 
 class CaptureView(Resource):
+
     """
     API Provides CRUD operations for Captures based on id.
 
@@ -391,6 +418,7 @@ class CaptureView(Resource):
 
     Captures should be immutable so no PUT operations are permitted.
     """
+
     def get(self, id):
         e = Capture.query.filter(Capture.id == id).first()
         if e is not None:
@@ -419,12 +447,14 @@ class CaptureView(Resource):
 
 
 class CaptureViewList(Resource):
+
     """
     API Provides CRUD operations for Captures.
 
     Methods:
     GET
     """
+
     def get(self):
         results = []
         for row in Capture.query.all():
@@ -433,6 +463,7 @@ class CaptureViewList(Resource):
 
 
 class GenericCollectorView(Resource):
+
     """
     API Provides CRUD operations for Captures based on id.
 
@@ -442,6 +473,7 @@ class GenericCollectorView(Resource):
 
     Captures should be immutable so no PUT operations are permitted.
     """
+
     def get(self, id):
         e = GenericCollector.query.filter(GenericCollector.id == id).first()
         if e is not None:
@@ -450,7 +482,8 @@ class GenericCollectorView(Resource):
             return {}
 
     def delete(self, id):
-        capture = GenericCollector.query.filter(GenericCollector.id == id).first()
+        capture = GenericCollector.query.filter(
+            GenericCollector.id == id).first()
         if capture is not None:
             try:
                 db.session.delete(capture)
@@ -465,12 +498,14 @@ class GenericCollectorView(Resource):
 
 
 class GenericCollectorViewList(Resource):
+
     """
     API Provides CRUD operations for Captures.
 
     Methods:
     GET
     """
+
     def get(self):
         results = []
         for row in GenericCollector.query.all():
@@ -479,6 +514,7 @@ class GenericCollectorViewList(Resource):
 
 
 class AccessLogView(Resource):
+
     """
     API Provides CRUD operations for AccessLog based on id.
 
@@ -488,6 +524,7 @@ class AccessLogView(Resource):
 
     Captures should be immutable so no PUT operations are permitted.
     """
+
     def get(self, id):
         e = AccessLog.query.filter(AccessLog.id == id).first()
         if e is not None:
@@ -511,12 +548,14 @@ class AccessLogView(Resource):
 
 
 class AccessLogViewList(Resource):
+
     """
     API Provides CRUD operations for Access Log.
 
     Methods:
     GET
     """
+
     def get(self):
         results = []
         for row in AccessLog.query.all():

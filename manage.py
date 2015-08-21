@@ -93,7 +93,8 @@ def default_login():
     """
     Seed the database with some inital values
     """
-    existing_admin = Administrator.query.filter(Administrator.login == 'admin').first()
+    existing_admin = Administrator.query.filter(
+        Administrator.login == 'admin').first()
     if existing_admin:
         print "Admin account (admin) already exists, skipping."
     else:
@@ -149,7 +150,8 @@ def create_bootstrap_assessment(name="General", add_default_payloads=True):
         print("Assessment with name", name, "already exists, exiting.")
         return
     else:
-        assessment = Assessment(name=name, access_log_enabled=False, snooze=False, run_once=False)
+        assessment = Assessment(
+            name=name, access_log_enabled=False, snooze=False, run_once=False)
         # add assessment
         db.session.add(assessment)
         db.session.commit()
@@ -166,7 +168,6 @@ def create_bootstrap_assessment(name="General", add_default_payloads=True):
                     notes=payload.notes,
                     ordering=u'1'
                 )
-                #assessment.payloads.append(payload)['payload', 'notes', 'snooze', 'run_once'])
                 db.session.add(payload)
                 db.session.commit()
 
