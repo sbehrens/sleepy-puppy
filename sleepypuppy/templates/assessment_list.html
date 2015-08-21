@@ -279,53 +279,62 @@ $('#assessments').on('click', 'tbody tr', function(event) {
 });
 
 var text = "";
-
+$('#assessments').on('change', function(){
+    if($('#assessments').length) {
+    console.log($('#assessments').length);
+    } else {
+    $("#payloads").addClass('hidden')
+    }
+});
 $( document ).ready(function() {
-if($('#assessment').length) {
-    $(this).addClass('hidden')
-} else {
+    if ($('#assessments').text().indexOf("There are no items in the table.") === -1) {
+        console.log('there is a record');
+        $("#payloads").removeClass('hidden')
+        var assessment = $($(".highlight td")[2]).attr("class").split(' ')[0].split('-')[3];
+        var assessment_name =$($(".highlight td")[2]).attr("class").split(' ')[0].split('-')[1];
+        var payloads = Array();
+        $("#payloads tbody tr td").each(function(index, value) {
+            capture = $(this).clone(true);
+            collector = $(this).clone(true);
+            access_log = $(this).clone(true);
+            text = $(this).clone(true);
 
-}
-    var assessment = $($(".highlight td")[2]).attr("class").split(' ')[0].split('-')[3];
-    var assessment_name =$($(".highlight td")[2]).attr("class").split(' ')[0].split('-')[1];
-    var payloads = Array();
-    $("#payloads tbody tr td").each(function(index, value) {
-        capture = $(this).clone(true);
-        collector = $(this).clone(true);
-        access_log = $(this).clone(true);
-        text = $(this).clone(true);
+            if ($(collector)[0].className.indexOf("collector") !== -1){
+                var collector_id = $(collector)[0].className.split('-')[2];
+                var total_collections = collector_data[assessment][collector_id];
 
-        if ($(collector)[0].className.indexOf("collector") !== -1){
-            var collector_id = $(collector)[0].className.split('-')[2];
-            var total_collections = collector_data[assessment][collector_id];
-
-            $(this).html('<a target="_blank" href="/admin/genericcollector/?flt2_14=' + collector_id + '&flt3_7=' + assessment_name + '">' + total_collections + '</a>');
-        }
-        if ($(access_log)[0].className.indexOf("accesslog") !== -1){
-            var access_log_id = $(access_log)[0].className.split('-')[2];
-            var total_access_logs = collector_data[assessment][access_log_id];
+                $(this).html('<a target="_blank" href="/admin/genericcollector/?flt2_14=' + collector_id + '&flt3_7=' + assessment_name + '">' + total_collections + '</a>');
+            }
+            if ($(access_log)[0].className.indexOf("accesslog") !== -1){
+                var access_log_id = $(access_log)[0].className.split('-')[2];
+                var total_access_logs = collector_data[assessment][access_log_id];
 
 
-            $(this).html('<a target="_blank" href="/admin/accesslog/?flt1_7=' + access_log_id + '&flt2_14=' + assessment_name + '">' + total_access_logs + '</a>');
-        }
+                $(this).html('<a target="_blank" href="/admin/accesslog/?flt1_7=' + access_log_id + '&flt2_14=' + assessment_name + '">' + total_access_logs + '</a>');
+            }
 
-        if ($(capture)[0].className.indexOf("capture") !== -1){
+            if ($(capture)[0].className.indexOf("capture") !== -1){
 
-            var capture_id = $(capture)[0].className.split('-')[2];
-            var total_captures = capture_data[assessment][capture_id];
+                var capture_id = $(capture)[0].className.split('-')[2];
+                var total_captures = capture_data[assessment][capture_id];
 
-            $(this).html('<a target="_blank" href="/admin/capture/?flt1_7=' + capture_id + '&flt2_14=' + assessment_name + '">' + total_captures + '</a>');
+                $(this).html('<a target="_blank" href="/admin/capture/?flt1_7=' + capture_id + '&flt2_14=' + assessment_name + '">' + total_captures + '</a>');
 
-        }
-        if ($(this)[0].className.indexOf("ignore") === -1) {
-            payloads.push($(this)[0].className.split('-')[2]);
-        }
-        if ($(this)[0].className.indexOf("ignore") != -1) {
-            var text = $(this).text();
-            text = text.replace("$1", "//{{ get_hostname() }}/x?u=" + payloads.pop() + "&a=" + assessment);
-            $(this).text(text);
-        }
-    });
+            }
+            if ($(this)[0].className.indexOf("ignore") === -1) {
+                payloads.push($(this)[0].className.split('-')[2]);
+            }
+            if ($(this)[0].className.indexOf("ignore") != -1) {
+                var text = $(this).text();
+                text = text.replace("$1", "//{{ get_hostname() }}/x?u=" + payloads.pop() + "&a=" + assessment);
+                $(this).text(text);
+            }
+        });
+
+    } else {
+        $("#payloads").addClass('hidden')
+    }
+
 });
 
 </script>
