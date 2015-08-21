@@ -129,7 +129,7 @@ def email_subscription(payload, the_assessment, url, client_info, model):
                 cgi.escape(notify_jobs.notes, quote=True)
             )
 
-        html += "<b>Capture: </b>{}://{}/admin/capture/?flt1_0={}&flt2_21={}".format(
+        html += "<b>Capture: </b>{}://{}/admin/capture/?flt1_0={}&flt3_14={}".format(
             app.config.get('CALLBACK_PROTOCOL', 'https'),
             app.config.get('HOSTNAME', 'localhost'),
             client_info.id, the_assessment.name)
@@ -151,10 +151,10 @@ def email_subscription(payload, the_assessment, url, client_info, model):
             cgi.escape(client_info.ip_address, quote=True)
         )
 
-        html += "<b>AccessLog: </b>{}://{}/admin/accesslog/?flt1_0={}".format(
+        html += "<b>AccessLog: </b>{}://{}/admin/accesslog/?flt1_7={}&flt2_14={}".format(
             app.config.get('CALLBACK_PROTOCOL', 'https'),
             app.config.get('HOSTNAME', 'localhost'),
-            client_info.id)
+            client_info.id, the_assessment.name)
 
     elif model == "generic_collector":
         subject = "[Sleepy Puppy] - Generic Collector Recieved From: {}".format(
@@ -173,7 +173,7 @@ def email_subscription(payload, the_assessment, url, client_info, model):
             cgi.escape(client_info.referrer or "", quote=True)
         )
 
-        html += "<b>Generic Collector: </b>{}://{}/admin/genericcollector/?flt1_0={}&flt3_7={}".format(
+        html += "<b>Generic Collector: </b>{}://{}/admin/genericcollector/?flt1_0={}&flt2_7={}".format(
             app.config.get('CALLBACK_PROTOCOL', 'https'),
             app.config.get('HOSTNAME', 'localhost'),
             client_info.id,

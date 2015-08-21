@@ -12,11 +12,8 @@
 #     See the License for the specific language governing permissions and
 #     limitations under the License.
 from flask.ext.admin.contrib.sqla import ModelView
-from flask.ext.admin.helpers import validate_form_on_submit
 from models import Assessment
 from sleepypuppy.admin.payload.models import Payload
-from flask_admin.babel import gettext
-from models import Assessment
 from sleepypuppy.admin.capture.models import Capture
 from sleepypuppy.admin.collector.models import GenericCollector
 from sleepypuppy.admin.access_log.models import AccessLog
