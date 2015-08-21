@@ -124,9 +124,10 @@ def email_subscription(payload, the_assessment, url, client_info, model):
         html += "<b>Payload: </b>{}<br/>".format(
             cgi.escape(notify_jobs.payload, quote=True)
         )
-        html += "<b>Notes: </b>{}<br/>".format(
-            cgi.escape(notify_jobs.notes, quote=True)
-        )
+        if notify_jobs.notes is not None:
+            html += "<b>Notes: </b>{}<br/>".format(
+                cgi.escape(notify_jobs.notes, quote=True)
+            )
 
         html += "<b>Capture: </b>{}://{}/admin/capture/?flt1_0={}&flt2_21={}".format(
             app.config.get('CALLBACK_PROTOCOL', 'https'),

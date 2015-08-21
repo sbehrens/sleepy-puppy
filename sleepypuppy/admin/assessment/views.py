@@ -15,10 +15,13 @@ from flask.ext.admin.contrib.sqla import ModelView
 from models import Assessment
 from sleepypuppy.admin.payload.models import Payload
 from sleepypuppy.admin.capture.models import Capture
+from sleepypuppy.admin.collector.models import GenericCollector
+from sleepypuppy.admin.access_log.models import AccessLog
 from flask.ext import login
 from flask_wtf import Form
-from sleepypuppy import app
+from sleepypuppy import app, db
 import collections
+import os
 
 
 @app.context_processor
@@ -38,29 +41,37 @@ def utility_processor2():
         return app.config['HOSTNAME']
     return dict(get_hostname=get_hostname)
 
-import json
+
 @app.context_processor
 def utility_processor3():
-    def get_captures():
-        results = []
+    def get_captures(data_type):
         magic_string = ""
-        magic_string += "["
+        magic_string += "{"
         the_assessments = Assessment.query.all()
         the_payloads = Payload.query.all()
         for the_assessment in the_assessments:
-            magic_string += "{\'" + str(the_assessment.id) + "': {"
+            magic_string += "\'" + str(the_assessment.id) + "': {"
             for the_payload in the_payloads:
-                cap_count = Capture.query.filter_by(assessment=the_assessment.name, payload=the_payload.id).count()
-                #results.append({str(the_assessment.name): [the_payload, cap_count]})
-                magic_string += str(the_payload.id) + ":" + str(cap_count) + ","
-            magic_string += "}},"
+                if data_type == "capture":
+                    cap_count = Capture.query.filter_by(
+                        assessment=the_assessment.name, payload=the_payload.id).count()
+                if data_type == "collector":
+                    cap_count = GenericCollector.query.filter_by(
+                        assessment=the_assessment.name, payload=the_payload.id).count()
+                if data_type == "access_log":
+                    cap_count = AccessLog.query.filter_by(
+                        assessment=the_assessment.name, payload=the_payload.id).count()
+                magic_string += str(the_payload.id) + \
+                    ":" + str(cap_count) + ","
+            magic_string += "},"
             print magic_string
-        magic_string += "]"
+        magic_string += "}"
         return magic_string
     return dict(get_captures=get_captures)
 
 
 class AssessmentView(ModelView):
+
     """
     ModelView override of Flask Admin for Assessments.
     """
@@ -76,6 +87,38 @@ class AssessmentView(ModelView):
     # Only display form columns listed below
     form_columns = ['name', 'access_log_enabled', 'snooze', 'run_once']
     column_list = ['name', 'snooze', 'run_once', 'access_log_enabled']
+
+    def delete_captures(self, assessment):
+        """
+        Remove captures and local captures upon assessment deletion
+        """
+        print assessment
+        cascaded_captures = Capture.query.filter_by(
+            assessment=assessment.name).all()
+
+        for capture in cascaded_captures:
+            try:
+                os.remove("uploads/{}.png".format(capture.screenshot))
+                os.remove(
+                    "uploads/small_{}.png".format(capture.screenshot))
+            except:
+                pass
+        try:
+            # Cascade delete for Assessment
+            Capture.query.filter_by(assessment=assessment.name).delete()
+            AccessLog.query.filter_by(assessment=assessment.name).delete()
+            GenericCollector.query.filter_by(assessment=assessment.name).delete()
+        except Exception as err:
+            app.logger.warn(err)
+
+        try:
+            db.session.add(assessment)
+            db.session.delete(assessment)
+            db.session.commit()
+        except Exception as err:
+            app.logger.warn(err)
+
+    on_model_delete = delete_captures
 
     form_args = dict(
         access_log_enabled=dict(
@@ -95,7 +138,6 @@ class AssessmentView(ModelView):
 
     column_formatters = dict(
         payloads=lambda v, c, m, p: [Payload.query.all()])
-
 
     def __init__(self, session, **kwargs):
         super(AssessmentView, self).__init__(Assessment, session, **kwargs)

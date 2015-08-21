@@ -45,8 +45,7 @@ if (typeof jQuery === 'undefined') {
 } else {
     $(document).ready(loader);
 }
-console.log({{assessment}});
-console.log('slkjafsklfjs');
+
 function loader () {
     $.ajax({
     type: 'GET',

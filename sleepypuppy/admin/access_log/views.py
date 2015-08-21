@@ -31,7 +31,7 @@ class AccessLogView(ModelView):
 
     form_excluded_columns = ('captures', 'uid')
 
-    column_filters = ('id', 'ip_address', 'user_agent', 'referrer')
+    column_filters = ('id', 'payload', 'assessment', 'ip_address', 'user_agent', 'referrer')
 
     # Disable unnneeded CRUD operations
     can_create = False

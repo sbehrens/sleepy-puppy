@@ -58,9 +58,7 @@ class CaptureView(ModelView):
         'assessment',
         'url',
         'referrer',
-        'cookies',
-        'user_agent',
-        'screenshot'
+        'user_agent'
     )
 
     hostname = app.config['HOSTNAME']
