@@ -114,8 +114,6 @@ class AssessmentView(ModelView):
             app.logger.warn(err)
 
         try:
-            db.session.add(assessment)
-            db.session.delete(assessment)
             db.session.commit()
         except Exception as err:
             app.logger.warn(err)

@@ -11,7 +11,7 @@ Sleepy Puppy is a cross-site scripting (XSS) payload management framework which 
 ##Why Should I use Sleepy Puppy?##
 Often when testing for client side injections (HTML/JS/etc.) security engineers are looking for where the injection occurs within the application they are testing *only*.  While this provides ample coverage for the application in scope, there is a possibility that the code engineers are injecting may be reflected back in a completely separate application.
 
-Sleepy Puppy helps facilitate inter-application xss testing by providing JavaScript payloads that callback to the Sleepy Puppy application.
+Sleepy Puppy helps facilitate inter-application XSS testing by providing JavaScript payloads that callback to the Sleepy Puppy application. This allows tracking when/where a payload fires even if the execution is triggered by a different user, occurs in a different application, or happens long after the initial test was performed.
 
 These payloads and the JavaScripts that define them are completely customizable, allowing you to capture only the information you need depending on your environment.
 

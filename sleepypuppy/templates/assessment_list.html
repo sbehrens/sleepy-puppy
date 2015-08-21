@@ -281,6 +281,11 @@ $('#assessments').on('click', 'tbody tr', function(event) {
 var text = "";
 
 $( document ).ready(function() {
+if($('#assessment').length) {
+    $(this).addClass('hidden')
+} else {
+
+}
     var assessment = $($(".highlight td")[2]).attr("class").split(' ')[0].split('-')[3];
     var assessment_name =$($(".highlight td")[2]).attr("class").split(' ')[0].split('-')[1];
     var payloads = Array();
