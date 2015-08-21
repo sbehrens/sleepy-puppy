@@ -12,8 +12,11 @@
 #     See the License for the specific language governing permissions and
 #     limitations under the License.
 from flask.ext.admin.contrib.sqla import ModelView
+from flask.ext.admin.helpers import validate_form_on_submit
 from models import Assessment
 from sleepypuppy.admin.payload.models import Payload
+from flask_admin.babel import gettext
+from models import Assessment
 from sleepypuppy.admin.capture.models import Capture
 from sleepypuppy.admin.collector.models import GenericCollector
 from sleepypuppy.admin.access_log.models import AccessLog
@@ -22,6 +25,10 @@ from flask_wtf import Form
 from sleepypuppy import app, db
 import collections
 import os
+
+#
+# Utility processors for healing with Assessment view.
+#
 
 
 @app.context_processor
@@ -64,7 +71,6 @@ def utility_processor3():
                 magic_string += str(the_payload.id) + \
                     ":" + str(cap_count) + ","
             magic_string += "},"
-            print magic_string
         magic_string += "}"
         return magic_string
     return dict(get_captures=get_captures)
@@ -92,7 +98,6 @@ class AssessmentView(ModelView):
         """
         Remove captures and local captures upon assessment deletion
         """
-        print assessment
         cascaded_captures = Capture.query.filter_by(
             assessment=assessment.name).all()
 
@@ -133,7 +138,7 @@ class AssessmentView(ModelView):
         ),
         run_once=dict(
             description="Only run capture once for this payload"
-        ),
+        )
     )
 
     column_formatters = dict(

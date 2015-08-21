@@ -40,4 +40,4 @@ class GenericCollector(db.Model):
         self.pub_date = pub_date
 
     def __repr__(self):
-        return str(self.payload_id)
+        return str(self.payload)

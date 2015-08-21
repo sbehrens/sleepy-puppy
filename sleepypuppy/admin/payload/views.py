@@ -141,7 +141,7 @@ class PayloadView(ModelView):
 
     # Method to cascade delete screenshots when removing a payload
     def delete_screenshots(self, model):
-        cascaded_captures = Capture.query.filter_by(payload_id=model.id).all()
+        cascaded_captures = Capture.query.filter_by(payload=model.id).all()
         for capture in cascaded_captures:
             try:
                 os.remove("uploads/{}.png".format(capture.screenshot))
@@ -154,7 +154,7 @@ class PayloadView(ModelView):
     def action_delete(self, items):
         for record in items:
             cascaded_captures = Capture.query.filter_by(
-                payload_id=record).all()
+                payload=record).all()
             for capture in cascaded_captures:
                 try:
                     os.remove("uploads/{}.png".format(capture.screenshot))

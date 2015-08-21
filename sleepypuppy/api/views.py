@@ -207,7 +207,7 @@ class PayloadView(Resource):
     def delete(self, id):
         e = Payload.query.filter(Payload.id == id).first()
         if e is not None:
-            cascaded_captures = Capture.query.filter_by(payload_id=e.id).all()
+            cascaded_captures = Capture.query.filter_by(payload=e.id).all()
             for capture in cascaded_captures:
                 try:
                     os.remove("uploads/{}.png".format(capture.screenshot))

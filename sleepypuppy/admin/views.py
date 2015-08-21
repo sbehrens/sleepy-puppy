@@ -29,7 +29,7 @@ def show_capture(id):
     """
     Return a specific capture record and render using capture template.
     """
-    captured = Capture.query.filter_by(payload_id=id).all()
+    captured = Capture.query.filter_by(payload=id).all()
     payload_assessment = Payload.query.filter_by(id=id).first()
     return render_template(
         'admin/capture.html',

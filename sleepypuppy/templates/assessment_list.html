@@ -265,7 +265,7 @@ $('#assessments').on('click', 'tbody tr', function(event) {
             var capture_id = $(capture)[0].className.split('-')[2];
             var total_captures = capture_data[assessment1][capture_id];
 
-            $(this).html('<a target="_blank" href="/admin/capture/?flt2_7=' + capture_id + '&flt3_21=' + assessment_name + '">' + total_captures + '</a>');
+            $(this).html('<a target="_blank" href="/admin/capture/?flt1_7=' + capture_id + '&flt2_14=' + assessment_name + '">' + total_captures + '</a>');
 
         }
 
@@ -309,7 +309,7 @@ $( document ).ready(function() {
             var capture_id = $(capture)[0].className.split('-')[2];
             var total_captures = capture_data[assessment][capture_id];
 
-            $(this).html('<a target="_blank" href="/admin/capture/?flt2_7=' + capture_id + '&flt3_21=' + assessment_name + '">' + total_captures + '</a>');
+            $(this).html('<a target="_blank" href="/admin/capture/?flt1_7=' + capture_id + '&flt2_14=' + assessment_name + '">' + total_captures + '</a>');
 
         }
         if ($(this)[0].className.indexOf("ignore") === -1) {

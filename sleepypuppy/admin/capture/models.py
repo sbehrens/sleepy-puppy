@@ -41,7 +41,6 @@ class Capture(db.Model):
     screenshot = db.Column(db.String(20), unique=False)
     pub_date = db.Column(db.String(512), unique=False)
     dom = db.Column(db.Text(), unique=False)
-    payload_id = db.Column(db.Integer, db.ForeignKey('payloads.id'))
 
     def as_dict(self):
         """Return Capture model as JSON object"""
@@ -57,7 +56,6 @@ class Capture(db.Model):
         self.payload = payload
         self.screenshot = screenshot
         self.dom = bs(dom).prettify()
-        self.payload_id = payload
         # Set datetime when a capture is recieved
         if pub_date is None:
             pub_date = str(datetime.datetime.now())

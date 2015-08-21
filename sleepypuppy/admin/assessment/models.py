@@ -24,11 +24,10 @@ class Assessment(db.Model):
     __tablename__ = 'assessments'
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(500), unique=True)
+    name = db.Column(db.String(500))
     snooze = db.Column(db.Boolean)
     run_once = db.Column(db.Boolean)
     url = db.Column(db.String(500))
-    #payloads = db.relationship("Payload", secondary=assessment_associations, backref="assessments")
 
     access_log_enabled = db.Column(db.Boolean)
 

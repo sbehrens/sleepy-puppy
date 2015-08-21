@@ -34,10 +34,11 @@ def x_collector(payload=1):
     and email users subscribed to the payload's assessment.
     """
 
-    the_payload = Payload.query.filter_by(id=int(request.args.get('u', 1))).first()
+    the_payload = Payload.query.filter_by(
+        id=int(request.args.get('u', 1))).first()
     assessment_id = request.args.get('a', 1)
 
-    # # consider only looking up payload one time for performance
+    # consider only looking up payload one time for performance
 
     the_assessment = Assessment.query.filter_by(
         id=int(assessment_id)).first()
@@ -54,14 +55,14 @@ def x_collector(payload=1):
         except Exception as err:
             app.logger.warn(err)
         try:
-            email_subscription(the_payload.id, the_assessment, None, client_info, 'access_log')
+            email_subscription(
+                the_payload.id, the_assessment, None, client_info, 'access_log')
         except Exception as err:
             app.logger.warn(err)
 
     # Log for recording access log records
     if request.args.get('u', 1):
         return collector(request.args.get('u', 1))
-
 
 
 @app.route('/loader.js', methods=['GET'])
@@ -71,7 +72,7 @@ def collector(payload=1):
     Enforce snooze and run_once directives.
     """
     payload = request.args.get('u', 1)
-    assessment =  request.args.get('a', 1)
+    assessment = request.args.get('a', 1)
     try:
         the_assessment = Assessment.query.filter_by(id=int(assessment)).first()
         if the_assessment.snooze:
@@ -80,7 +81,6 @@ def collector(payload=1):
             return ''
     except Exception as err:
         app.logger.warn(err)
-    print the_assessment.id
     # Render the template and include payload, hostname, callback_protocol.
     # If you need to expose additiional server side
     # information for your JavaScripts, do it here.
@@ -363,7 +363,8 @@ def get_callbacks():
             db.session.add(client_info)
             db.session.commit()
             # Email users subscribed to the Payload's Assessment
-            email_subscription(payload.id, assessment, url, client_info, 'capture')
+            email_subscription(
+                payload.id, assessment, url, client_info, 'capture')
         except Exception as e:
             app.logger.warn(
                 "Exception in /callbacks {}\n\n{}".format(Exception, str(e)))
