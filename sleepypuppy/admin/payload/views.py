@@ -14,7 +14,6 @@
 import os
 from sleepypuppy import app, db
 from flask.ext.admin.contrib.sqla import ModelView
-from flask.ext.admin.actions import action
 from wtforms import validators
 from wtforms.fields import SelectField, TextAreaField, SelectMultipleField
 from wtforms.widgets import TextInput

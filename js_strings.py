@@ -25,6 +25,7 @@ This example shows how you can log arbitrary data to the Generic Collector.
 Simply specify the following parameters in your POST request to https://server/generic_collector:
 
 payload: the payload that was triggered in the user's browser.  Use {{payload}} template to fill this in automatically.
+assessment: the assessment that is associated with this generic collector.  Use {{assessment}} template to fill this in automatically.
 javascript_name: the name of your javascript file that was used to generate the generic collection
 data: any data in Text/Json format.  Do not send binary data.
 (optional)

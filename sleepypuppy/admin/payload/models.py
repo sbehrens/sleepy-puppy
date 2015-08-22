@@ -14,6 +14,7 @@
 from sleepypuppy import db
 from sleepypuppy.admin.javascript.models import Javascript
 
+
 class Payload(db.Model):
     """
     Payload model contains the following parameters:

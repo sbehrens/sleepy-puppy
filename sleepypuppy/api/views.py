@@ -112,6 +112,8 @@ class AssessmentView(Resource):
             e.name = args["access_log_enabled"]
             e.name = args["snooze"]
             e.name = args["run_once"]
+        else:
+            return 'assessment not found!'
         try:
             db.session.commit()
         except IntegrityError, exc:
@@ -192,7 +194,7 @@ class PayloadView(Resource):
         if e is not None:
             return e.as_dict()
         else:
-            return 'payload or assesment not found!'
+            return 'payload not found!'
 
     def put(self, id):
         args = parser_payload.parse_args()
@@ -200,6 +202,8 @@ class PayloadView(Resource):
         if e is not None:
             e.notes = args["notes"]
             e.payload = args["payload"]
+        else:
+            return 'payload not found!'
         try:
             db.session.commit()
         except IntegrityError, exc:
@@ -285,7 +289,7 @@ class JavascriptAssociations(Resource):
             return {}
 
 
-class AssessmentAssociations(Resource):
+class AssessmentPayloads(Resource):
 
     """
     API Provides GET operation for retriving Payloads associated with an Assessment
@@ -338,6 +342,8 @@ class JavascriptView(Resource):
             e.name = args["name"]
             e.code = args["code"]
             e.notes = args["notes"]
+        else:
+            return {'javascript not found!'}
         try:
             db.session.commit()
         except IntegrityError, exc:
