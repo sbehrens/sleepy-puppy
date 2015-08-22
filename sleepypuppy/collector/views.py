@@ -78,9 +78,12 @@ def collector(payload=1):
             return ''
         if the_assessment.run_once and Capture.query.filter_by(payload=int(payload), assessment=the_assessment.name).first():
             return ''
+        if the_assessment.run_once and GenericCollector.query.filter_by(payload=int(payload), assessment=the_assessment.name).first():
+            return ''
     except Exception as err:
         app.logger.warn(err)
-    # Render the template and include payload, hostname, callback_protocol.
+    # Render the template and include payload, hostname, callback_protocol,
+    # assessment.
     # If you need to expose additiional server side
     # information for your JavaScripts, do it here.
     headers = {'Content-Type': 'text/javascript'}
