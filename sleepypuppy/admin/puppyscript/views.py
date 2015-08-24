@@ -12,16 +12,16 @@
 #     See the License for the specific language governing permissions and
 #     limitations under the License.
 from flask.ext.admin.contrib.sqla import ModelView
-from models import Javascript
+from models import Puppyscript
 from sleepypuppy.admin.payload.models import Payload
 from flask.ext import login
 from flask_wtf import Form
 from sleepypuppy import db, app
 
 
-class JavascriptView(ModelView):
+class PuppyscriptView(ModelView):
     """
-    ModelView override of Flask Admin for JavaScripts.
+    ModelView override of Flask Admin for Puppyscripts.
     """
     # CSRF protection
     form_base_class = Form
@@ -53,4 +53,4 @@ class JavascriptView(ModelView):
             app.logger.warn(err)
 
     def __init__(self, session, **kwargs):
-        super(JavascriptView, self).__init__(Javascript, session, **kwargs)
+        super(PuppyscriptView, self).__init__(Puppyscript, session, **kwargs)

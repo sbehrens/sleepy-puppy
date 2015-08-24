@@ -41,8 +41,9 @@ def x_collector(payload=1):
     # consider only looking up payload one time for performance
     the_assessment = Assessment.query.filter_by(
         id=int(assessment_id)).first()
-    if the_assessment.access_log_enabled:
-        try:
+
+    try:
+        if the_assessment.access_log_enabled:
             referrer = request.headers.get("Referrer", None)
             user_agent = request.headers.get("User-Agent", None)
             ip_address = request.remote_addr
@@ -50,14 +51,10 @@ def x_collector(payload=1):
                 the_payload.id, the_assessment.name, referrer, user_agent, ip_address)
             db.session.add(client_info)
             db.session.commit()
-
-        except Exception as err:
-            app.logger.warn(err)
-        try:
-            email_subscription(
-                the_payload.id, the_assessment, None, client_info, 'access_log')
-        except Exception as err:
-            app.logger.warn(err)
+            email_subscription(the_payload.id, the_assessment, None, client_info, 'access_log')
+    except Exception as err:
+        app.logger.warn("assessment not found, can't check access log.")
+        app.logger.warn(err)
 
     # Log for recording access log records
     if request.args.get('u', 1):
@@ -67,7 +64,7 @@ def x_collector(payload=1):
 @app.route('/loader.js', methods=['GET'])
 def collector(payload=1):
     """
-    Render Javascript payload with unique identifier and hosts for callback.
+    Render Puppyscript payload with unique identifier and hosts for callback.
     Enforce snooze and run_once directives.
     """
     payload = request.args.get('u', 1)
@@ -86,16 +83,30 @@ def collector(payload=1):
     # assessment.
     # If you need to expose additiional server side
     # information for your JavaScripts, do it here.
-    headers = {'Content-Type': 'text/javascript'}
-    return make_response(render_template(
-        'loader.js',
-        payload=payload,
-        assessment=the_assessment.id,
-        hostname=app.config['CALLBACK_HOSTNAME'],
-        callback_protocol=app.config.get('CALLBACK_PROTOCOL', 'https')),
-        200,
-        headers
-    )
+    try:
+        headers = {'Content-Type': 'text/javascript'}
+        return make_response(render_template(
+            'loader.js',
+            payload=payload,
+            assessment=the_assessment.id,
+            hostname=app.config['CALLBACK_HOSTNAME'],
+            callback_protocol=app.config.get('CALLBACK_PROTOCOL', 'https')),
+            200,
+            headers
+        )
+    except:
+        app.logger.warn("Assessment not found, defaulting to General.")
+        # If the assessment doesn't exist, default to general
+        headers = {'Content-Type': 'text/javascript'}
+        return make_response(render_template(
+            'loader.js',
+            payload=payload,
+            assessment=1,
+            hostname=app.config['CALLBACK_HOSTNAME'],
+            callback_protocol=app.config.get('CALLBACK_PROTOCOL', 'https')),
+            200,
+            headers
+        )
 
 
 def email_subscription(payload, the_assessment, url, client_info, model):
@@ -165,8 +176,8 @@ def email_subscription(payload, the_assessment, url, client_info, model):
         html = "<b>Associated Assessment: </b>{}<br/>".format(
             cgi.escape(the_assessment.name, quote=True)
         )
-        html += "<b>Javascript Name: </b>{}<br/>".format(
-            cgi.escape(client_info.javascript_name or "", quote=True)
+        html += "<b>Puppyscript Name: </b>{}<br/>".format(
+            cgi.escape(client_info.puppyscript_name or "", quote=True)
         )
         html += "<b>Url: </b>{}<br/>".format(
             cgi.escape(client_info.url or "", quote=True)
@@ -232,11 +243,11 @@ def email_subscription(payload, the_assessment, url, client_info, model):
 @app.route('/generic_callback', methods=['POST', 'GET'])
 def get_generic_callback():
     """
-    Method to handle generic callbacks from arbitrary javascripts.
+    Method to handle generic callbacks from arbitrary puppyscripts.
 
     Expects
     Method:          POST
-    Data:            payload, javascript_name, data
+    Data:            payload, puppyscript_name, data
     Optional Data:   referrer, url
     """
     response = Response()
@@ -246,8 +257,8 @@ def get_generic_callback():
             app.logger.info("request.form.get('payload', 0): {}".format(
                 request.form.get('payload', 0)))
 
-            javascript_name = urllib.unquote(
-                unicode(request.form.get('javascript_name', '')))
+            puppyscript_name = urllib.unquote(
+                unicode(request.form.get('puppyscript_name', '')))
 
             # If they don't set a url or referrer, ignore it
             url = urllib.unquote(unicode(request.form.get('uri', '')))
@@ -275,11 +286,11 @@ def get_generic_callback():
             # If it's a rogue capture, log it anyway.
             if payload is None or assessment is None:
                 client_info = GenericCollector(
-                    0, 0, javascript_name, url, referrer, data)
+                    0, 0, puppyscript_name, url, referrer, data)
             else:
                 # Create the capture with associated assessment/payload
                 client_info = GenericCollector(
-                    payload.id, assessment.name, javascript_name, url, referrer, data)
+                    payload.id, assessment.name, puppyscript_name, url, referrer, data)
 
             db.session.add(client_info)
             db.session.commit()
@@ -302,7 +313,7 @@ def get_callbacks():
     """
     Method to handle Capture creation.
 
-    The Default Javascript provides all the expected parameters
+    The Default Puppyscript provides all the expected parameters
     for this endpoint.
 
     If you need to modify the default captures, provide the following:

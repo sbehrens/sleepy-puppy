@@ -228,7 +228,7 @@
   <script src="{{ admin_static.url(filename='admin/js/form-1.0.0.js') }}"></script>
   <script src="../../../static/src-noconflict/ace.js"></script>
 
-  {% if request.endpoint == "javascript.create_view" or request.endpoint == "javascript.edit_view" %}
+  {% if request.endpoint == "puppyscript.create_view" or request.endpoint == "puppyscript.edit_view" %}
   <script>
       // Hook up ACE editor to all textareas with data-editor attribute
       $(function () {

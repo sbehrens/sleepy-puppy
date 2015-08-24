@@ -74,9 +74,9 @@ def require_appkey(view_function):
     @wraps(view_function)
     def decorated_function(*args, **kwargs):
 
-        # If the user is attempting to get list of javascripts
-        # return the javascripts without token auth
-        if request.method == "GET" and request.path.split('/')[2] == 'javascript_loader':
+        # If the user is attempting to get list of puppyscripts
+        # return the puppyscripts without token auth
+        if request.method == "GET" and request.path.split('/')[2] == 'puppyscript_loader':
                 return view_function(*args, **kwargs)
         if request.headers.get('Token'):
             for keys in Administrator.query.all():
@@ -122,27 +122,27 @@ from collector import views
 from upload import upload  # noqa
 
 # Initalize all Flask API views
-from api.views import JavascriptAssociations, CaptureView, CaptureViewList, JavascriptView, JavascriptViewList, PayloadView, PayloadViewList, AccessLogView, AccessLogViewList, AssessmentView, AssessmentViewList, GenericCollectorView, GenericCollectorViewList, AssessmentPayloads  # noqa
+from api.views import PuppyscriptAssociations, CaptureView, CaptureViewList, PuppyscriptView, PuppyscriptViewList, PayloadView, PayloadViewList, AccessLogView, AccessLogViewList, AssessmentView, AssessmentViewList, GenericCollectorView, GenericCollectorViewList, AssessmentPayloads  # noqa
 
 flask_api.add_resource(AssessmentViewList, '/api/assessments')
 flask_api.add_resource(AssessmentView, '/api/assessments/<int:id>')
 flask_api.add_resource(CaptureViewList, '/api/captures')
 flask_api.add_resource(CaptureView, '/api/captures/<int:id>')
-flask_api.add_resource(JavascriptView, '/api/javascript/<int:id>')
-flask_api.add_resource(JavascriptViewList, '/api/javascript')
+flask_api.add_resource(PuppyscriptView, '/api/puppyscript/<int:id>')
+flask_api.add_resource(PuppyscriptViewList, '/api/puppyscript')
 flask_api.add_resource(PayloadViewList, '/api/payloads')
 flask_api.add_resource(PayloadView, '/api/payloads/<int:id>')
 flask_api.add_resource(AccessLogViewList, '/api/access_log')
 flask_api.add_resource(AccessLogView, '/api/access_log/<int:id>')
 flask_api.add_resource(GenericCollectorViewList, '/api/generic_collector')
 flask_api.add_resource(GenericCollectorView, '/api/generic_collector/<int:id>')
-flask_api.add_resource(JavascriptAssociations, '/api/javascript_loader/<int:id>')
+flask_api.add_resource(PuppyscriptAssociations, '/api/puppyscript_loader/<int:id>')
 flask_api.add_resource(AssessmentPayloads, '/api/assessment_payloads/<int:id>')
 
 # Initalize all Flask Admin dashboard views
 from admin.capture.views import CaptureView
 from admin.access_log.views import AccessLogView
-from admin.javascript.views import JavascriptView
+from admin.puppyscript.views import PuppyscriptView
 from admin.payload.views import PayloadView
 from admin.user.views import UserView
 from admin.assessment.views import AssessmentView
@@ -156,7 +156,7 @@ from sqlalchemy.orm import configure_mappers
 configure_mappers()
 
 # # Add all Flask Admin routes
-flask_admin.add_view(JavascriptView(db.session))
+flask_admin.add_view(PuppyscriptView(db.session))
 flask_admin.add_view(PayloadView(db.session))
 flask_admin.add_view(CaptureView(db.session))
 flask_admin.add_view(GenericCollectorView(db.session))

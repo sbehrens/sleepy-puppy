@@ -16,45 +16,45 @@ from sleepypuppy.admin.models import taxonomy
 from flask import render_template_string
 
 
-class Javascript(db.Model):
+class Puppyscript(db.Model):
 
     """
-    Javascript model contains the following parameters:
+    Puppyscript model contains the following parameters:
 
     name = name of javascriopt file.
     code = code that will be executed when a sleepy puppy payload is executed
     notes = notes
 
-    Javascript is many to many with payload.
+    Puppyscript is many to many with payload.
     """
-    __tablename__ = 'javascript'
+    __tablename__ = 'puppyscript'
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(500), nullable=False)
     code = db.Column(db.Text(), nullable=False)
     notes = db.Column(db.String(500))
     payloads = db.relationship(
-        "Payload", backref='javascript', secondary=taxonomy)
+        "Payload", backref='puppyscript', secondary=taxonomy)
 
-    def show_javascript_ids(self):
+    def show_puppyscript_ids(self):
         """
-        Print javascripts as a list of javascript ids.
+        Print puppyscripts as a list of Puppyscript ids.
         """
-        return [i.id for i in self.javascripts]
+        return [i.id for i in self.Puppyscripts]
 
-    def show_javascript_names(self):
+    def show_puppyscript_names(self):
         """
-        Print javascripts as a string of javascript ids.
+        Print puppyscripts as a string of Puppyscript ids.
         """
         return ','.join(
-            [i.name for i in self.javascripts]
+            [i.name for i in self.Puppyscripts]
         )
 
     def as_dict(self, payload=1, assessment=1):
         """
         Return Assessment model as JSON object
 
-        If you need to expose addtional variables to your Javascript
+        If you need to expose addtional variables to your Puppyscript
         templates, this is the place to do it.
         """
 

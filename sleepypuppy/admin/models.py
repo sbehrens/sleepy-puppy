@@ -23,6 +23,6 @@ user_associations = db.Table(
 
 taxonomy = db.Table(
     'taxonomy',
-    Column('javascript_id', Integer, ForeignKey('javascript.id')),
+    Column('puppyscript_id', Integer, ForeignKey('puppyscript.id')),
     Column('payload', Integer, ForeignKey('payloads.id')),
 )

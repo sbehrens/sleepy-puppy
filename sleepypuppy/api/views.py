@@ -15,7 +15,7 @@ import os
 from flask.ext.restful import Resource, reqparse
 from sqlalchemy.exc import IntegrityError
 from sleepypuppy import db, app
-from sleepypuppy.admin.javascript.models import Javascript
+from sleepypuppy.admin.puppyscript.models import Puppyscript
 from sleepypuppy.admin.payload.models import Payload
 from sleepypuppy.admin.capture.models import Capture
 from sleepypuppy.admin.assessment.models import Assessment
@@ -57,22 +57,22 @@ parser_assessment.add_argument('run_once',
                                required=False,
                                location='json')
 
-# Request parser for API calls to Javascript model
-parser_javascript = reqparse.RequestParser()
-parser_javascript.add_argument('name',
-                               type=str,
-                               required=True,
-                               help="Name Cannot Be Blank",
-                               location='json')
-parser_javascript.add_argument('code',
-                               type=str,
-                               required=True,
-                               help="Code Cannot Be Blank",
-                               location='json')
-parser_javascript.add_argument('notes',
-                               type=str,
-                               required=False,
-                               location='json')
+# Request parser for API calls to Puppyscript model
+parser_puppyscript = reqparse.RequestParser()
+parser_puppyscript.add_argument('name',
+                                type=str,
+                                required=True,
+                                help="Name Cannot Be Blank",
+                                location='json')
+parser_puppyscript.add_argument('code',
+                                type=str,
+                                required=True,
+                                help="Code Cannot Be Blank",
+                                location='json')
+parser_puppyscript.add_argument('notes',
+                                type=str,
+                                required=False,
+                                location='json')
 
 parser_helper = reqparse.RequestParser()
 parser_helper.add_argument('a',
@@ -262,10 +262,10 @@ class PayloadViewList(Resource):
         return o.as_dict(), 201
 
 
-class JavascriptAssociations(Resource):
+class PuppyscriptAssociations(Resource):
 
     """
-    API Provides GET operations for retriving Javascripts associated with payload
+    API Provides GET operations for retriving Puppyscripts associated with payload
 
     Methods:
     GET
@@ -278,9 +278,9 @@ class JavascriptAssociations(Resource):
         the_payload = Payload.query.filter(Payload.id == id).first()
         try:
             if the_payload is not None:
-                for the_javascript in the_payload.ordering.split(','):
-                    the_list.append(Javascript.query.filter_by(
-                        id=int(the_javascript)).first().as_dict(the_payload.id, the_assessment))
+                for the_puppyscript in the_payload.ordering.split(','):
+                    the_list.append(Puppyscript.query.filter_by(
+                        id=int(the_puppyscript)).first().as_dict(the_payload.id, the_assessment))
 
                 return the_list
             else:
@@ -316,10 +316,10 @@ class AssessmentPayloads(Resource):
             return {}
 
 
-class JavascriptView(Resource):
+class PuppyscriptView(Resource):
 
     """
-    API Provides CRUD operations for Javascripts based on id.
+    API Provides CRUD operations for Puppyscripts based on id.
 
     Methods:
     GET
@@ -328,22 +328,22 @@ class JavascriptView(Resource):
     """
 
     def get(self, id):
-        e = Javascript.query.filter(Javascript.id == id).first()
+        e = Puppyscript.query.filter(Puppyscript.id == id).first()
         if e is not None:
             return e.as_dict()
         else:
             return {}
 
     def put(self, id):
-        args = parser_javascript.parse_args()
-        e = Javascript.query.filter(Javascript.id == id).first()
+        args = parser_puppyscript.parse_args()
+        e = Puppyscript.query.filter(Puppyscript.id == id).first()
         if e is not None:
 
             e.name = args["name"]
             e.code = args["code"]
             e.notes = args["notes"]
         else:
-            return {'javascript not found!'}
+            return {'puppyscript not found!'}
         try:
             db.session.commit()
         except IntegrityError, exc:
@@ -353,7 +353,7 @@ class JavascriptView(Resource):
         return e.as_dict(), 201
 
     def delete(self, id):
-        result = Javascript.query.filter(Javascript.id == id).first()
+        result = Puppyscript.query.filter(Puppyscript.id == id).first()
         if result is not None:
             try:
                 payloads = Payload.query.all()
@@ -379,10 +379,10 @@ class JavascriptView(Resource):
             return {}
 
 
-class JavascriptViewList(Resource):
+class PuppyscriptViewList(Resource):
 
     """
-    API Provides CRUD operations for Javascripts.
+    API Provides CRUD operations for Puppyscripts.
 
     Methods:
     GET
@@ -391,14 +391,14 @@ class JavascriptViewList(Resource):
 
     def get(self):
         results = []
-        for row in Javascript.query.all():
+        for row in Puppyscript.query.all():
             results.append(row.as_dict())
         return results
 
     def post(self):
 
-        args = parser_javascript.parse_args()
-        o = Javascript()
+        args = parser_puppyscript.parse_args()
+        o = Puppyscript()
         o.name = args["name"]
         o.code = args["code"]
         o.notes = args["notes"]

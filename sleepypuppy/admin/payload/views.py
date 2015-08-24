@@ -18,7 +18,7 @@ from wtforms import validators
 from wtforms.fields import SelectField, TextAreaField, SelectMultipleField
 from wtforms.widgets import TextInput
 from flask.ext.admin._compat import text_type
-from sleepypuppy.admin.javascript.models import Javascript
+from sleepypuppy.admin.puppyscript.models import Puppyscript
 from sleepypuppy.admin.capture.models import Capture
 from models import Payload
 from flask.ext import login
@@ -62,11 +62,11 @@ class Select2MultipleField(SelectMultipleField):
         )
         self.allow_blank = allow_blank
         self.blank_text = blank_text or ' '
-        self.choices = db.session.query(Javascript.id, Javascript.name).all()
+        self.choices = db.session.query(Puppyscript.id, Puppyscript.name).all()
 
     def iter_choices(self):
         # moved the query here so it updates
-        choices = db.session.query(Javascript.id, Javascript.name).all()
+        choices = db.session.query(Puppyscript.id, Puppyscript.name).all()
         if self.allow_blank:
             yield (u'__None', self.blank_text, self.data is [])
 
@@ -95,7 +95,7 @@ class Select2MultipleField(SelectMultipleField):
                         self.data.append(self.coerce(value))
                 except ValueError:
                     raise ValueError(
-                        self.gettext(u'Invalid: Please set a Javascript for this payload {}'.format(value)))
+                        self.gettext(u'Invalid: Please set a Puppyscript for this payload {}'.format(value)))
 
     def pre_validate(self, form):
         if self.allow_blank and self.data is []:
@@ -123,7 +123,7 @@ class PayloadView(ModelView):
         to_process = self.session.query(
             Payload.ordering).filter(Payload.id == id).first()
         if to_process[0]:
-            form.javascript_list.process_data(to_process[0].split(','))
+            form.puppyscript_list.process_data(to_process[0].split(','))
 
     # Custom templates for listing models
     list_template = 'payload_list.html'
@@ -132,7 +132,7 @@ class PayloadView(ModelView):
 
     def on_model_change(self, form, model, is_created=False):
         try:
-            model.ordering = ','.join(str(v) for v in form.javascript_list.data)
+            model.ordering = ','.join(str(v) for v in form.puppyscript_list.data)
             db.session.add(model)
             db.session.commit()
         except Exception as err:
@@ -153,7 +153,7 @@ class PayloadView(ModelView):
     column_list = (
         'id',
         'payload',
-        'javascripts',
+        'puppyscripts',
         'notes'
     )
 
@@ -168,23 +168,23 @@ class PayloadView(ModelView):
     )
 
     form_excluded_columns = ('captures', 'uid')
-    form_columns = ('javascript_list',
+    form_columns = ('puppyscript_list',
                     'payload',
                     'notes')
 
     # Check if payload has associated captures, and format column if found
     # Format payload string to include hostname
     column_formatters = dict(
-        javascripts=lambda v, c, m, p: [Javascript.query.filter_by(id=thing).first(
+        puppyscripts=lambda v, c, m, p: [Puppyscript.query.filter_by(id=thing).first(
         ) for thing in Payload.query.filter_by(id=m.id).first().ordering.split(',')]
         if Payload.query.filter_by(id=m.id).first().ordering is not None or "" else "Default"
     )
 
     # Extra fields
-    # 'javascript_list' name chosen to avoid name conflict
+    # 'puppyscript_list' name chosen to avoid name conflict
     form_extra_fields = {
-        'javascript_list': Select2MultipleField(
-            'Javascripts',
+        'puppyscript_list': Select2MultipleField(
+            'Puppyscripts',
             coerce=int),
     }
 
@@ -196,13 +196,13 @@ class PayloadView(ModelView):
 
     form_args = dict(
         payload=dict(
-            description="Use $1 as a placeholder for the Javascript URL.",
+            description="Use $1 as a placeholder for the Puppyscript URL.",
             default="<script src=$1></script>",
             validators=[validators.required()]
         ),
-        javascript_list=dict(
+        puppyscript_list=dict(
             description="Stuff.",
-            label="Javascripts",
+            label="Puppyscripts",
             validators=[validators.required()]
         )
     )

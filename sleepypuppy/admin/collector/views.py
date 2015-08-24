@@ -19,7 +19,7 @@ from flask_wtf import Form
 
 class GenericCollectorView(ModelView):
     """
-    ModelView override of Flask Admin for JavaScripts.
+    ModelView override of Flask Admin for Puppyscripts.
     """
     # CSRF protection
     form_base_class = Form
@@ -38,18 +38,18 @@ class GenericCollectorView(ModelView):
         'pub_date',
         'payload',
         'assessment',
-        'javascript_name',
+        'puppyscript_name',
         'url',
         'referrer',
         'data'
     )
-    column_filters = ('id', 'assessment', 'payload', 'javascript_name', 'url', 'referrer')
+    column_filters = ('id', 'assessment', 'payload', 'puppyscript_name', 'url', 'referrer')
 
     column_sortable_list = (
         'pub_date',
         'payload',
         'assessment',
-        'javascript_name',
+        'puppyscript_name',
         'url',
         'referrer'
     )

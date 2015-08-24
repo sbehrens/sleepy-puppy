@@ -135,10 +135,10 @@
                 {% set counter = 0 -%}
                 {% for c, name in list_columns %}
                     {% if c == 'name' and counter == 0 %}
-                    <td class="col-{{row}}-assessment-{{row.id}} highlight" style="cursor: pointer;">
+                    <td class="col-{{row.name.split()[0]}}-assessment-{{row.id}} highlight" style="cursor: pointer;">
                     {% set counter = counter + 1 %}
                     {% else %}
-                    <td class="col-{{row}}-assessment-{{row.id}}" style="cursor: pointer;">
+                    <td class="col-{{row.name.split()[0]}}-assessment-{{row.id}}" style="cursor: pointer;">
                     {% endif %}
                     <!-- sbehrens removed
                     {% if admin_view.is_editable(c) %}
@@ -251,6 +251,7 @@ $('#assessments').on('click', 'tbody tr', function(event) {
 
         if ($(collector)[0].className.indexOf("collector") !== -1){
             var collector_id = $(collector)[0].className.split('-')[2];
+
             var total_collections = collector_data[assessment1][collector_id];
 
             $(this).html('<a target="_blank" href="/admin/genericcollector/?flt2_14=' + collector_id + '&flt3_7=' + assessment_name + '">' + total_collections + '</a>');
@@ -281,14 +282,12 @@ $('#assessments').on('click', 'tbody tr', function(event) {
 var text = "";
 $('#assessments').on('change', function(){
     if($('#assessments').length) {
-    console.log($('#assessments').length);
     } else {
     $("#payloads").addClass('hidden')
     }
 });
 $( document ).ready(function() {
     if ($('#assessments').text().indexOf("There are no items in the table.") === -1) {
-        console.log('there is a record');
         $("#payloads").removeClass('hidden')
         var assessment = $($(".highlight td")[2]).attr("class").split(' ')[0].split('-')[3];
         var assessment_name =$($(".highlight td")[2]).attr("class").split(' ')[0].split('-')[1];
