@@ -50,7 +50,7 @@ SES_REGION = 'us-east-1'
 # SMTP Options:
 MAIL_SERVER = 'localhost'
 MAIL_PORT = 25
-MAIL_SENDER = os.getenv('sender', 'monterey@saasmail.netflix.com')
+MAIL_SENDER = os.getenv('sender', 'some_sender@your_domain.com')
 # Uncomment if your SMTP server requires authentication
 # MAIL_USE_TLS = False
 # MAIL_USE_SSL = False
